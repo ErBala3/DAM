@@ -230,7 +230,6 @@
       display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;
       font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
     }
-    /* basic syntax */
     .kw  { color:#c084fc; }
     .str { color:#86efac; }
     .cmt { color:#52637a;font-style:italic; }
@@ -256,12 +255,132 @@
       header,.langbar-wrap,.search-wrap,main,footer{padding-left:16px;padding-right:16px;}
       header{padding-top:32px;flex-direction:column;}
     }
+
+    /* ════════════════════════════════════════
+       BIRTHDAY WIDGET
+    ════════════════════════════════════════ */
+    #bday-widget {
+      position: fixed;
+      bottom: 24px;
+      left: 20px;
+      z-index: 200;
+      display: none; /* shown by JS only if there's a birthday today */
+      flex-direction: column;
+      gap: 0;
+      max-width: 220px;
+      animation: bdaySlideIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes bdaySlideIn {
+      from { opacity:0; transform: translateX(-30px) scale(.9); }
+      to   { opacity:1; transform: translateX(0) scale(1); }
+    }
+
+    #bday-widget .bday-card {
+      background: var(--bg2);
+      border: 1px solid rgba(74,222,128,.35);
+      border-radius: 14px;
+      padding: 14px 16px 12px;
+      box-shadow: 0 0 28px rgba(74,222,128,.12), 0 8px 32px rgba(0,0,0,.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle shimmer line at top */
+    #bday-widget .bday-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: .4; transform: scaleX(.5); }
+      50%      { opacity: 1;  transform: scaleX(1); }
+    }
+
+    #bday-widget .bday-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    #bday-widget .bday-label::before { content: '●'; font-size: 7px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+    #bday-widget .bday-emoji {
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    #bday-widget .bday-congrats {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    #bday-widget .bday-names {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+    }
+
+    #bday-widget .bday-close {
+      position: absolute;
+      top: 8px; right: 10px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 12px; line-height: 1;
+      padding: 2px 4px; border-radius: 4px;
+      transition: color .15s;
+    }
+    #bday-widget .bday-close:hover { color: #fff; }
+
+    /* confetti dots */
+    #bday-widget .confetti {
+      position: absolute;
+      inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px;
+    }
+    #bday-widget .confetti span {
+      position: absolute;
+      width: 5px; height: 5px; border-radius: 50%;
+      animation: confettiFall linear infinite;
+      opacity: 0;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(-10px) rotate(0deg);   opacity: .8; }
+      100% { transform: translateY(120px) rotate(360deg); opacity: 0;  }
+    }
   </style>
 </head>
 <body>
 
 <div class="glow g1"></div>
 <div class="glow g2"></div>
+
+<!-- ════ BIRTHDAY WIDGET ════ -->
+<div id="bday-widget">
+  <div class="bday-card">
+    <div class="confetti" id="bday-confetti"></div>
+    <button class="bday-close" id="bday-close" title="Cerrar">✕</button>
+    <div class="bday-label">🎂 Hoy es su cumpleaños</div>
+    <span class="bday-emoji">🎉</span>
+    <div class="bday-congrats">¡Felicidades!</div>
+    <div class="bday-names" id="bday-names"></div>
+  </div>
+</div>
 
 <header>
   <div class="avatar">
@@ -349,12 +468,79 @@
 </div>
 
 <script>
+  /* ════════════════════════════════════════
+     BIRTHDAY WIDGET LOGIC
+  ════════════════════════════════════════ */
+  const BIRTHDAYS = [
+    { month: 1,  day: 7,  name: "Julia" },
+    { month: 2,  day: 9,  name: "Juan Carlos" },
+    { month: 2,  day: 27, name: "Alejandro F" },
+    { month: 3,  day: 19, name: "Sergio" },
+    { month: 5,  day: 25, name: "Guille" },
+    { month: 6,  day: 14, name: "Oscar" },
+    { month: 6,  day: 23, name: "Miguel" },
+    { month: 7,  day: 19, name: "Román" },
+    { month: 8,  day: 7,  name: "Jaime" },
+    { month: 8,  day: 19, name: "Alex D" },
+    { month: 8,  day: 19, name: "Nuria" },
+    { month: 8,  day: 31, name: "Carlos" },
+    { month: 8,  day: 31, name: "María" },
+    { month: 9,  day: 2,  name: "Gonzalo" },
+    { month: 11, day: 7,  name: "Marcos" },
+    { month: 11, day: 27, name: "Mario" },
+  ];
+
+  (function initBdayWidget() {
+    const now   = new Date();
+    const today = { month: now.getMonth() + 1, day: now.getDate() };
+
+    const todayBdays = BIRTHDAYS.filter(b => b.month === today.month && b.day === today.day);
+    if (todayBdays.length === 0) return;
+
+    // Build names string
+    const names = todayBdays.map(b => b.name);
+    let nameStr;
+    if (names.length === 1)      nameStr = names[0];
+    else if (names.length === 2) nameStr = names.join(' y ');
+    else                         nameStr = names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
+
+    document.getElementById('bday-names').textContent = nameStr;
+
+    // Confetti dots
+    const confettiEl = document.getElementById('bday-confetti');
+    const colors = ['#4ade80','#818cf8','#f89820','#f472b6','#67e8f9','#fbbf24'];
+    for (let i = 0; i < 14; i++) {
+      const dot = document.createElement('span');
+      dot.style.cssText = `
+        left:${Math.random()*100}%;
+        background:${colors[i % colors.length]};
+        animation-duration:${1.6 + Math.random()*2}s;
+        animation-delay:${Math.random()*2}s;
+        width:${3 + Math.random()*5}px;
+        height:${3 + Math.random()*5}px;
+      `;
+      confettiEl.appendChild(dot);
+    }
+
+    // Show widget with slight delay for page load
+    const widget = document.getElementById('bday-widget');
+    setTimeout(() => { widget.style.display = 'flex'; }, 800);
+
+    // Close button
+    document.getElementById('bday-close').addEventListener('click', () => {
+      widget.style.animation = 'bdaySlideIn .3s cubic-bezier(.55,.06,.68,.19) reverse both';
+      setTimeout(() => { widget.style.display = 'none'; }, 280);
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     GITHUB TREE (original code)
+  ════════════════════════════════════════ */
   const OWNER   = 'ErBala3';
   const REPO    = 'DAM';
   const BRANCH  = 'main';
-  const ROOT    = 'GitTodo';   // contents of this folder become the root
+  const ROOT    = 'GitTodo';
 
-  // helpers
   const getExt  = n => n.includes('.') ? n.split('.').pop().toLowerCase() : '';
   const ICONS   = { java:'☕', html:'🌐', css:'🎨', js:'🟨', md:'📝', txt:'📄',
                     xml:'📋', json:'🔧', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️',
@@ -372,7 +558,6 @@
     return r.json();
   }
 
-  // ── highlight ──
   function highlight(code, lang) {
     const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     let s = esc(code);
@@ -402,8 +587,7 @@
     return s;
   }
 
-  // ── modal ──
-  const backdrop  = document.getElementById('modal-backdrop');
+  const backdrop   = document.getElementById('modal-backdrop');
   const modalTitle = document.getElementById('modal-title');
   const modalIcon  = document.getElementById('modal-icon');
   const modalBody  = document.getElementById('modal-body');
@@ -446,7 +630,6 @@
     }
   }
 
-  // ── sort ──
   function sort(items) {
     return [...items].sort((a,b) => {
       if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
@@ -454,7 +637,6 @@
     });
   }
 
-  // ── render file ──
   function renderFile(item, delay = 0) {
     const el = document.createElement('div');
     el.className = 'tree-leaf';
@@ -470,7 +652,6 @@
     return el;
   }
 
-  // ── render folder ──
   function renderFolder(item, delay = 0) {
     const wrap = document.createElement('div');
     wrap.className = 'tree-item';
@@ -524,7 +705,6 @@
     return wrap;
   }
 
-  // ── search ──
   document.getElementById('search-input').addEventListener('input', function() {
     const q = this.value.trim().toLowerCase();
     const all = document.getElementById('tree-root').querySelectorAll('.tree-item, .tree-leaf');
@@ -537,7 +717,6 @@
     document.getElementById('search-count').textContent = q ? `${n} resultado${n!==1?'s':''}` : '';
   });
 
-  // ── init ──
   async function init() {
     const root  = document.getElementById('tree-root');
     const label = document.getElementById('section-label');
