@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+
+		<title>Novedades en Tecnología</title>
+		<link>https://www.tecnoshop.com</link>
+		<description>Productos electrónicos y gadgets destacados</description>
+		<language>es-ES</language>
+		<lastBuildDate>Fri, 29 Nov 2024 12:00:00 GMT</lastBuildDate>
+		<generator>TechFeedGenerator v1.0</generator>
+
+		<image>
+			<url>https://www.tecnoshop.com/logo.png</url>
+			<title>TecnoShop</title>
+			<link>https://www.tecnoshop.com</link>
+		</image>
+
+		<item>
+			<title>Smartphone X12</title>
+			<link>https://www.tecnoshop.com/smartphone-x12</link>
+			<description>El nuevo Smartphone X12 con características avanzadas.
+				Precio: 999 $</description>
+			<pubDate>Thu, 28 Nov 2024 12:00:00 GMT</pubDate>
+			<guid>https://www.tecnoshop.com/smartphone-x12</guid>
+		</item>
+
+		<item>
+			<title>Auriculares Wireless Pro</title>
+			<link>https://www.tecnoshop.com/auriculares-pro</link>
+			<description>Auriculares inalámbricos con cancelación de ruido
+			</description>
+			<pubDate>Sun, 24 Nov 2024 12:00:00 GMT</pubDate>
+			<comments>https://www.tecnoshop.com/auriculares-pro#comments
+			</comments>
+			<guid>https://www.tecnoshop.com/auriculares-pro</guid>
+		</item>
+
+	</channel>
+</rss>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  version="2.0">
+	<channel>
+		<title>Explorando el Mundo</title>
+		<description>Relatos y Recomendaciones para viajeros</description>
+		<link>https://www.explorandoelmundo.com</link>
+		<language>es-es</language>
+		<lastBuildDate>Fri, 29 Nov 2024 12:00:00 GMT</lastBuildDate>
+		<generator>FeedGenerator v1.0</generator>
+		<category>Viajes y Turismo</category>
+		<item>
+			<title>10 destinos para visitar en 2024</title>
+			<link>https://www.explorandoelmundo.com/destinos-2024</link>
+			<description>Descubre los mejores lugares para viajar este año</description>
+			<pubDate>Thu, 28 Nov 2024 12:00:00 GMT</pubDate>
+			<category>Recomendaciones</category>
+			<guid>https://www.explorandoelmundo.com/destinos-2024/1</guid>
+		</item>
+		<item>
+			<title>Cómo empezar como un profesional</title>
+			<link>https://www.explorandoelmundo.com/empacar-profesional</link>
+			<description>Consejos para viajar ligero y organizado</description>
+			<pubDate>Wed, 27 Nov 2024 12:00:00 GMT</pubDate>
+			<comments>https://www.explorandoelmundo.com/empacar-profesional#comments</comments>
+			<guid>https://www.explorandoelmundo.com/destinos-2024/2</guid>
+		</item>
+	</channel>
+
+</rss>

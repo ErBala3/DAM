@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Lobby</title>
+    <link rel="stylesheet" href="../css/DAM.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+</head>
+<body>
+    <div class="lobby-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Lobby <span>Code</span></h2>
+                <p>Explorador multicarpeta</p>
+                
+                <!-- Workspace Selector -->
+                <div class="workspace-selector">
+                    <button class="ws-btn active" data-ws="Programacion">Prog</button>
+                    <button class="ws-btn" data-ws="Entornos">Entornos</button>
+                    <button class="ws-btn" data-ws="LenguajeDeMarcas">L. Marcas</button>
+                    <button class="ws-btn" data-ws="EXMAMENCLASES">Exámenes</button>
+                </div>
+                
+                <!-- Mode Toggle -->
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="approved">Mis Proyectos</button>
+                    <button class="mode-btn review-mode" data-mode="review">En Revisión <span id="reviewCount" class="badge">0</span></button>
+                </div>
+            </div>
+            
+            <nav class="project-list" id="projectList">
+                <!-- Projects will be dynamically injected here -->
+            </nav>
+            <div class="sidebar-footer">
+                <button id="openNewCodeModal" class="btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Añadir Paquete
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h3 id="currentProjectTitle">Tus Proyectos</h3>
+                <button id="refreshBtn" class="btn-secondary" style="margin-left:auto; width:auto; border-color:transparent; background:rgba(255,255,255,0.05); padding:8px 12px; margin-top:0; margin-bottom:0;" title="Recargar Proyectos">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.64-6.36L2 9"></path></svg>
+                    <span>Recargar</span>
+                </button>
+            </div>
+            
+            <div class="split-view">
+                <!-- Files Panel -->
+                <div class="files-panel">
+                    <h4>Archivos</h4>
+                    <ul class="file-list" id="fileList">
+                        <li class="empty-state">Selecciona un proyecto<br>para ver sus archivos</li>
+                    </ul>
+                </div>
+
+                <!-- Code View -->
+                <div class="code-view-container">
+                    <div class="code-header">
+                        <span id="currentFileName">Bienvenido</span>
+                        
+                        <div class="code-actions" id="actionButtons">
+                            <button class="copy-btn" id="copyBtn" title="Copiar código">Copiar</button>
+                        </div>
+                    </div>
+                    <pre><code class="language-java" id="codeDisplay">// Selecciona un archivo en la lista para ver su código fuente aquí.</code></pre>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form for New Code/Package -->
+    <div id="newCodeModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Añadir Nuevo Paquete</h3>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Asignatura (Workspace) Destino</label>
+                    <select id="newWorkspaceSelector" class="custom-select">
+                        <option value="Programacion">Programación</option>
+                        <option value="Entornos">Entornos</option>
+                        <option value="LenguajeDeMarcas">Lenguaje de Marcas</option>
+                        <option value="EXMAMENCLASES">Exámenes (EXMAMENCLASES)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Paquete (Carpeta del Proyecto)</label>
+                    <input type="text" id="newProjectName" placeholder="Ej: ejerciciosClases" required>
+                </div>
+                
+                <div class="multi-file-container" id="multiFileContainer">
+                    <div class="file-entry" data-index="0">
+                        <div class="file-entry-header">
+                            <label>Archivo 1</label>
+                        </div>
+                        <input type="text" class="newFileName" placeholder="Ej: Main.java" required>
+                        <textarea class="newFileCode" rows="6" placeholder="public class Main { ... }" required></textarea>
+                    </div>
+                </div>
+                
+                <button type="button" id="addAnotherFile" class="btn-secondary">
+                    + Añadir otra clase al paquete
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button id="saveNewCode" class="btn-primary">Enviar a Revisión</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const projectListEl = document.getElementById('projectList');
+            const fileListEl = document.getElementById('fileList');
+            const codeDisplayEl = document.getElementById('codeDisplay');
+            const currentProjectTitleEl = document.getElementById('currentProjectTitle');
+            const currentFileNameEl = document.getElementById('currentFileName');
+            const actionButtons = document.getElementById('actionButtons');
+            const reviewCountBadge = document.getElementById('reviewCount');
+            
+            // State
+            let allData = [];
+            let currentWs = 'Programacion';
+            let currentMode = 'approved'; // 'approved' or 'review'
+            let selectedProject = null;
+
+            // Load codes
+            async function loadData() {
+                try {
+                    const res = await fetch('/api/datos');
+                    if (!res.ok) throw new Error("Fallo");
+                    allData = await res.json();
+                    updateReviewCount();
+                    renderLobby();
+                } catch (e) {
+                    codeDisplayEl.textContent = "// Error: Conexión con servidor falló.";
+                }
+            }
+
+            document.getElementById('refreshBtn').onclick = () => {
+                const icon = document.querySelector('#refreshBtn svg');
+                icon.style.transition = 'transform 0.5s ease';
+                icon.style.transform = 'rotate(360deg)';
+                loadData().then(() => {
+                    setTimeout(() => {
+                        icon.style.transition = 'none';
+                        icon.style.transform = 'rotate(0deg)';
+                    }, 500);
+                });
+            };
+            
+            function updateReviewCount() {
+                const count = allData.filter(i => i.status === 'review').length;
+                reviewCountBadge.textContent = count;
+                if(count > 0) reviewCountBadge.classList.add('has-items');
+                else reviewCountBadge.classList.remove('has-items');
+            }
+
+            // Top level selectors
+            document.querySelectorAll('.ws-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.ws-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentWs = btn.dataset.ws;
+                    renderLobby();
+                };
+            });
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    renderLobby();
+                };
+            });
+
+            function renderLobby() {
+                // Filter by WS and Mode
+                const filtered = allData.filter(i => i.workspace === currentWs && i.status === currentMode);
+                selectedProject = null;
+                
+                // Group by project
+                const projects = {};
+                filtered.forEach(item => {
+                    if (!projects[item.projectName]) projects[item.projectName] = [];
+                    projects[item.projectName].push(item);
+                });
+
+                const projectNames = Object.keys(projects).sort();
+                projectListEl.innerHTML = ''; 
+                fileListEl.innerHTML = '<li class="empty-state">Selecciona un proyecto<br>para ver sus archivos</li>';
+                codeDisplayEl.textContent = '// Selecciona un archivo...';
+                currentFileNameEl.textContent = '';
+                currentProjectTitleEl.textContent = currentMode === 'review' ? 'Bandeja de Revisión' : 'Tus Proyectos';
+                actionButtons.innerHTML = '<button class="copy-btn" id="copyBtn">Copiar</button>';
+                attachCopyEvent();
+
+                if (projectNames.length === 0) {
+                    projectListEl.innerHTML = '<div style="padding: 20px; color: var(--text-muted); font-size: 0.9rem; text-align: center;">Vacío</div>';
+                    return;
+                }
+
+                projectNames.forEach(projName => {
+                    const btn = document.createElement('button');
+                    btn.className = 'project-btn';
+                    if (currentMode === 'review') btn.classList.add('is-review');
+                    btn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        ${projName}
+                    `;
+                    btn.onclick = () => selectProject(projName, btn, projects);
+                    projectListEl.appendChild(btn);
+                });
+            }
+
+            function selectProject(projName, btnElement, projects) {
+                document.querySelectorAll('.project-btn').forEach(btn => btn.classList.remove('active'));
+                btnElement.classList.add('active');
+                selectedProject = projName;
+
+                currentProjectTitleEl.textContent = `${currentMode === 'review' ? 'Revisando' : 'Proyecto'}: ${projName}`;
+                
+                fileListEl.innerHTML = '';
+                const files = projects[projName].sort((a, b) => a.fileName.localeCompare(b.fileName));
+                
+                files.forEach(fileOpt => {
+                    const li = document.createElement('li');
+                    li.className = 'file-item';
+                    li.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        ${fileOpt.fileName}
+                    `;
+                    li.onclick = () => selectFile(fileOpt, li);
+                    fileListEl.appendChild(li);
+                });
+                
+                // Show approve/reject toolbar if in review mode
+                if (currentMode === 'review') {
+                    actionButtons.innerHTML = `
+                        <button class="btn-success" id="approveBtn">Aprobar Paquete</button>
+                        <button class="btn-danger" id="rejectBtn">Rechazar</button>
+                    `;
+                    document.getElementById('approveBtn').onclick = () => handleReviewAction('aprobar');
+                    document.getElementById('rejectBtn').onclick = () => handleReviewAction('rechazar');
+                } else {
+                    actionButtons.innerHTML = '<button class="copy-btn" id="copyBtn">Copiar</button>';
+                    attachCopyEvent();
+                }
+
+                codeDisplayEl.textContent = '// Selecciona un archivo de la lista';
+                currentFileNameEl.textContent = 'Selecciona un archivo';
+                codeDisplayEl.removeAttribute('data-highlighted');
+                hljs.highlightElement(codeDisplayEl);
+            }
+
+            function selectFile(fileData, liElement) {
+                document.querySelectorAll('.file-item').forEach(li => li.classList.remove('active'));
+                liElement.classList.add('active');
+                currentFileNameEl.textContent = fileData.fileName;
+                codeDisplayEl.textContent = fileData.code;
+                codeDisplayEl.removeAttribute('data-highlighted');
+                
+                // Extracción de extensión para highlight
+                const parts = fileData.fileName.split('.');
+                const ext = parts.length > 1 ? parts.pop().toLowerCase() : '';
+                let langClass = 'language-java';
+                
+                if (ext === 'html' || ext === 'xml') langClass = 'language-xml';
+                else if (ext === 'css') langClass = 'language-css';
+                else if (ext === 'js') langClass = 'language-javascript';
+                else if (ext === 'php') langClass = 'language-php';
+                else if (ext === 'sql') langClass = 'language-sql';
+                else if (ext === 'json') langClass = 'language-json';
+                else if (ext === 'py') langClass = 'language-python';
+                else if (['txt', 'md', 'csv', 'ps1'].includes(ext)) langClass = 'language-plaintext';
+                
+                codeDisplayEl.className = langClass;
+                hljs.highlightElement(codeDisplayEl);
+            }
+
+            async function handleReviewAction(action) {
+                if (!selectedProject) return;
+                try {
+                    const res = await fetch(`/api/${action}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ workspace: currentWs, project: selectedProject })
+                    });
+                    if (res.ok) {
+                        alert(action === 'aprobar' ? '¡Paquete aprobado y movido a tus proyectos!' : 'Paquete rechazado y borrado.');
+                        loadData();
+                    }
+                } catch (e) { alert("Error"); }
+            }
+
+            function attachCopyEvent() {
+                const copyBtn = document.getElementById('copyBtn');
+                if (copyBtn) {
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(codeDisplayEl.textContent).then(() => {
+                            const original = copyBtn.textContent;
+                            copyBtn.textContent = '¡Copiado!';
+                            setTimeout(() => copyBtn.textContent = original, 2000);
+                        });
+                    };
+                }
+            }
+
+            // Modal Logic --------
+            const modal = document.getElementById('newCodeModal');
+            let fileCount = 1;
+
+            document.getElementById('openNewCodeModal').onclick = () => {
+                modal.classList.remove('hidden');
+                document.getElementById('newWorkspaceSelector').value = currentWs;
+            };
+            document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+            
+            document.getElementById('addAnotherFile').onclick = () => {
+                fileCount++;
+                const div = document.createElement('div');
+                div.className = 'file-entry';
+                div.innerHTML = `
+                    <div class="file-entry-header">
+                        <label>Archivo ${fileCount}</label>
+                        <button type="button" class="remove-file-btn" onclick="this.parentElement.parentElement.remove()">X</button>
+                    </div>
+                    <input type="text" class="newFileName" placeholder="Ej: Utils.java" required>
+                    <textarea class="newFileCode" rows="4" placeholder="..." required></textarea>
+                `;
+                document.getElementById('multiFileContainer').appendChild(div);
+            };
+
+            document.getElementById('saveNewCode').onclick = async () => {
+                const ws = document.getElementById('newWorkspaceSelector').value;
+                const projName = document.getElementById('newProjectName').value.trim();
+                const saveBtn = document.getElementById('saveNewCode');
+                
+                if (!projName) return alert("Falta el nombre de paquete.");
+                
+                const files = [];
+                const entries = document.querySelectorAll('.file-entry');
+                
+                for (let entry of entries) {
+                    let name = entry.querySelector('.newFileName').value.trim();
+                    let content = entry.querySelector('.newFileCode').value;
+                    if (!name || !content) return alert("Rellena todos los archivos añadidos.");
+                    files.push({ name, content });
+                }
+
+                saveBtn.textContent = 'Enviando...';
+                saveBtn.disabled = true;
+
+                try {
+                    const res = await fetch('/api/save', {
+                        method: 'POST',
+                        body: JSON.stringify({ workspace: ws, project: projName, files: files })
+                    });
+                    if (res.ok) {
+                        alert("¡Enviado a la Bandeja de Revisión correctamente!");
+                        modal.classList.add('hidden');
+                        document.getElementById('newProjectName').value = '';
+                        document.getElementById('multiFileContainer').innerHTML = `
+                            <div class="file-entry" data-index="0"><div class="file-entry-header"><label>Archivo 1</label></div><input type="text" class="newFileName" placeholder="Ej: Main.java" required><textarea class="newFileCode" rows="6" required></textarea></div>
+                        `;
+                        fileCount = 1;
+                        loadData();
+                    }
+                } catch (e) { alert("Error guardando"); } finally {
+                    saveBtn.textContent = 'Enviar a Revisión';
+                    saveBtn.disabled = false;
+                }
+            };
+            
+            // Init
+            loadData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Actualidad deportiva</title>
+		<description>Descubre todas las noticias sobre el múndo del deporte</description>
+		<link>https://Actuelidad-deportiva</link>
+		<language>es-es</language>
+		<item>
+			<title>Datos de los partidos de la Champions</title>
+			<link>http://Datos-de-los-partidos-de-la-champions</link>
+			<description>Descubre toda la información sobre la actualidad de la champions</description>
+			<guid>http://Datos-de-los-partidos-de-la-champions/2912026 </guid>
+			<pubDate>Thu, 29 Jan 2026 12:08:00 GTM</pubDate>
+			<category>Fútbol</category>
+		</item>
+
+		<item>
+			<title>Datos de la jornada de la NBA</title>
+			<link>http://NBA-Jornada-7</link>
+			<description> No te pierdas nada de esta interesante jornada en la NBA</description>
+			<guid>http://NBA-Jornada-7/2912026 </guid>
+			<pubDate>Sun, 25 Jan 2026 00:00:03 GTM</pubDate>
+			<category>Baloncesto</category>
+		</item>
+
+		<item>
+			<title>Récord histórico en Golf</title>
+			<link>http://Golf-a-tus-pies</link>
+			<description>Descubre, cómo se desarrolló el torneo mundial </description>
+			<guid>http://Golf-a-tus-pies/2912026 </guid>
+			<pubDate>Fri, 30 Jan 2026 23:40:16 GTM</pubDate>
+			<category>Golf</category>
+		</item>
+
+	</channel>
+</rss>	
