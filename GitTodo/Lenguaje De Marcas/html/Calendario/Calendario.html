@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario Interactivo</title>
+  <link rel="stylesheet" href="calendario.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <header class="site-header">
+    <div class="year-display" id="yearDisplay"></div>
+    <h1 class="site-title">Calendario</h1>
+    <p class="site-sub">España 🇪🇸</p>
+    <div class="nav-arrows">
+      <button class="nav-btn" id="prevYear">&#8592;</button>
+      <button class="nav-btn" id="nextYear">&#8594;</button>
+    </div>
+  </header>
+
+  <div class="calendar-grid" id="calendarGrid"></div>
+
+  <footer class="site-footer">
+    <div class="birthday-list-toggle" id="bdayToggle">🎂 Ver todos los cumpleaños</div>
+    <div class="birthday-panel" id="birthdayPanel">
+      <h3>Cumpleaños del año</h3>
+      <ul id="bdayList"></ul>
+    </div>
+  </footer>
+
+</div>
+
+<!-- POPUP OVERLAY -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-card" id="popupCard">
+    <button class="popup-close" id="popupClose">✕</button>
+    <div class="popup-date" id="popupDate"></div>
+    <div class="popup-weekday" id="popupWeekday"></div>
+    <div class="popup-events" id="popupEvents"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+
+const BIRTHDAYS = [
+  { month: 1,  day: 7,  name: "Julia" },
+  { month: 2,  day: 9,  name: "Juan Carlos" },
+  { month: 2,  day: 27, name: "Alejandro F" },
+  { month: 3,  day: 19, name: "Sergio" },
+  { month: 5,  day: 25, name: "Guille" },
+  { month: 6,  day: 14, name: "Oscar" },
+  { month: 6,  day: 23, name: "Miguel" },
+  { month: 7,  day: 19, name: "Román" },
+  { month: 8,  day: 7,  name: "Jaime" },
+  { month: 8,  day: 19, name: "Alex D" },
+  { month: 8,  day: 19, name: "Nuria" },
+  { month: 8,  day: 31, name: "Carlos" },
+  { month: 8,  day: 31, name: "María" },
+  { month: 9,  day: 2,  name: "Gonzalo" },
+  { month: 11, day: 7,  name: "Marcos" },
+  { month: 11, day: 27, name: "Mario" },
+];
+
+// Fixed holidays (month, day)
+const FIXED_HOLIDAYS = [
+  { month: 1,  day: 1,  label: "🎆 Año Nuevo" },
+  { month: 1,  day: 6,  label: "👑 Reyes Magos" },
+  { month: 2,  day: 14, label: "💕 San Valentín" },
+  { month: 5,  day: 1,  label: "👷 Día del Trabajo" },
+  { month: 6,  day: 24, label: "🔥 San Juan" },
+  { month: 8,  day: 15, label: "⛪ Asunción" },
+  { month: 10, day: 12, label: "🇪🇸 Fiesta Nacional" },
+  { month: 10, day: 31, label: "🎃 Halloween" },
+  { month: 11, day: 1,  label: "✝️ Todos los Santos" },
+  { month: 12, day: 6,  label: "🏛️ Día de la Constitución" },
+  { month: 12, day: 8,  label: "🌹 Inmaculada Concepción" },
+  { month: 12, day: 25, label: "🎄 Navidad" },
+  { month: 12, day: 31, label: "🥂 Nochevieja" },
+];
+
+// Easter calculation (Gregorian)
+function easterDate(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return { month, day };
+}
+
+function getMovableHolidays(year) {
+  const easter = easterDate(year);
+  const easterDate_ = new Date(year, easter.month - 1, easter.day);
+
+  const holyThursday = new Date(easterDate_); holyThursday.setDate(holyThursday.getDate() - 3);
+  const goodFriday   = new Date(easterDate_); goodFriday.setDate(goodFriday.getDate() - 2);
+
+  return [
+    { month: holyThursday.getMonth()+1, day: holyThursday.getDate(), label: "✝️ Jueves Santo" },
+    { month: goodFriday.getMonth()+1,   day: goodFriday.getDate(),   label: "✝️ Viernes Santo" },
+    { month: easterDate_.getMonth()+1,  day: easterDate_.getDate(),  label: "🐣 Pascua" },
+  ];
+}
+
+const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                     "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DAY_NAMES   = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const WEEKDAY_FULL = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let currentYear = new Date().getFullYear();
+
+// ─────────────────────────────────────────────
+//  BUILD CALENDAR
+// ─────────────────────────────────────────────
+function buildCalendar(year) {
+  document.getElementById("yearDisplay").textContent = year;
+  const grid = document.getElementById("calendarGrid");
+  grid.innerHTML = "";
+
+  const allHolidays = [...FIXED_HOLIDAYS, ...getMovableHolidays(year)];
+
+  for (let m = 1; m <= 12; m++) {
+    const card = document.createElement("div");
+    card.className = "month-card";
+
+    // Header
+    const mHead = document.createElement("div");
+    mHead.className = "month-header";
+    mHead.textContent = MONTH_NAMES[m-1];
+    card.appendChild(mHead);
+
+    // Day-of-week labels
+    const labRow = document.createElement("div");
+    labRow.className = "day-labels";
+    DAY_NAMES.forEach((d,i) => {
+      const lbl = document.createElement("span");
+      lbl.className = "day-label" + (i === 5 ? " sat" : i === 6 ? " sun" : "");
+      lbl.textContent = d;
+      labRow.appendChild(lbl);
+    });
+    card.appendChild(labRow);
+
+    // Days grid
+    const daysGrid = document.createElement("div");
+    daysGrid.className = "days-grid";
+
+    // First weekday of month (0=Sun..6=Sat → convert to Mon-based 0-6)
+    const firstDay = new Date(year, m-1, 1).getDay(); // 0=Sun
+    const offset = firstDay === 0 ? 6 : firstDay - 1;
+    for (let i = 0; i < offset; i++) {
+      const empty = document.createElement("div");
+      empty.className = "day-cell empty";
+      daysGrid.appendChild(empty);
+    }
+
+    const daysInMonth = new Date(year, m, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const jsDay = new Date(year, m-1, d).getDay(); // 0=Sun,6=Sat
+      const isSat = jsDay === 6;
+      const isSun = jsDay === 0;
+
+      const holidays = allHolidays.filter(h => h.month === m && h.day === d);
+      const bdays    = BIRTHDAYS.filter(b => b.month === m && b.day === d);
+      const isHoliday = holidays.length > 0;
+      const isBday    = bdays.length > 0;
+      const isToday   = (d === new Date().getDate() && m === new Date().getMonth()+1 && year === new Date().getFullYear());
+
+      const cell = document.createElement("div");
+      let classes = "day-cell";
+      if (isSun)     classes += " sunday";
+      else if (isSat) classes += " saturday";
+      if (isHoliday) classes += " holiday";
+      if (isBday)    classes += " birthday";
+      if (isToday)   classes += " today";
+      cell.className = classes;
+
+      const num = document.createElement("span");
+      num.className = "day-num";
+      num.textContent = d;
+      cell.appendChild(num);
+
+      if (isBday) {
+        const dot = document.createElement("span");
+        dot.className = "bday-dot";
+        dot.textContent = "🎂";
+        cell.appendChild(dot);
+      } else if (isHoliday) {
+        const dot = document.createElement("span");
+        dot.className = "holiday-dot";
+        cell.appendChild(dot);
+      }
+
+      // Click handler
+      if (isHoliday || isBday || isToday) {
+        cell.style.cursor = "pointer";
+        cell.addEventListener("click", () => openPopup(year, m, d, holidays, bdays));
+      }
+
+      daysGrid.appendChild(cell);
+    }
+    card.appendChild(daysGrid);
+    grid.appendChild(card);
+  }
+
+  buildBdayList();
+}
+
+// ─────────────────────────────────────────────
+//  POPUP
+// ─────────────────────────────────────────────
+function openPopup(year, month, day, holidays, bdays) {
+  const jsDate = new Date(year, month-1, day);
+  const weekdayName = WEEKDAY_FULL[jsDate.getDay()];
+
+  document.getElementById("popupDate").textContent =
+    `${day} de ${MONTH_NAMES[month-1]} de ${year}`;
+  document.getElementById("popupWeekday").textContent = weekdayName;
+
+  const eventsEl = document.getElementById("popupEvents");
+  eventsEl.innerHTML = "";
+
+  holidays.forEach(h => {
+    const ev = document.createElement("div");
+    ev.className = "popup-event holiday-ev";
+    ev.innerHTML = `<span class="ev-icon">🗓️</span><span>${h.label}</span>`;
+    eventsEl.appendChild(ev);
+  });
+
+  bdays.forEach(b => {
+    const ev = document.createElement("div");
+    ev.className = "popup-event birthday-ev";
+    const age = year - /* no birth year stored */ year; // just show name
+    ev.innerHTML = `<span class="ev-icon">🎂</span><span>Cumpleaños de <strong>${b.name}</strong></span>`;
+    eventsEl.appendChild(ev);
+  });
+
+  document.getElementById("popupOverlay").classList.add("active");
+}
+
+function closePopup() {
+  document.getElementById("popupOverlay").classList.remove("active");
+}
+
+// ─────────────────────────────────────────────
+//  BIRTHDAY PANEL
+// ─────────────────────────────────────────────
+function buildBdayList() {
+  const ul = document.getElementById("bdayList");
+  ul.innerHTML = "";
+  BIRTHDAYS.forEach(b => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="bday-date">${b.day} ${MONTH_NAMES[b.month-1].substring(0,3)}</span>
+                    <span class="bday-name">${b.name}</span>`;
+    ul.appendChild(li);
+  });
+}
+
+// ─────────────────────────────────────────────
+//  EVENTS
+// ─────────────────────────────────────────────
+document.getElementById("prevYear").addEventListener("click", () => {
+  currentYear--;
+  buildCalendar(currentYear);
+});
+document.getElementById("nextYear").addEventListener("click", () => {
+  currentYear++;
+  buildCalendar(currentYear);
+});
+document.getElementById("popupClose").addEventListener("click", closePopup);
+document.getElementById("popupOverlay").addEventListener("click", (e) => {
+  if (e.target === document.getElementById("popupOverlay")) closePopup();
+});
+document.getElementById("bdayToggle").addEventListener("click", () => {
+  document.getElementById("birthdayPanel").classList.toggle("open");
+  document.getElementById("bdayToggle").classList.toggle("open");
+});
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+buildCalendar(currentYear);
+</script>
+</body>
+</html>
