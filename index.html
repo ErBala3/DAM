@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DAM — ErBala3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg:      #0d0f14;
@@ -38,7 +38,6 @@
     .g1 { width: 560px; height: 560px; background: rgba(74,222,128,.07); top: -140px; left: -140px; }
     .g2 { width: 420px; height: 420px; background: rgba(129,140,248,.06); bottom: -80px; right: -60px; }
 
-    /* ── HEADER ── */
     header {
       position: relative; z-index: 10;
       padding: 52px 40px 32px;
@@ -77,17 +76,12 @@
     .dot { width:7px;height:7px;border-radius:50%;display:inline-block; }
     .dot.java{background:var(--java);}.dot.html{background:var(--html);}.dot.css{background:var(--css);}
 
-    /* ── LANG BAR ── */
     .langbar-wrap { max-width:980px;margin:0 auto;padding:0 40px 24px;position:relative;z-index:10; }
     .langbar { height:5px;border-radius:999px;overflow:hidden;display:flex; }
     .langbar-seg { height:100%; }
     .langbar-leg { display:flex;gap:18px;margin-top:9px; }
-    .langbar-leg-item {
-      display:flex;align-items:center;gap:5px;
-      font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);
-    }
+    .langbar-leg-item { display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted); }
 
-    /* ── SEARCH ── */
     .search-wrap { max-width:980px;margin:0 auto;padding:0 40px 24px;position:relative;z-index:10; }
     .search-box {
       display:flex;align-items:center;gap:10px;
@@ -96,14 +90,10 @@
     }
     .search-box:focus-within { border-color:var(--accent); }
     .search-box svg { flex-shrink:0;color:var(--muted); }
-    .search-box input {
-      flex:1;background:none;border:none;outline:none;
-      color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;
-    }
+    .search-box input { flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px; }
     .search-box input::placeholder { color:var(--muted); }
     #search-count { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap; }
 
-    /* ── MAIN ── */
     main { max-width:980px;margin:0 auto;padding:0 40px 80px;position:relative;z-index:10; }
     .section-label {
       font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
@@ -112,142 +102,57 @@
     }
     .section-label::after { content:'';flex:1;height:1px;background:var(--border); }
 
-    .loading-wrap {
-      display:flex;flex-direction:column;align-items:center;gap:14px;
-      padding:72px 0;color:var(--muted);
-      font-family:'JetBrains Mono',monospace;font-size:12px;
-    }
-    .spinner {
-      width:34px;height:34px;border:2px solid var(--border);
-      border-top-color:var(--accent);border-radius:50%;
-      animation:spin .8s linear infinite;
-    }
+    .loading-wrap { display:flex;flex-direction:column;align-items:center;gap:14px;padding:72px 0;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px; }
+    .spinner { width:34px;height:34px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg);} }
-    .error-box {
-      background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
-      border-radius:12px;padding:22px;
-      color:#fca5a5;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;
-    }
+    .error-box { background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:22px;color:#fca5a5;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7; }
 
-    /* ── TREE ── */
     .tree { display:flex;flex-direction:column;gap:5px; }
-    .tree-item {
-      background:var(--bg2);border:1px solid var(--border);
-      border-radius:11px;overflow:hidden;
-      transition:border-color .2s,box-shadow .2s;
-      animation:fadeUp .4s ease both;
-    }
+    .tree-item { background:var(--bg2);border:1px solid var(--border);border-radius:11px;overflow:hidden;transition:border-color .2s,box-shadow .2s;animation:fadeUp .4s ease both; }
     .tree-item.hidden,.tree-leaf.hidden { display:none; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
     .tree-item:hover { border-color:rgba(74,222,128,.3);box-shadow:0 0 18px rgba(74,222,128,.05); }
-    .tree-header {
-      display:flex;align-items:center;gap:11px;padding:13px 18px;
-      cursor:pointer;user-select:none;transition:background .15s;
-    }
+    .tree-header { display:flex;align-items:center;gap:11px;padding:13px 18px;cursor:pointer;user-select:none;transition:background .15s; }
     .tree-header:hover { background:var(--bg3); }
     .tree-icon { font-size:17px;flex-shrink:0;width:26px;text-align:center; }
     .tree-name { font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;flex:1;color:#fff; }
     .tree-meta { display:flex;align-items:center;gap:7px; }
     .fbadge { padding:2px 8px;border-radius:999px;font-size:9px;font-weight:600;font-family:'JetBrains Mono',monospace; }
-    .fbadge.java  { background:rgba(248,152,32,.15);color:var(--java); }
-    .fbadge.html  { background:rgba(227,76,38,.15); color:var(--html); }
-    .fbadge.css   { background:rgba(38,77,228,.15);  color:var(--css); }
-    .fbadge.dir   { background:rgba(74,222,128,.12); color:var(--accent); }
-    .fbadge.other { background:rgba(148,163,184,.1); color:var(--muted); }
-    .count-pill {
-      font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);
-      background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:1px 7px;
-    }
+    .fbadge.java{background:rgba(248,152,32,.15);color:var(--java);}
+    .fbadge.html{background:rgba(227,76,38,.15);color:var(--html);}
+    .fbadge.css{background:rgba(38,77,228,.15);color:var(--css);}
+    .fbadge.dir{background:rgba(74,222,128,.12);color:var(--accent);}
+    .fbadge.other{background:rgba(148,163,184,.1);color:var(--muted);}
+    .count-pill { font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:1px 7px; }
     .chevron { color:var(--muted);transition:transform .22s ease;font-size:11px; }
     .chevron.open { transform:rotate(90deg); }
-
-    .tree-children {
-      display:none;border-top:1px solid var(--border);
-      background:var(--bg);padding:7px 10px 7px 36px;
-      flex-direction:column;gap:4px;
-    }
+    .tree-children { display:none;border-top:1px solid var(--border);background:var(--bg);padding:7px 10px 7px 36px;flex-direction:column;gap:4px; }
     .tree-children.open { display:flex; }
     .tree-children .tree-item { border-radius:9px; }
-
-    .tree-leaf {
-      display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:7px;
-      transition:background .15s;cursor:pointer;color:var(--text);
-      animation:fadeUp .3s ease both;
-    }
+    .tree-leaf { display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:7px;transition:background .15s;cursor:pointer;color:var(--text);animation:fadeUp .3s ease both; }
     .tree-leaf:hover { background:var(--bg3);color:var(--accent); }
     .tree-leaf .leaf-name { font-family:'JetBrains Mono',monospace;font-size:12px;flex:1; }
+    .sub-loading { display:flex;align-items:center;gap:9px;padding:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted); }
+    .sub-spinner { width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite; }
 
-    .sub-loading {
-      display:flex;align-items:center;gap:9px;padding:11px;
-      font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
-    }
-    .sub-spinner {
-      width:13px;height:13px;border:2px solid var(--border);
-      border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;
-    }
-
-    /* ── MODAL ── */
-    .modal-backdrop {
-      display:none;position:fixed;inset:0;
-      background:rgba(0,0,0,.75);backdrop-filter:blur(4px);
-      z-index:100;align-items:center;justify-content:center;padding:20px;
-    }
+    .modal-backdrop { display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px; }
     .modal-backdrop.open { display:flex; }
-    .modal {
-      background:var(--bg2);border:1px solid var(--border);
-      border-radius:16px;width:100%;max-width:840px;max-height:86vh;
-      display:flex;flex-direction:column;
-      box-shadow:0 40px 80px rgba(0,0,0,.5);
-      animation:modalIn .22s ease;
-    }
+    .modal { background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:840px;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.5);animation:modalIn .22s ease; }
     @keyframes modalIn { from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);} }
-    .modal-header {
-      display:flex;align-items:center;gap:12px;
-      padding:14px 18px;border-bottom:1px solid var(--border);
-      flex-wrap:wrap;gap:8px;
-    }
+    .modal-header { display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap; }
     .modal-title { font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;flex:1;color:#fff;min-width:0;word-break:break-all; }
     .modal-actions { display:flex;gap:6px;flex-shrink:0; }
-    .modal-btn {
-      font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;
-      border-radius:7px;border:1px solid var(--border);
-      background:var(--bg3);color:var(--muted);cursor:pointer;
-      text-decoration:none;display:inline-flex;align-items:center;gap:5px;
-      transition:border-color .15s,color .15s;
-    }
+    .modal-btn { font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:border-color .15s,color .15s; }
     .modal-btn:hover { border-color:var(--accent);color:var(--accent); }
-    .modal-close {
-      background:none;border:none;color:var(--muted);cursor:pointer;
-      font-size:17px;line-height:1;padding:4px;border-radius:6px;transition:color .15s;
-    }
+    .modal-close { background:none;border:none;color:var(--muted);cursor:pointer;font-size:17px;line-height:1;padding:4px;border-radius:6px;transition:color .15s; }
     .modal-close:hover { color:#fff; }
     .modal-body { flex:1;overflow-y:auto;padding:18px; }
-    .modal-body pre {
-      font-family:'JetBrains Mono',monospace;font-size:12px;
-      line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word;
-    }
-    .modal-loading {
-      display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;
-      font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
-    }
-    .kw  { color:#c084fc; }
-    .str { color:#86efac; }
-    .cmt { color:#52637a;font-style:italic; }
-    .num { color:#fbbf24; }
-    .typ { color:#67e8f9; }
-    .ann { color:#f472b6; }
+    .modal-body pre { font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word; }
+    .modal-loading { display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted); }
+    .kw{color:#c084fc;}.str{color:#86efac;}.cmt{color:#52637a;font-style:italic;}.num{color:#fbbf24;}.typ{color:#67e8f9;}.ann{color:#f472b6;}
 
-    /* ── FOOTER ── */
-    footer {
-      border-top:1px solid var(--border);max-width:980px;margin:0 auto;
-      padding:26px 40px;display:flex;align-items:center;
-      justify-content:space-between;position:relative;z-index:10;flex-wrap:wrap;gap:10px;
-    }
-    footer a {
-      color:var(--accent);text-decoration:none;
-      font-family:'JetBrains Mono',monospace;font-size:11px;
-      display:flex;align-items:center;gap:5px;transition:opacity .2s;
-    }
+    footer { border-top:1px solid var(--border);max-width:980px;margin:0 auto;padding:26px 40px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:10;flex-wrap:wrap;gap:10px; }
+    footer a { color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;align-items:center;gap:5px;transition:opacity .2s; }
     footer a:hover { opacity:.7; }
     .foot-muted { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted); }
 
@@ -256,113 +161,148 @@
       header{padding-top:32px;flex-direction:column;}
     }
 
-    /* ════════════════════════════════════════
-       BIRTHDAY WIDGET
-    ════════════════════════════════════════ */
-    #bday-widget {
-      position: fixed;
-      bottom: 24px;
-      left: 20px;
-      z-index: 200;
-      display: none; /* shown by JS only if there's a birthday today */
-      flex-direction: column;
-      gap: 0;
-      max-width: 220px;
-      animation: bdaySlideIn .5s cubic-bezier(.34,1.56,.64,1) both;
-    }
-    @keyframes bdaySlideIn {
-      from { opacity:0; transform: translateX(-30px) scale(.9); }
-      to   { opacity:1; transform: translateX(0) scale(1); }
-    }
-
-    #bday-widget .bday-card {
+    /* ══════════ CALENDAR BUTTON ══════════ */
+    #cal-open-btn {
+      position: fixed; bottom: 24px; left: 20px; z-index: 200;
+      display: flex; align-items: center; gap: 8px;
       background: var(--bg2);
-      border: 1px solid rgba(74,222,128,.35);
-      border-radius: 14px;
-      padding: 14px 16px 12px;
-      box-shadow: 0 0 28px rgba(74,222,128,.12), 0 8px 32px rgba(0,0,0,.4);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* subtle shimmer line at top */
-    #bday-widget .bday-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      animation: shimmer 2.5s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-      0%,100% { opacity: .4; transform: scaleX(.5); }
-      50%      { opacity: 1;  transform: scaleX(1); }
-    }
-
-    #bday-widget .bday-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      border: 1px solid rgba(74,222,128,.45);
+      border-radius: 999px; padding: 10px 18px 10px 14px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
       color: var(--accent);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      box-shadow: 0 0 20px rgba(74,222,128,.1), 0 4px 20px rgba(0,0,0,.4);
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      animation: slideIn .5s .3s cubic-bezier(.34,1.56,.64,1) both;
     }
-    #bday-widget .bday-label::before { content: '●'; font-size: 7px; animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+    #cal-open-btn:hover { border-color:var(--accent); box-shadow:0 0 30px rgba(74,222,128,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
+    #cal-open-btn .ci { font-size:16px; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-30px) scale(.9);}to{opacity:1;transform:translateX(0) scale(1);} }
 
-    #bday-widget .bday-emoji {
-      font-size: 26px;
-      line-height: 1;
-      margin-bottom: 6px;
-      display: block;
+    #cal-bday-dot {
+      display:none; width:8px; height:8px;
+      background:#f472b6; border-radius:50%; border:1.5px solid var(--bg2);
+      position:absolute; top:4px; right:4px;
+      animation:pulse 1.4s ease-in-out infinite;
     }
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-    #bday-widget .bday-congrats {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      line-height: 1.3;
-      margin-bottom: 3px;
+    /* ══════════ BIRTHDAY WIDGET ══════════ */
+    #bday-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s .8s cubic-bezier(.34,1.56,.64,1) both;
     }
+    .bday-card {
+      background:var(--bg2); border:1px solid rgba(244,114,182,.4);
+      border-radius:14px; padding:12px 15px 10px;
+      box-shadow:0 0 22px rgba(244,114,182,.1),0 8px 28px rgba(0,0,0,.4);
+      position:relative; overflow:hidden; max-width:200px;
+    }
+    .bday-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,#f472b6,transparent);
+      animation:shimmer 2.5s ease-in-out infinite;
+    }
+    @keyframes shimmer{0%,100%{opacity:.4;transform:scaleX(.5);}50%{opacity:1;transform:scaleX(1);}}
+    .bday-lbl { font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f472b6;margin-bottom:4px;display:flex;align-items:center;gap:5px; }
+    .bday-lbl::before{content:'●';font-size:7px;animation:pulse 1.4s ease-in-out infinite;}
+    .bday-emoji{font-size:22px;line-height:1;margin-bottom:4px;display:block;}
+    .bday-sub{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:2px;}
+    .bday-name-text{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#fff;line-height:1.3;}
+    .bday-x{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px;border-radius:4px;transition:color .15s;}
+    .bday-x:hover{color:#fff;}
 
-    #bday-widget .bday-names {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.4;
+    /* ══════════ CALENDAR POPUP ══════════ */
+    #cal-backdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.82); backdrop-filter:blur(6px);
+      z-index:300; align-items:center; justify-content:center; padding:14px;
     }
+    #cal-backdrop.open { display:flex; }
 
-    #bday-widget .bday-close {
-      position: absolute;
-      top: 8px; right: 10px;
-      background: none; border: none;
-      color: var(--muted); cursor: pointer;
-      font-size: 12px; line-height: 1;
-      padding: 2px 4px; border-radius: 4px;
-      transition: color .15s;
+    #cal-modal {
+      background:#f5f0e8; border-radius:20px;
+      width:100%; max-width:1080px; max-height:92vh;
+      display:flex; flex-direction:column;
+      box-shadow:0 40px 100px rgba(0,0,0,.65);
+      animation:calIn .3s cubic-bezier(.34,1.2,.64,1);
+      overflow:hidden;
     }
-    #bday-widget .bday-close:hover { color: #fff; }
+    @keyframes calIn{from{opacity:0;transform:scale(.94) translateY(18px);}to{opacity:1;transform:scale(1) translateY(0);}}
 
-    /* confetti dots */
-    #bday-widget .confetti {
-      position: absolute;
-      inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px;
+    #cal-modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px; background:#1a1612; flex-shrink:0;
     }
-    #bday-widget .confetti span {
-      position: absolute;
-      width: 5px; height: 5px; border-radius: 50%;
-      animation: confettiFall linear infinite;
-      opacity: 0;
+    #cal-modal-header span { font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#f5f0e8; }
+    #cal-modal-close { background:none;border:none;color:#f5f0e8;cursor:pointer;font-size:20px;opacity:.55;transition:opacity .15s,transform .15s;padding:4px 8px;border-radius:6px; }
+    #cal-modal-close:hover{opacity:1;transform:rotate(90deg);}
+
+    #cal-modal-body { overflow-y:auto; flex:1; }
+
+    /* ── calendar internals ── */
+    .cal-wrap { padding:20px 18px 28px; font-family:'DM Sans',sans-serif; color:#1a1612; }
+
+    .cal-top { display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px; }
+    .cal-year-title { font-family:'Playfair Display',serif;font-size:28px;font-weight:900;letter-spacing:-1px;color:#1a1612; }
+    .cal-nav { background:#1a1612;color:#f5f0e8;border:none;border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;flex-shrink:0; }
+    .cal-nav:hover{background:#b5432a;transform:scale(1.1);}
+
+    .cal-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
+    @media(max-width:860px){.cal-grid{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:560px){.cal-grid{grid-template-columns:repeat(2,1fr);}}
+
+    .cal-month { background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 2px 10px rgba(26,22,18,.07); }
+    .cal-month-name { background:#1a1612;color:#f5f0e8;font-family:'Playfair Display',serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:8px 4px; }
+    .cal-day-labels { display:grid;grid-template-columns:repeat(7,1fr);background:#ede5d4; }
+    .cal-day-lbl { text-align:center;font-size:8px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;padding:4px 0;opacity:.55; }
+    .cal-day-lbl.s{color:#b5432a;opacity:.8;}
+
+    .cal-days { display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:3px; }
+    .cal-cell { aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;position:relative;min-height:22px;transition:transform .12s,box-shadow .12s; }
+    .cal-cell.empty{pointer-events:none;}
+    .cal-cell.sat{background:#f0ece3;}
+    .cal-cell.sun{background:#fae8e5;}
+    .cal-cell.sun .cn{color:#b5432a;font-weight:600;}
+    .cal-cell.hol{background:#fef4d0;}
+    .cal-cell.hol .cn{color:#7a5c10;font-weight:600;}
+    .cal-cell.bday{background:#dbeaf4;}
+    .cal-cell.bday .cn{color:#4a7fa5;font-weight:600;}
+    .cal-cell.today{outline:2px solid #b5432a;outline-offset:-1px;}
+    .cal-cell.today .cn{color:#b5432a;font-weight:700;}
+    .cal-cell.clickable{cursor:pointer;}
+    .cal-cell.clickable:hover{transform:scale(1.18);z-index:2;box-shadow:0 3px 10px rgba(0,0,0,.15);}
+    .cn{line-height:1;font-size:11px;}
+    .ci{font-size:6px;line-height:1;margin-top:1px;}
+
+    /* ── event popup (on top of calendar) ── */
+    #ev-popup-overlay {
+      position:fixed;inset:0;z-index:500;
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      background:rgba(26,22,18,.5);backdrop-filter:blur(3px);
+      opacity:0;pointer-events:none;transition:opacity .2s;
     }
-    @keyframes confettiFall {
-      0%   { transform: translateY(-10px) rotate(0deg);   opacity: .8; }
-      100% { transform: translateY(120px) rotate(360deg); opacity: 0;  }
+    #ev-popup-overlay.open{opacity:1;pointer-events:all;}
+    #ev-popup {
+      background:#fff;border-radius:16px;padding:26px 30px 22px;
+      max-width:320px;width:100%;
+      box-shadow:0 20px 60px rgba(26,22,18,.3);
+      transform:scale(.95) translateY(10px);
+      transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+      position:relative;
     }
+    #ev-popup-overlay.open #ev-popup{transform:scale(1) translateY(0);}
+    #ev-popup-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:15px;cursor:pointer;opacity:.4;transition:opacity .15s,transform .15s;}
+    #ev-popup-close:hover{opacity:.9;transform:rotate(90deg);}
+    #ev-popup-date{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:3px;color:#1a1612;}
+    #ev-popup-wday{font-size:9px;letter-spacing:3px;text-transform:uppercase;opacity:.4;margin-bottom:16px;font-weight:500;}
+    .ev-item{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:8px;font-size:13px;margin-bottom:7px;}
+    .ev-item:last-child{margin-bottom:0;}
+    .ev-icon{font-size:19px;flex-shrink:0;}
+    .ev-hol{background:#fef4d0;border-left:3px solid #c9a84c;}
+    .ev-bday{background:#dbeaf4;border-left:3px solid #4a7fa5;}
+    .ev-bday strong{color:#1a1612;}
   </style>
 </head>
 <body>
@@ -370,29 +310,63 @@
 <div class="glow g1"></div>
 <div class="glow g2"></div>
 
-<!-- ════ BIRTHDAY WIDGET ════ -->
+<!-- ══ CALENDAR BUTTON (bottom-left) ══ -->
+<button id="cal-open-btn" title="Abrir Calendario">
+  <span class="ci" style="font-size:16px">📅</span>
+  <span>Calendario</span>
+  <span id="cal-bday-dot"></span>
+</button>
+
+<!-- ══ BIRTHDAY WIDGET ══ -->
 <div id="bday-widget">
   <div class="bday-card">
-    <div class="confetti" id="bday-confetti"></div>
-    <button class="bday-close" id="bday-close" title="Cerrar">✕</button>
-    <div class="bday-label">🎂 Hoy es su cumpleaños</div>
+    <button class="bday-x" id="bday-close">✕</button>
+    <div class="bday-lbl">Cumple hoy</div>
     <span class="bday-emoji">🎉</span>
-    <div class="bday-congrats">¡Felicidades!</div>
-    <div class="bday-names" id="bday-names"></div>
+    <div class="bday-sub">¡Felicidades!</div>
+    <div class="bday-name-text" id="bday-name-text"></div>
   </div>
 </div>
 
+<!-- ══ CALENDAR POPUP ══ -->
+<div id="cal-backdrop">
+  <div id="cal-modal">
+    <div id="cal-modal-header">
+      <span>📅 Calendario</span>
+      <button id="cal-modal-close">✕</button>
+    </div>
+    <div id="cal-modal-body">
+      <div class="cal-wrap">
+        <div class="cal-top">
+          <button class="cal-nav" id="cal-prev">&#8592;</button>
+          <div class="cal-year-title" id="cal-year-title"></div>
+          <button class="cal-nav" id="cal-next">&#8594;</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EVENT POPUP (inside calendar) ══ -->
+<div id="ev-popup-overlay">
+  <div id="ev-popup">
+    <button id="ev-popup-close">✕</button>
+    <div id="ev-popup-date"></div>
+    <div id="ev-popup-wday"></div>
+    <div id="ev-popup-events"></div>
+  </div>
+</div>
+
+<!-- ══════════════ ORIGINAL PAGE ══════════════ -->
 <header>
   <div class="avatar">
-    <img src="https://avatars.githubusercontent.com/ErBala3?v=4" alt="ErBala3"
-         onerror="this.style.display='none'">
+    <img src="https://avatars.githubusercontent.com/ErBala3?v=4" alt="ErBala3" onerror="this.style.display='none'">
   </div>
   <div class="header-text">
     <div class="breadcrumb">
-      <a href="https://github.com/ErBala3" target="_blank">ErBala3</a>
-      &nbsp;/&nbsp;
-      <a href="https://github.com/ErBala3/DAM" target="_blank">DAM</a>
-      &nbsp;/&nbsp;
+      <a href="https://github.com/ErBala3" target="_blank">ErBala3</a> &nbsp;/&nbsp;
+      <a href="https://github.com/ErBala3/DAM" target="_blank">DAM</a> &nbsp;/&nbsp;
       <span class="hi">ejercicios</span>
     </div>
     <h1>D<em>AM</em></h1>
@@ -449,7 +423,7 @@
   <span class="foot-muted">ErBala3 · DAM · GitHub Pages</span>
 </footer>
 
-<!-- MODAL VIEWER -->
+<!-- FILE VIEWER MODAL -->
 <div class="modal-backdrop" id="modal-backdrop">
   <div class="modal">
     <div class="modal-header">
@@ -468,279 +442,210 @@
 </div>
 
 <script>
-  /* ════════════════════════════════════════
-     BIRTHDAY WIDGET LOGIC
-  ════════════════════════════════════════ */
-  const BIRTHDAYS = [
-    { month: 1,  day: 7,  name: "Julia" },
-    { month: 2,  day: 9,  name: "Juan Carlos" },
-    { month: 2,  day: 27, name: "Alejandro F" },
-    { month: 3,  day: 19, name: "Sergio" },
-    { month: 5,  day: 25, name: "Guille" },
-    { month: 6,  day: 14, name: "Oscar" },
-    { month: 6,  day: 23, name: "Miguel" },
-    { month: 7,  day: 19, name: "Román" },
-    { month: 8,  day: 7,  name: "Jaime" },
-    { month: 8,  day: 19, name: "Alex D" },
-    { month: 8,  day: 19, name: "Nuria" },
-    { month: 8,  day: 31, name: "Carlos" },
-    { month: 8,  day: 31, name: "María" },
-    { month: 9,  day: 2,  name: "Gonzalo" },
-    { month: 11, day: 7,  name: "Marcos" },
-    { month: 11, day: 27, name: "Mario" },
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const BIRTHDAYS = [
+  {month:1,  day:7,  name:"Julia"},
+  {month:2,  day:9,  name:"Juan Carlos"},
+  {month:2,  day:27, name:"Alejandro F"},
+  {month:3,  day:19, name:"Sergio"},
+  {month:5,  day:25, name:"Guille"},
+  {month:6,  day:14, name:"Oscar"},
+  {month:6,  day:23, name:"Miguel"},
+  {month:7,  day:19, name:"Román"},
+  {month:8,  day:7,  name:"Jaime"},
+  {month:8,  day:19, name:"Alex D"},
+  {month:8,  day:19, name:"Nuria"},
+  {month:8,  day:31, name:"Carlos"},
+  {month:8,  day:31, name:"María"},
+  {month:9,  day:2,  name:"Gonzalo"},
+  {month:11, day:7,  name:"Marcos"},
+  {month:11, day:27, name:"Mario"},
+];
+const FIXED_HOL = [
+  {month:1,  day:1,  label:"🎆 Año Nuevo"},
+  {month:1,  day:6,  label:"👑 Reyes Magos"},
+  {month:2,  day:14, label:"💕 San Valentín"},
+  {month:5,  day:1,  label:"👷 Día del Trabajo"},
+  {month:6,  day:24, label:"🔥 San Juan"},
+  {month:8,  day:15, label:"⛪ Asunción"},
+  {month:10, day:12, label:"🇪🇸 Fiesta Nacional"},
+  {month:10, day:31, label:"🎃 Halloween"},
+  {month:11, day:1,  label:"✝️ Todos los Santos"},
+  {month:12, day:6,  label:"🏛️ Día de la Constitución"},
+  {month:12, day:8,  label:"🌹 Inmaculada Concepción"},
+  {month:12, day:25, label:"🎄 Navidad"},
+  {month:12, day:31, label:"🥂 Nochevieja"},
+];
+function easterDate(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4;
+  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3);
+  const h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4;
+  const l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  return {month:Math.floor((h+l-7*m+114)/31),day:((h+l-7*m+114)%31)+1};
+}
+function getMovableHols(y){
+  const e=easterDate(y),ed=new Date(y,e.month-1,e.day);
+  const ht=new Date(ed); ht.setDate(ht.getDate()-3);
+  const gf=new Date(ed); gf.setDate(gf.getDate()-2);
+  return [
+    {month:ht.getMonth()+1,day:ht.getDate(),label:"✝️ Jueves Santo"},
+    {month:gf.getMonth()+1,day:gf.getDate(),label:"✝️ Viernes Santo"},
+    {month:ed.getMonth()+1,day:ed.getDate(),label:"🐣 Pascua"},
   ];
+}
+const MONTHS=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DLBLS=["L","M","X","J","V","S","D"];
+const WDFULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
-  (function initBdayWidget() {
-    const now   = new Date();
-    const today = { month: now.getMonth() + 1, day: now.getDate() };
+/* ══ Birthday widget ══ */
+(function(){
+  const now=new Date(),tm=now.getMonth()+1,td=now.getDate();
+  const tb=BIRTHDAYS.filter(b=>b.month===tm&&b.day===td);
+  if(!tb.length)return;
+  const ns=tb.map(b=>b.name);
+  document.getElementById('bday-name-text').textContent=ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+  setTimeout(()=>{document.getElementById('bday-widget').style.display='block';},900);
+  document.getElementById('cal-bday-dot').style.display='block';
+  document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';};
+})();
 
-    const todayBdays = BIRTHDAYS.filter(b => b.month === today.month && b.day === today.day);
-    if (todayBdays.length === 0) return;
+/* ══ Calendar ══ */
+let calYear=new Date().getFullYear();
 
-    // Build names string
-    const names = todayBdays.map(b => b.name);
-    let nameStr;
-    if (names.length === 1)      nameStr = names[0];
-    else if (names.length === 2) nameStr = names.join(' y ');
-    else                         nameStr = names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
+function buildCalendar(year){
+  document.getElementById('cal-year-title').textContent=year;
+  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
+  const allH=[...FIXED_HOL,...getMovableHols(year)];
+  const now=new Date();
 
-    document.getElementById('bday-names').textContent = nameStr;
-
-    // Confetti dots
-    const confettiEl = document.getElementById('bday-confetti');
-    const colors = ['#4ade80','#818cf8','#f89820','#f472b6','#67e8f9','#fbbf24'];
-    for (let i = 0; i < 14; i++) {
-      const dot = document.createElement('span');
-      dot.style.cssText = `
-        left:${Math.random()*100}%;
-        background:${colors[i % colors.length]};
-        animation-duration:${1.6 + Math.random()*2}s;
-        animation-delay:${Math.random()*2}s;
-        width:${3 + Math.random()*5}px;
-        height:${3 + Math.random()*5}px;
-      `;
-      confettiEl.appendChild(dot);
+  for(let m=1;m<=12;m++){
+    const mc=document.createElement('div'); mc.className='cal-month';
+    const mh=document.createElement('div'); mh.className='cal-month-name'; mh.textContent=MONTHS[m-1]; mc.appendChild(mh);
+    const dl=document.createElement('div'); dl.className='cal-day-labels';
+    DLBLS.forEach((d,i)=>{const s=document.createElement('span');s.className='cal-day-lbl'+(i>=5?' s':'');s.textContent=d;dl.appendChild(s);});
+    mc.appendChild(dl);
+    const dg=document.createElement('div'); dg.className='cal-days';
+    const fd=new Date(year,m-1,1).getDay(),off=fd===0?6:fd-1;
+    for(let i=0;i<off;i++){const e=document.createElement('div');e.className='cal-cell empty';dg.appendChild(e);}
+    const dim=new Date(year,m,0).getDate();
+    for(let d=1;d<=dim;d++){
+      const jd=new Date(year,m-1,d).getDay();
+      const hols=allH.filter(h=>h.month===m&&h.day===d);
+      const bdays=BIRTHDAYS.filter(b=>b.month===m&&b.day===d);
+      const isToday=d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
+      const cell=document.createElement('div');
+      let cls='cal-cell';
+      if(jd===0)cls+=' sun'; else if(jd===6)cls+=' sat';
+      if(hols.length)cls+=' hol';
+      if(bdays.length)cls+=' bday';
+      if(isToday)cls+=' today';
+      if(hols.length||bdays.length)cls+=' clickable';
+      cell.className=cls;
+      const cn=document.createElement('span');cn.className='cn';cn.textContent=d;cell.appendChild(cn);
+      if(bdays.length){const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);}
+      else if(hols.length){const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);}
+      if(hols.length||bdays.length){cell.addEventListener('click',()=>openEvPopup(year,m,d,hols,bdays));}
+      dg.appendChild(cell);
     }
-
-    // Show widget with slight delay for page load
-    const widget = document.getElementById('bday-widget');
-    setTimeout(() => { widget.style.display = 'flex'; }, 800);
-
-    // Close button
-    document.getElementById('bday-close').addEventListener('click', () => {
-      widget.style.animation = 'bdaySlideIn .3s cubic-bezier(.55,.06,.68,.19) reverse both';
-      setTimeout(() => { widget.style.display = 'none'; }, 280);
-    });
-  })();
-
-  /* ════════════════════════════════════════
-     GITHUB TREE (original code)
-  ════════════════════════════════════════ */
-  const OWNER   = 'ErBala3';
-  const REPO    = 'DAM';
-  const BRANCH  = 'main';
-  const ROOT    = 'GitTodo';
-
-  const getExt  = n => n.includes('.') ? n.split('.').pop().toLowerCase() : '';
-  const ICONS   = { java:'☕', html:'🌐', css:'🎨', js:'🟨', md:'📝', txt:'📄',
-                    xml:'📋', json:'🔧', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️',
-                    pdf:'📕', zip:'📦', sql:'🗄️', sh:'⚙️', ts:'🟦', kt:'🟣' };
-  const getIcon = item => item.type === 'dir' ? '📁' : (ICONS[getExt(item.name)] || '📄');
-  const getLang = name => {
-    const e = getExt(name);
-    return e === 'java' ? 'java' : e === 'html' ? 'html' : e === 'css' ? 'css' : 'other';
-  };
-
-  async function apiFetch(path) {
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`;
-    const r = await fetch(url, { headers: { Accept: 'application/vnd.github.v3+json' } });
-    if (!r.ok) throw new Error(`GitHub API ${r.status}`);
-    return r.json();
+    mc.appendChild(dg); grid.appendChild(mc);
   }
+}
 
-  function highlight(code, lang) {
-    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    let s = esc(code);
-    if (['java','js','ts'].includes(lang)) {
-      s = s.replace(/(\/\/[^\n]*)/g, '<span class="cmt">$1</span>');
-      s = s.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="cmt">$1</span>');
-      s = s.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
+function openEvPopup(year,month,day,hols,bdays){
+  const jd=new Date(year,month-1,day);
+  document.getElementById('ev-popup-date').textContent=`${day} de ${MONTHS[month-1]} de ${year}`;
+  document.getElementById('ev-popup-wday').textContent=WDFULL[jd.getDay()];
+  const ev=document.getElementById('ev-popup-events'); ev.innerHTML='';
+  hols.forEach(h=>{const d=document.createElement('div');d.className='ev-item ev-hol';d.innerHTML=`<span class="ev-icon">🗓️</span><span>${h.label}</span>`;ev.appendChild(d);});
+  bdays.forEach(b=>{const d=document.createElement('div');d.className='ev-item ev-bday';d.innerHTML=`<span class="ev-icon">🎂</span><span>Cumpleaños de <strong>${b.name}</strong></span>`;ev.appendChild(d);});
+  document.getElementById('ev-popup-overlay').classList.add('open');
+}
+document.getElementById('ev-popup-close').onclick=()=>document.getElementById('ev-popup-overlay').classList.remove('open');
+document.getElementById('ev-popup-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('ev-popup-overlay'))document.getElementById('ev-popup-overlay').classList.remove('open');});
+
+document.getElementById('cal-open-btn').addEventListener('click',()=>{
+  buildCalendar(calYear);
+  document.getElementById('cal-backdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+});
+function closeCalModal(){document.getElementById('cal-backdrop').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('cal-modal-close').onclick=closeCalModal;
+document.getElementById('cal-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('cal-backdrop'))closeCalModal();});
+document.getElementById('cal-prev').onclick=()=>{calYear--;buildCalendar(calYear);};
+document.getElementById('cal-next').onclick=()=>{calYear++;buildCalendar(calYear);};
+
+/* ══ GitHub Tree ══ */
+const OWNER='ErBala3',REPO='DAM',BRANCH='main',ROOT='GitTodo';
+const getExt=n=>n.includes('.')?n.split('.').pop().toLowerCase():'';
+const ICONS={java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'};
+const getIcon=item=>item.type==='dir'?'📁':(ICONS[getExt(item.name)]||'📄');
+const getLang=name=>{const e=getExt(name);return e==='java'?'java':e==='html'?'html':e==='css'?'css':'other';};
+
+async function apiFetch(path){
+  const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`,{headers:{Accept:'application/vnd.github.v3+json'}});
+  if(!r.ok)throw new Error(`GitHub API ${r.status}`);
+  return r.json();
+}
+function highlight(code,lang){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let s=esc(code);
+  if(['java','js','ts'].includes(lang)){s=s.replace(/(\/\/[^\n]*)/g,'<span class="cmt">$1</span>');s=s.replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="cmt">$1</span>');s=s.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>');}
+  if(lang==='java'){s=s.replace(/\b(public|private|protected|class|interface|extends|implements|new|return|void|static|final|if|else|for|while|do|switch|case|break|continue|import|package|try|catch|finally|throws|throw|this|super|null|true|false|abstract|synchronized|instanceof)\b/g,'<span class="kw">$1</span>');s=s.replace(/\b(int|long|double|float|boolean|char|byte|short|String|Object|List|Map|Set|ArrayList|Integer|Double|Boolean)\b/g,'<span class="typ">$1</span>');s=s.replace(/(@\w+)/g,'<span class="ann">$1</span>');}
+  if(lang==='html'){s=s.replace(/(&lt;!--[\s\S]*?--&gt;)/g,'<span class="cmt">$1</span>');s=s.replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9-]*)/g,'<span class="kw">$1</span>');s=s.replace(/(=(?:"[^"]*"|'[^']*'))/g,'<span class="str">$1</span>');}
+  if(lang==='css'){s=s.replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="cmt">$1</span>');s=s.replace(/([.#]?[\w-]+\s*\{)/g,'<span class="kw">$1</span>');s=s.replace(/(:[\s]*[^;{}\n]+)/g,'<span class="str">$1</span>');}
+  s=s.replace(/\b(\d+\.?\d*)(px|em|rem|%|vh|vw|s|ms)?\b/g,'<span class="num">$1$2</span>');
+  return s;
+}
+const bd2=document.getElementById('modal-backdrop');
+const mTitle=document.getElementById('modal-title'),mIcon=document.getElementById('modal-icon'),mBody=document.getElementById('modal-body'),mGh=document.getElementById('modal-gh'),mCopy=document.getElementById('modal-copy');
+let rawCode='';
+document.getElementById('modal-close').onclick=()=>bd2.classList.remove('open');
+bd2.addEventListener('click',e=>{if(e.target===bd2)bd2.classList.remove('open');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){bd2.classList.remove('open');closeCalModal();document.getElementById('ev-popup-overlay').classList.remove('open');}});
+mCopy.onclick=()=>{if(!rawCode)return;navigator.clipboard.writeText(rawCode).then(()=>{mCopy.textContent='✅ Copiado';setTimeout(()=>{mCopy.textContent='📋 Copiar';},2000);});};
+async function openFile(item){
+  bd2.classList.add('open');mTitle.textContent=item.name;mIcon.textContent=getIcon(item);mGh.href=item.html_url;
+  mBody.innerHTML='<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';rawCode='';
+  const e=getExt(item.name);
+  if(['png','jpg','jpeg','gif','webp','svg'].includes(e)){mBody.innerHTML=`<img src="${item.download_url}" style="max-width:100%;border-radius:8px;" alt="${item.name}">`;return;}
+  try{const r=await fetch(item.download_url);if(!r.ok)throw new Error(r.statusText);rawCode=await r.text();mBody.innerHTML=`<pre>${highlight(rawCode,getLang(item.name))}</pre>`;}
+  catch(err){mBody.innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`;}
+}
+function sortI(items){return [...items].sort((a,b)=>{if(a.type!==b.type)return a.type==='dir'?-1:1;return a.name.localeCompare(b.name,'es',{numeric:true});});}
+function renderFile(item,delay=0){
+  const el=document.createElement('div');el.className='tree-leaf';el.dataset.name=item.name.toLowerCase();el.style.animationDelay=`${delay}ms`;
+  const lang=getLang(item.name);
+  el.innerHTML=`<span class="tree-icon" style="font-size:14px">${getIcon(item)}</span><span class="leaf-name">${item.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
+  el.addEventListener('click',()=>openFile(item));return el;
+}
+function renderFolder(item,delay=0){
+  const wrap=document.createElement('div');wrap.className='tree-item';wrap.dataset.name=item.name.toLowerCase();wrap.style.animationDelay=`${delay}ms`;
+  const uid=`cp-${Math.random().toString(36).slice(2)}`;
+  const header=document.createElement('div');header.className='tree-header';
+  header.innerHTML=`<span class="tree-icon">${getIcon(item)}</span><span class="tree-name">${item.name}</span><div class="tree-meta"><span class="fbadge dir">carpeta</span><span class="count-pill" id="${uid}">…</span><span class="chevron">▶</span></div>`;
+  const children=document.createElement('div');children.className='tree-children';let loaded=false;
+  header.addEventListener('click',async()=>{
+    const chv=header.querySelector('.chevron');const open=children.classList.toggle('open');chv.classList.toggle('open',open);
+    if(open&&!loaded){loaded=true;children.innerHTML=`<div class="sub-loading"><div class="sub-spinner"></div><span>Cargando ${item.name}…</span></div>`;
+      try{const contents=await apiFetch(item.path);children.innerHTML='';const sorted=sortI(contents);const pill=document.getElementById(uid);if(pill)pill.textContent=`${sorted.length} items`;sorted.forEach((child,i)=>children.appendChild(child.type==='dir'?renderFolder(child,i*35):renderFile(child,i*35)));}
+      catch(e){children.innerHTML=`<div class="error-box">Error cargando ${item.name}: ${e.message}</div>`;}
     }
-    if (lang === 'java') {
-      s = s.replace(/\b(public|private|protected|class|interface|extends|implements|new|return|void|static|final|if|else|for|while|do|switch|case|break|continue|import|package|try|catch|finally|throws|throw|this|super|null|true|false|abstract|synchronized|instanceof)\b/g,
-        '<span class="kw">$1</span>');
-      s = s.replace(/\b(int|long|double|float|boolean|char|byte|short|String|Object|List|Map|Set|ArrayList|Integer|Double|Boolean)\b/g,
-        '<span class="typ">$1</span>');
-      s = s.replace(/(@\w+)/g, '<span class="ann">$1</span>');
-    }
-    if (lang === 'html') {
-      s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="cmt">$1</span>');
-      s = s.replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9-]*)/g, '<span class="kw">$1</span>');
-      s = s.replace(/(=(?:"[^"]*"|'[^']*'))/g, '<span class="str">$1</span>');
-    }
-    if (lang === 'css') {
-      s = s.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="cmt">$1</span>');
-      s = s.replace(/([.#]?[\w-]+\s*\{)/g, '<span class="kw">$1</span>');
-      s = s.replace(/(:[\s]*[^;{}\n]+)/g, '<span class="str">$1</span>');
-    }
-    s = s.replace(/\b(\d+\.?\d*)(px|em|rem|%|vh|vw|s|ms)?\b/g, '<span class="num">$1$2</span>');
-    return s;
-  }
-
-  const backdrop   = document.getElementById('modal-backdrop');
-  const modalTitle = document.getElementById('modal-title');
-  const modalIcon  = document.getElementById('modal-icon');
-  const modalBody  = document.getElementById('modal-body');
-  const modalGh    = document.getElementById('modal-gh');
-  const modalCopy  = document.getElementById('modal-copy');
-  let rawCode = '';
-
-  document.getElementById('modal-close').onclick = () => backdrop.classList.remove('open');
-  backdrop.addEventListener('click', e => { if (e.target === backdrop) backdrop.classList.remove('open'); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') backdrop.classList.remove('open'); });
-
-  modalCopy.onclick = () => {
-    if (!rawCode) return;
-    navigator.clipboard.writeText(rawCode).then(() => {
-      modalCopy.textContent = '✅ Copiado';
-      setTimeout(() => { modalCopy.textContent = '📋 Copiar'; }, 2000);
-    });
-  };
-
-  async function openFile(item) {
-    backdrop.classList.add('open');
-    modalTitle.textContent = item.name;
-    modalIcon.textContent  = getIcon(item);
-    modalGh.href = item.html_url;
-    modalBody.innerHTML = '<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';
-    rawCode = '';
-
-    const e = getExt(item.name);
-    if (['png','jpg','jpeg','gif','webp','svg'].includes(e)) {
-      modalBody.innerHTML = `<img src="${item.download_url}" style="max-width:100%;border-radius:8px;" alt="${item.name}">`;
-      return;
-    }
-    try {
-      const r = await fetch(item.download_url);
-      if (!r.ok) throw new Error(r.statusText);
-      rawCode = await r.text();
-      modalBody.innerHTML = `<pre>${highlight(rawCode, getLang(item.name))}</pre>`;
-    } catch(err) {
-      modalBody.innerHTML = `<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`;
-    }
-  }
-
-  function sort(items) {
-    return [...items].sort((a,b) => {
-      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
-      return a.name.localeCompare(b.name, 'es', { numeric: true });
-    });
-  }
-
-  function renderFile(item, delay = 0) {
-    const el = document.createElement('div');
-    el.className = 'tree-leaf';
-    el.dataset.name = item.name.toLowerCase();
-    el.style.animationDelay = `${delay}ms`;
-    const lang = getLang(item.name);
-    el.innerHTML = `
-      <span class="tree-icon" style="font-size:14px">${getIcon(item)}</span>
-      <span class="leaf-name">${item.name}</span>
-      ${lang !== 'other' ? `<span class="fbadge ${lang}">${lang.toUpperCase()}</span>` : ''}
-    `;
-    el.addEventListener('click', () => openFile(item));
-    return el;
-  }
-
-  function renderFolder(item, delay = 0) {
-    const wrap = document.createElement('div');
-    wrap.className = 'tree-item';
-    wrap.dataset.name = item.name.toLowerCase();
-    wrap.style.animationDelay = `${delay}ms`;
-
-    const uid = `cp-${Math.random().toString(36).slice(2)}`;
-    const header = document.createElement('div');
-    header.className = 'tree-header';
-    header.innerHTML = `
-      <span class="tree-icon">${getIcon(item)}</span>
-      <span class="tree-name">${item.name}</span>
-      <div class="tree-meta">
-        <span class="fbadge dir">carpeta</span>
-        <span class="count-pill" id="${uid}">…</span>
-        <span class="chevron">▶</span>
-      </div>
-    `;
-
-    const children = document.createElement('div');
-    children.className = 'tree-children';
-    let loaded = false;
-
-    header.addEventListener('click', async () => {
-      const chevron = header.querySelector('.chevron');
-      const open = children.classList.toggle('open');
-      chevron.classList.toggle('open', open);
-
-      if (open && !loaded) {
-        loaded = true;
-        children.innerHTML = `<div class="sub-loading"><div class="sub-spinner"></div><span>Cargando ${item.name}…</span></div>`;
-        try {
-          const contents = await apiFetch(item.path);
-          children.innerHTML = '';
-          const sorted = sort(contents);
-          const pill = document.getElementById(uid);
-          if (pill) pill.textContent = `${sorted.length} items`;
-          sorted.forEach((child, i) => {
-            children.appendChild(
-              child.type === 'dir' ? renderFolder(child, i * 35) : renderFile(child, i * 35)
-            );
-          });
-        } catch(e) {
-          children.innerHTML = `<div class="error-box">Error cargando ${item.name}: ${e.message}</div>`;
-        }
-      }
-    });
-
-    wrap.appendChild(header);
-    wrap.appendChild(children);
-    return wrap;
-  }
-
-  document.getElementById('search-input').addEventListener('input', function() {
-    const q = this.value.trim().toLowerCase();
-    const all = document.getElementById('tree-root').querySelectorAll('.tree-item, .tree-leaf');
-    let n = 0;
-    all.forEach(el => {
-      const match = !q || (el.dataset.name || '').includes(q);
-      el.classList.toggle('hidden', !match);
-      if (match) n++;
-    });
-    document.getElementById('search-count').textContent = q ? `${n} resultado${n!==1?'s':''}` : '';
   });
-
-  async function init() {
-    const root  = document.getElementById('tree-root');
-    const label = document.getElementById('section-label');
-    try {
-      const items = await apiFetch(ROOT);
-      root.innerHTML = '';
-      const sorted = sort(items);
-      label.textContent = `// ${sorted.length} carpeta${sorted.length!==1?'s':''} · haz click para expandir`;
-      sorted.forEach((item, i) => {
-        root.appendChild(
-          item.type === 'dir' ? renderFolder(item, i * 55) : renderFile(item, i * 55)
-        );
-      });
-    } catch(e) {
-      label.textContent = '// error al cargar';
-      root.innerHTML = `<div class="error-box">
-        ❌ No se pudo conectar con el repositorio.<br><br>
-        <strong>Error:</strong> ${e.message}<br><br>
-        Verifica que el repo sea público: <strong>github.com/${OWNER}/${REPO}</strong>
-      </div>`;
-    }
-  }
-
-  init();
+  wrap.appendChild(header);wrap.appendChild(children);return wrap;
+}
+document.getElementById('search-input').addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();const all=document.getElementById('tree-root').querySelectorAll('.tree-item,.tree-leaf');let n=0;
+  all.forEach(el=>{const match=!q||(el.dataset.name||'').includes(q);el.classList.toggle('hidden',!match);if(match)n++;});
+  document.getElementById('search-count').textContent=q?`${n} resultado${n!==1?'s':''}` :'';
+});
+async function init(){
+  const root=document.getElementById('tree-root'),label=document.getElementById('section-label');
+  try{const items=await apiFetch(ROOT);root.innerHTML='';const sorted=sortI(items);label.textContent=`// ${sorted.length} carpeta${sorted.length!==1?'s':''} · haz click para expandir`;sorted.forEach((item,i)=>root.appendChild(item.type==='dir'?renderFolder(item,i*55):renderFile(item,i*55)));}
+  catch(e){label.textContent='// error al cargar';root.innerHTML=`<div class="error-box">❌ No se pudo conectar con el repositorio.<br><br><strong>Error:</strong> ${e.message}<br><br>Verifica que el repo sea público: <strong>github.com/${OWNER}/${REPO}</strong></div>`;}
+}
+init();
 </script>
 </body>
 </html>
