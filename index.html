@@ -303,6 +303,84 @@
     .ev-hol{background:#fef4d0;border-left:3px solid #c9a84c;}
     .ev-bday{background:#dbeaf4;border-left:3px solid #4a7fa5;}
     .ev-bday strong{color:#1a1612;}
+    .ev-exam{background:#fde8ff;border-left:3px solid #a855f7;}
+    .ev-custom-hol{background:#fff0e6;border-left:3px solid #e07b39;}
+    .ev-custom-bday{background:#dbeaf4;border-left:3px solid #4a7fa5;}
+
+    /* delete button inside ev-item */
+    .ev-del{margin-left:auto;background:none;border:none;cursor:pointer;font-size:12px;opacity:.3;transition:opacity .15s;padding:2px 5px;border-radius:4px;flex-shrink:0;color:#e34c26;}
+    .ev-del:hover{opacity:1;}
+
+    /* add event button inside ev-popup */
+    #ev-add-btn{
+      margin-top:14px;width:100%;
+      background:#1a1612;color:#f5f0e8;
+      border:none;border-radius:10px;
+      padding:11px 0;font-family:'JetBrains Mono',monospace;
+      font-size:11px;font-weight:600;letter-spacing:.08em;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+      transition:background .2s,transform .12s;
+    }
+    #ev-add-btn:hover{background:#b5432a;transform:scale(1.02);}
+
+    /* ══ ADD EVENT FORM MODAL ══ */
+    #add-ev-overlay{
+      position:fixed;inset:0;z-index:600;
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      background:rgba(26,22,18,.65);backdrop-filter:blur(4px);
+      opacity:0;pointer-events:none;transition:opacity .2s;
+    }
+    #add-ev-overlay.open{opacity:1;pointer-events:all;}
+    #add-ev-modal{
+      background:#fff;border-radius:18px;padding:28px 28px 24px;
+      max-width:330px;width:100%;
+      box-shadow:0 24px 70px rgba(26,22,18,.35);
+      transform:scale(.95) translateY(12px);
+      transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+      position:relative;
+    }
+    #add-ev-overlay.open #add-ev-modal{transform:scale(1) translateY(0);}
+    #add-ev-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:15px;cursor:pointer;opacity:.35;transition:opacity .15s,transform .15s;}
+    #add-ev-close:hover{opacity:.85;transform:rotate(90deg);}
+    #add-ev-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#1a1612;margin-bottom:2px;}
+    #add-ev-subtitle{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;opacity:.4;margin-bottom:16px;font-weight:500;}
+
+    .ev-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+    .ev-type-btn{
+      border:1.5px solid #e8e1d4;border-radius:10px;padding:11px 4px 9px;
+      background:#fafafa;cursor:pointer;text-align:center;
+      transition:border-color .15s,background .15s,transform .12s;
+      display:flex;flex-direction:column;align-items:center;gap:5px;
+    }
+    .ev-type-btn:hover{border-color:#888;background:#f5f0e8;transform:scale(1.03);}
+    .ev-type-btn.sel-bday{border-color:#4a7fa5!important;background:#dbeaf4!important;}
+    .ev-type-btn.sel-exam{border-color:#a855f7!important;background:#fde8ff!important;}
+    .ev-type-btn.sel-hol{border-color:#c9a84c!important;background:#fef4d0!important;}
+    .ev-type-icon{font-size:22px;line-height:1;}
+    .ev-type-label{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#64748b;line-height:1.2;text-align:center;}
+
+    .ev-input-wrap{margin-bottom:14px;}
+    .ev-input-wrap label{display:block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:5px;}
+    .ev-input-wrap input{
+      width:100%;border:1.5px solid #e8e1d4;border-radius:8px;
+      padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;
+      color:#1a1612;background:#fafafa;outline:none;transition:border-color .15s;
+    }
+    .ev-input-wrap input:focus{border-color:#1a1612;}
+
+    #add-ev-submit{
+      width:100%;background:#1a1612;color:#f5f0e8;border:none;
+      border-radius:10px;padding:12px 0;
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+      letter-spacing:.1em;cursor:pointer;
+      transition:background .2s,transform .12s;
+    }
+    #add-ev-submit:hover{background:#b5432a;transform:scale(1.02);}
+    #add-ev-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+    .cal-cell.has-exam .cn{color:#a855f7;font-weight:600;}
+    .cal-cell.has-custom-hol .cn{color:#e07b39;font-weight:600;}
+    .cal-cell.has-custom-bday .cn{color:#4a7fa5;font-weight:600;}
   </style>
 </head>
 <body>
@@ -355,10 +433,39 @@
     <div id="ev-popup-date"></div>
     <div id="ev-popup-wday"></div>
     <div id="ev-popup-events"></div>
+    <button id="ev-add-btn">＋ Añadir evento</button>
   </div>
 </div>
 
-<!-- ══════════════ ORIGINAL PAGE ══════════════ -->
+<!-- ══ ADD EVENT FORM ══ -->
+<div id="add-ev-overlay">
+  <div id="add-ev-modal">
+    <button id="add-ev-close">✕</button>
+    <div id="add-ev-title">Nuevo evento</div>
+    <div id="add-ev-subtitle" id="add-ev-subtitle-date"></div>
+    <div class="ev-type-grid">
+      <button class="ev-type-btn" data-type="bday">
+        <span class="ev-type-icon">🎂</span>
+        <span class="ev-type-label">Cumple&shy;años</span>
+      </button>
+      <button class="ev-type-btn" data-type="exam">
+        <span class="ev-type-icon">📝</span>
+        <span class="ev-type-label">Examen</span>
+      </button>
+      <button class="ev-type-btn" data-type="hol">
+        <span class="ev-type-icon">🎉</span>
+        <span class="ev-type-label">Festivo</span>
+      </button>
+    </div>
+    <div class="ev-input-wrap">
+      <label id="add-ev-input-label">Nombre / descripción</label>
+      <input type="text" id="add-ev-input" placeholder="Ej: Física, Navidad…" maxlength="60">
+    </div>
+    <button id="add-ev-submit" disabled>+ Guardar evento</button>
+  </div>
+</div>
+
+
 <header>
   <div class="avatar">
     <img src="https://avatars.githubusercontent.com/ErBala3?v=4" alt="ErBala3" onerror="this.style.display='none'">
@@ -443,27 +550,27 @@
 
 <script>
 /* ══════════════════════════════════════
-   DATA
+   SEED DATA  (se carga en localStorage la primera vez)
 ══════════════════════════════════════ */
-const BIRTHDAYS = [
-  {month:1,  day:7,  name:"Julia"},
-  {month:2,  day:9,  name:"Juan Carlos"},
-  {month:2,  day:27, name:"Alejandro F"},
-  {month:3,  day:19, name:"Sergio"},
-  {month:5,  day:25, name:"Guille"},
-  {month:6,  day:14, name:"Oscar"},
-  {month:6,  day:23, name:"Miguel"},
-  {month:7,  day:19, name:"Román"},
-  {month:8,  day:7,  name:"Jaime"},
-  {month:8,  day:19, name:"Alex D"},
-  {month:8,  day:19, name:"Nuria"},
-  {month:8,  day:31, name:"Carlos"},
-  {month:8,  day:31, name:"María"},
-  {month:9,  day:2,  name:"Gonzalo"},
-  {month:11, day:7,  name:"Marcos"},
-  {month:11, day:27, name:"Mario"},
+const SEED_BIRTHDAYS = [
+  {month:1,  day:7,  label:"Julia"},
+  {month:2,  day:9,  label:"Juan Carlos"},
+  {month:2,  day:27, label:"Alejandro F"},
+  {month:3,  day:19, label:"Sergio"},
+  {month:5,  day:25, label:"Guille"},
+  {month:6,  day:14, label:"Oscar"},
+  {month:6,  day:23, label:"Miguel"},
+  {month:7,  day:19, label:"Román"},
+  {month:8,  day:7,  label:"Jaime"},
+  {month:8,  day:19, label:"Alex D"},
+  {month:8,  day:19, label:"Nuria"},
+  {month:8,  day:31, label:"Carlos"},
+  {month:8,  day:31, label:"María"},
+  {month:9,  day:2,  label:"Gonzalo"},
+  {month:11, day:7,  label:"Marcos"},
+  {month:11, day:27, label:"Mario"},
 ];
-const FIXED_HOL = [
+const SEED_HOLIDAYS = [
   {month:1,  day:1,  label:"🎆 Año Nuevo"},
   {month:1,  day:6,  label:"👑 Reyes Magos"},
   {month:2,  day:14, label:"💕 San Valentín"},
@@ -499,25 +606,99 @@ const MONTHS=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto",
 const DLBLS=["L","M","X","J","V","S","D"];
 const WDFULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
+/* ══════════════════════════════════════
+   EVENTS  (localStorage)
+   { id, type:"bday"|"exam"|"hol", label, month, day, year|null }
+   bday/hol → year=null (se repite cada año)
+   exam     → year=YYYY (se borra al pasar el día)
+══════════════════════════════════════ */
+function loadEvents(){
+  try{ return JSON.parse(localStorage.getItem('cal_events')||'[]'); }
+  catch(e){ return []; }
+}
+function saveEvents(arr){
+  localStorage.setItem('cal_events', JSON.stringify(arr));
+}
+
+/* Seed: primera vez que se carga la web, volcamos los datos predefinidos */
+function seedIfNeeded(){
+  if(localStorage.getItem('cal_seeded')) return;
+  const evs=[];
+  SEED_BIRTHDAYS.forEach(b=>{
+    evs.push({id:'seed_b_'+b.month+'_'+b.day+'_'+b.label.replace(/\s/g,''), type:'bday', label:b.label, month:b.month, day:b.day, year:null});
+  });
+  SEED_HOLIDAYS.forEach(h=>{
+    evs.push({id:'seed_h_'+h.month+'_'+h.day, type:'hol', label:h.label, month:h.month, day:h.day, year:null});
+  });
+  // Add Easter for a range of years
+  const currentYear=new Date().getFullYear();
+  for(let y=currentYear-1; y<=currentYear+5; y++){
+    const e=easterDate(y),ed=new Date(y,e.month-1,e.day);
+    const ht=new Date(ed); ht.setDate(ht.getDate()-3);
+    const gf=new Date(ed); gf.setDate(gf.getDate()-2);
+    [
+      {month:ht.getMonth()+1,day:ht.getDate(),label:"✝️ Jueves Santo"},
+      {month:gf.getMonth()+1,day:gf.getDate(),label:"✝️ Viernes Santo"},
+      {month:ed.getMonth()+1,day:ed.getDate(),label:"🐣 Pascua"},
+    ].forEach(h=>{
+      evs.push({id:`seed_easter_${y}_${h.label.slice(-3)}`, type:'hol', label:h.label, month:h.month, day:h.day, year:null});
+    });
+  }
+  saveEvents(evs);
+  localStorage.setItem('cal_seeded','1');
+}
+
+function purgeOldExams(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let evs=loadEvents();
+  const before=evs.length;
+  evs=evs.filter(ev=>{
+    if(ev.type!=='exam') return true;
+    return new Date(ev.year,ev.month-1,ev.day)>=today;
+  });
+  if(evs.length!==before) saveEvents(evs);
+}
+
+function getEventsForDay(month,day,year){
+  return loadEvents().filter(ev=>{
+    if(ev.month!==month||ev.day!==day) return false;
+    if(ev.type==='exam') return ev.year===year;
+    return true;
+  });
+}
+function deleteEvent(id){
+  saveEvents(loadEvents().filter(e=>e.id!==id));
+}
+
+// init storage
+seedIfNeeded();
+purgeOldExams();
+
 /* ══ Birthday widget ══ */
 (function(){
   const now=new Date(),tm=now.getMonth()+1,td=now.getDate();
-  const tb=BIRTHDAYS.filter(b=>b.month===tm&&b.day===td);
-  if(!tb.length)return;
-  const ns=tb.map(b=>b.name);
-  document.getElementById('bday-name-text').textContent=ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+  const allBdays=loadEvents().filter(e=>e.type==='bday'&&e.month===tm&&e.day===td).map(e=>e.label);
+  if(!allBdays.length)return;
+  document.getElementById('bday-name-text').textContent=
+    allBdays.length===1?allBdays[0]:allBdays.length===2?allBdays.join(' y '):allBdays.slice(0,-1).join(', ')+' y '+allBdays[allBdays.length-1];
   setTimeout(()=>{document.getElementById('bday-widget').style.display='block';},900);
   document.getElementById('cal-bday-dot').style.display='block';
   document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';};
 })();
 
-/* ══ Calendar ══ */
+/* ══════════════════════════════════════
+   CALENDAR RENDERING
+══════════════════════════════════════ */
 let calYear=new Date().getFullYear();
+// store current popup context for "add event" button
+let _popupCtx={year:0,month:0,day:0,dayEvs:[]};
 
 function buildCalendar(year){
   document.getElementById('cal-year-title').textContent=year;
   const grid=document.getElementById('cal-grid'); grid.innerHTML='';
-  const allH=[...FIXED_HOL,...getMovableHols(year)];
+  // movable holidays (Easter) still computed but stored as events conceptually
+  // We render purely from localStorage now
   const now=new Date();
 
   for(let m=1;m<=12;m++){
@@ -532,39 +713,150 @@ function buildCalendar(year){
     const dim=new Date(year,m,0).getDate();
     for(let d=1;d<=dim;d++){
       const jd=new Date(year,m-1,d).getDay();
-      const hols=allH.filter(h=>h.month===m&&h.day===d);
-      const bdays=BIRTHDAYS.filter(b=>b.month===m&&b.day===d);
-      const isToday=d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
+      const dayEvs=getEventsForDay(m,d,year);
+      const hasExam =dayEvs.some(e=>e.type==='exam');
+      const hasBday =dayEvs.some(e=>e.type==='bday');
+      const hasHol  =dayEvs.some(e=>e.type==='hol');
+      const isToday =d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
       const cell=document.createElement('div');
-      let cls='cal-cell';
+      let cls='cal-cell clickable';
       if(jd===0)cls+=' sun'; else if(jd===6)cls+=' sat';
-      if(hols.length)cls+=' hol';
-      if(bdays.length)cls+=' bday';
+      if(hasHol) cls+=' hol';
+      if(hasBday)cls+=' bday';
+      if(hasExam)cls+=' has-exam';
       if(isToday)cls+=' today';
-      if(hols.length||bdays.length)cls+=' clickable';
       cell.className=cls;
       const cn=document.createElement('span');cn.className='cn';cn.textContent=d;cell.appendChild(cn);
-      if(bdays.length){const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);}
-      else if(hols.length){const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);}
-      if(hols.length||bdays.length){cell.addEventListener('click',()=>openEvPopup(year,m,d,hols,bdays));}
+      if(hasExam){
+        const ci=document.createElement('span');ci.className='ci';ci.textContent='📝';ci.style.fontSize='6px';cell.appendChild(ci);
+      } else if(hasBday){
+        const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);
+      } else if(hasHol){
+        const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);
+      }
+      cell.addEventListener('click',()=>openEvPopup(year,m,d,dayEvs));
       dg.appendChild(cell);
     }
     mc.appendChild(dg); grid.appendChild(mc);
   }
 }
 
-function openEvPopup(year,month,day,hols,bdays){
+/* ══ Event popup ══ */
+function openEvPopup(year,month,day,dayEvs){
+  _popupCtx={year,month,day,dayEvs};
   const jd=new Date(year,month-1,day);
   document.getElementById('ev-popup-date').textContent=`${day} de ${MONTHS[month-1]} de ${year}`;
   document.getElementById('ev-popup-wday').textContent=WDFULL[jd.getDay()];
-  const ev=document.getElementById('ev-popup-events'); ev.innerHTML='';
-  hols.forEach(h=>{const d=document.createElement('div');d.className='ev-item ev-hol';d.innerHTML=`<span class="ev-icon">🗓️</span><span>${h.label}</span>`;ev.appendChild(d);});
-  bdays.forEach(b=>{const d=document.createElement('div');d.className='ev-item ev-bday';d.innerHTML=`<span class="ev-icon">🎂</span><span>Cumpleaños de <strong>${b.name}</strong></span>`;ev.appendChild(d);});
+  renderEvPopupEvents(dayEvs);
   document.getElementById('ev-popup-overlay').classList.add('open');
 }
+
+function renderEvPopupEvents(dayEvs){
+  const ev=document.getElementById('ev-popup-events'); ev.innerHTML='';
+
+  if(!dayEvs.length){
+    const empty=document.createElement('div');
+    empty.style.cssText='text-align:center;padding:14px 0;font-size:12px;opacity:.4;';
+    empty.textContent='Sin eventos este día';
+    ev.appendChild(empty);
+    return;
+  }
+
+  dayEvs.forEach(e=>{
+    const typeClass=e.type==='exam'?'ev-exam':e.type==='hol'?'ev-hol':'ev-bday';
+    const icon=e.type==='exam'?'📝':e.type==='hol'?'🗓️':'🎂';
+    const typeLabel=e.type==='exam'?'Examen':e.type==='hol'?'Festivo':'Cumpleaños';
+    const labelText=e.type==='bday'?`Cumpleaños de <strong>${e.label}</strong>`:`<strong>${typeLabel}:</strong> ${e.label}`;
+    const d=document.createElement('div');d.className=`ev-item ${typeClass}`;
+    d.innerHTML=`<span class="ev-icon">${icon}</span><span>${labelText}</span>`;
+    const del=document.createElement('button');del.className='ev-del';del.title='Eliminar';del.textContent='🗑';
+    del.addEventListener('click',()=>{
+      deleteEvent(e.id);
+      buildCalendar(calYear);
+      const fresh=getEventsForDay(_popupCtx.month,_popupCtx.day,_popupCtx.year);
+      _popupCtx.dayEvs=fresh;
+      renderEvPopupEvents(fresh);
+    });
+    d.appendChild(del);
+    ev.appendChild(d);
+  });
+}
+
 document.getElementById('ev-popup-close').onclick=()=>document.getElementById('ev-popup-overlay').classList.remove('open');
 document.getElementById('ev-popup-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('ev-popup-overlay'))document.getElementById('ev-popup-overlay').classList.remove('open');});
 
+/* ══ Add event button in popup ══ */
+document.getElementById('ev-add-btn').addEventListener('click',()=>{
+  openAddForm(_popupCtx.year,_popupCtx.month,_popupCtx.day);
+});
+
+/* ══ Add event form ══ */
+let _addCtx={year:0,month:0,day:0};
+let _selType=null;
+
+function openAddForm(year,month,day){
+  _addCtx={year,month,day};
+  _selType=null;
+  document.getElementById('add-ev-subtitle').textContent=`${day} de ${MONTHS[month-1]} de ${year}`;
+  document.getElementById('add-ev-input').value='';
+  document.getElementById('add-ev-input-label').textContent='Nombre / descripción';
+  document.getElementById('add-ev-input').placeholder='Ej: Física, Navidad…';
+  document.getElementById('add-ev-submit').disabled=true;
+  document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol'));
+  document.getElementById('add-ev-overlay').classList.add('open');
+}
+
+document.querySelectorAll('.ev-type-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    _selType=btn.dataset.type;
+    document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol'));
+    btn.classList.add(`sel-${_selType}`);
+    // update label hint
+    const labels={bday:'Nombre de la persona',exam:'Nombre del examen / asignatura',hol:'Nombre del festivo'};
+    const placeholders={bday:'Ej: Ana García',exam:'Ej: Matemáticas',hol:'Ej: Día del pueblo'};
+    document.getElementById('add-ev-input-label').textContent=labels[_selType];
+    document.getElementById('add-ev-input').placeholder=placeholders[_selType];
+    checkSubmit();
+  });
+});
+
+document.getElementById('add-ev-input').addEventListener('input',checkSubmit);
+
+function checkSubmit(){
+  const hasType=!!_selType;
+  const hasText=document.getElementById('add-ev-input').value.trim().length>0;
+  document.getElementById('add-ev-submit').disabled=!(hasType&&hasText);
+}
+
+document.getElementById('add-ev-submit').addEventListener('click',()=>{
+  const label=document.getElementById('add-ev-input').value.trim();
+  if(!label||!_selType) return;
+  const evs=loadEvents();
+  evs.push({
+    id: Date.now()+Math.random().toString(36).slice(2),
+    type: _selType,
+    label,
+    month: _addCtx.month,
+    day:   _addCtx.day,
+    year:  _selType==='exam' ? _addCtx.year : null,
+  });
+  saveEvents(evs);
+  document.getElementById('add-ev-overlay').classList.remove('open');
+  buildCalendar(calYear);
+  const fresh=getEventsForDay(_popupCtx.month,_popupCtx.day,_popupCtx.year);
+  _popupCtx.dayEvs=fresh;
+  renderEvPopupEvents(fresh);
+});
+
+document.getElementById('add-ev-close').addEventListener('click',()=>{
+  document.getElementById('add-ev-overlay').classList.remove('open');
+});
+document.getElementById('add-ev-overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('add-ev-overlay'))
+    document.getElementById('add-ev-overlay').classList.remove('open');
+});
+
+/* ══ Calendar open/close ══ */
 document.getElementById('cal-open-btn').addEventListener('click',()=>{
   buildCalendar(calYear);
   document.getElementById('cal-backdrop').classList.add('open');
