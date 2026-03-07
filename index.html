@@ -595,6 +595,7 @@
       <span class="badge html"><span class="dot html"></span>HTML 17.2%</span>
       <span class="badge css"><span class="dot css"></span>CSS 10.1%</span>
       <span class="badge green">⭐ Public</span>
+      <span class="badge online"><span class="dot online-dot"></span><span id="online-count">1</span> online</span>
     </div>
   </div>
 </header>
@@ -725,7 +726,7 @@ const WDFULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábad
    { id, type:"bday"|"exam"|"hol", label, month, day, year|null }
 ══════════════════════════════════════ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD4RDqcQYH_8fNPbo6d_K9GFgQiPh-3Cno",
@@ -741,6 +742,42 @@ const _db    = getFirestore(_fbApp);
 // Mapa type → colección Firestore
 const TYPE_COL = { bday: 'Cumpleaños', hol: 'Eventos', exam: 'Examenes' };
 const DOC_PATH  = 'Calendario/Calendarios';  // ruta del documento padre
+
+/* ══ Presencia en tiempo real (Firestore) ══ */
+const PRESENCE_COL = 'presencia';
+const _sessionId = Math.random().toString(36).slice(2);
+
+async function registerPresence(){
+  try{
+    await setDoc(doc(_db, PRESENCE_COL, _sessionId), {
+      sessionId: _sessionId,
+      ts: serverTimestamp()
+    });
+    // Limpiar al salir
+    window.addEventListener('beforeunload', ()=>{
+      // beacon no funciona con Firestore SDK, usamos fetch síncrono como fallback
+      deleteDoc(doc(_db, PRESENCE_COL, _sessionId)).catch(()=>{});
+    });
+    // Escuchar cambios en la colección presencia
+    onSnapshot(collection(_db, PRESENCE_COL), snap => {
+      // Limpiar sesiones antiguas (>2 min)
+      const now = Date.now();
+      snap.docs.forEach(d => {
+        const ts = d.data().ts?.toMillis?.() || 0;
+        if(ts && now - ts > 120000) deleteDoc(doc(_db, PRESENCE_COL, d.id)).catch(()=>{});
+      });
+      const count = snap.docs.length;
+      const el = document.getElementById('online-count');
+      if(el) el.textContent = count;
+    });
+    // Renovar timestamp cada 60s para no expirar
+    setInterval(()=>{
+      setDoc(doc(_db, PRESENCE_COL, _sessionId), { sessionId: _sessionId, ts: serverTimestamp() }).catch(()=>{});
+    }, 60000);
+  } catch(e){ console.warn('Presencia no disponible:', e); }
+}
+registerPresence();
+
 
 async function loadEvents(){
   const results = await Promise.all(
