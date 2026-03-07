@@ -932,73 +932,32 @@ document.getElementById('cal-prev').onclick=()=>{calYear--;buildCalendar(calYear
 document.getElementById('cal-next').onclick=()=>{calYear++;buildCalendar(calYear);};
 
 /* ══ Firebase Códigos ══
-   Estructura: Codigo/Codigos/<NombreCarpeta>/<NombreSubcarpeta>/…
-   Los archivos se guardan como documentos en la colección de su carpeta.
-   { id(sha), name, path, lang, download_url, html_url, content, updatedAt }
+   Colección plana: Codigo/Codigos/Archivos
+   Cada documento = un archivo del repo
+   { id(sha), name, path, carpeta, lang, download_url, html_url, content, updatedAt }
 ══════════════════════════════════════ */
-const CODIGO_ROOT = 'Codigo/Codigos'; // colección raíz + documento raíz
 
-/* Convierte la ruta relativa al repo en la ruta Firestore equivalente.
-   Ej: "GitTodo/Programacion/Java/Hola.java"
-   → colección: "Codigo/Codigos/Programacion/docs/Java/docs"
-   → doc id:    sha del archivo
-   Para carpetas intermedias usamos un documento ficticio "docs"
-   para poder tener subcolecciones dentro. */
-function pathToFirestore(repoPath){
-  // Quitar el prefijo ROOT (GitTodo)
-  const relative = repoPath.startsWith(ROOT+'/') ? repoPath.slice(ROOT.length+1) : repoPath;
-  const parts = relative.split('/');
-  // El archivo es el último elemento; las carpetas son el resto
-  const folders = parts.slice(0, -1);
-  const fileName = parts[parts.length - 1];
-  // Construir ruta Firestore: Codigo/Codigos/Carpeta1/docs/Carpeta2/docs/…
-  let fsPath = CODIGO_ROOT;
-  for(const folder of folders){
-    fsPath += `/${folder}/docs`;
-  }
-  return { collectionPath: fsPath, docId: fileName };
-}
-
-/* Guarda un archivo en su subcolección correspondiente */
-async function saveCodigoFile(fileDoc){
-  const repoPath = fileDoc.path;
-  const { collectionPath, docId } = pathToFirestore(repoPath);
-  // Firestore: collectionPath tiene segmentos pares (colección/doc alternados)
-  // pathToFirestore ya genera la ruta correcta
-  const pathParts = collectionPath.split('/');
-  // pathParts[0] = colección raíz, pathParts[1] = doc raíz, pathParts[2] = subcolección, etc.
-  const colRef = collection(_db, ...pathParts);
-  await setDoc(doc(colRef, fileDoc.id), fileDoc);
-}
-
-/* Lee TODOS los archivos recursivamente desde Firebase */
-async function loadAllCodigos(colPath=CODIGO_ROOT.split('/')){
-  const results = [];
-  // Leer documentos de la colección actual
-  const colRef = collection(_db, ...colPath);
-  const snap = await getDocs(colRef);
-  for(const d of snap.docs){
-    const data = d.data();
-    if(data.name){ // es un archivo real
-      results.push({...data, _docId: d.id});
-    }
-    // Buscar subcolecciones dentro de este documento (carpetas)
-    // Firestore no lista subcolecciones en cliente, así que usamos
-    // las subcarpetas conocidas del repo que se registran al hacer sync
-  }
-  return results;
-}
-
-/* Índice plano de todos los archivos (se llena al sincronizar) */
 let _allArchivos = [];
 
-/* Sincroniza el repo de GitHub a Firebase manteniendo la estructura de carpetas */
+async function loadCodigosFlat(){
+  const snap = await getDocs(collection(_db, 'Codigo', 'Codigos', 'Archivos'));
+  return snap.docs.map(d => ({...d.data(), _docId: d.id}));
+}
+
+async function saveCodigoFile(fileDoc){
+  await setDoc(doc(_db, 'Codigo', 'Codigos', 'Archivos', fileDoc.id), fileDoc);
+}
+
 async function syncRepoToFirebase(ghPath){
   const items = await apiFetch(ghPath);
   for(const item of items){
     if(item.type === 'dir'){
       await syncRepoToFirebase(item.path);
     } else {
+      // Carpeta relativa al ROOT (ej: "Programacion/Java")
+      const relative = item.path.startsWith(ROOT+'/') ? item.path.slice(ROOT.length+1) : item.path;
+      const parts = relative.split('/');
+      const carpeta = parts.slice(0, -1).join('/') || '/';
       let content = '';
       try{
         const r = await fetch(item.download_url);
@@ -1008,6 +967,7 @@ async function syncRepoToFirebase(ghPath){
         id:           item.sha,
         name:         item.name,
         path:         item.path,
+        carpeta:      carpeta,
         lang:         getLang(item.name),
         download_url: item.download_url,
         html_url:     item.html_url,
@@ -1020,44 +980,20 @@ async function syncRepoToFirebase(ghPath){
   }
 }
 
-/* Lee el índice plano desde Firebase (todos los docs de todas las subcolecciones) */
-async function loadCodigosFlat(pathParts=CODIGO_ROOT.split('/')){
-  const results = [];
-  try{
-    const snap = await getDocs(collection(_db, ...pathParts));
-    for(const d of snap.docs){
-      const data = d.data();
-      if(data.name) results.push({...data, _docId: d.id});
-      // Intentar subcolección "docs" dentro de este doc (carpetas anidadas)
-      const subSnap = await getDocs(collection(_db, ...pathParts, d.id, 'docs')).catch(()=>null);
-      if(subSnap){
-        for(const sd of subSnap.docs){
-          const sdata = sd.data();
-          if(sdata.name) results.push({...sdata, _docId: sd.id});
-          // Un nivel más de profundidad
-          const sub2 = await getDocs(collection(_db, ...pathParts, d.id, 'docs', sd.id, 'docs')).catch(()=>null);
-          if(sub2) sub2.docs.forEach(x=>{ if(x.data().name) results.push({...x.data(),_docId:x.id}); });
-        }
-      }
-    }
-  } catch(e){}
-  return results;
-}
-
 async function initArchivos(){
-  document.getElementById('section-label').textContent='// Cargando índice de archivos…';
-  // Intentar cargar desde Firebase primero
-  const existing = await loadCodigosFlat();
+  const label = document.getElementById('section-label');
+  // Intentar cargar desde Firebase
+  const existing = await loadCodigosFlat().catch(()=>[]);
   if(existing.length > 0){
     _allArchivos = existing;
     return;
   }
   // Primera vez: sincronizar desde GitHub → Firebase
-  document.getElementById('section-label').textContent='// Sincronizando archivos con Firebase (primera vez)…';
+  label.textContent = '// Sincronizando archivos con Firebase (primera vez, espera un momento)…';
   try{
     await syncRepoToFirebase(ROOT);
   } catch(e){
-    console.error('Error sincronizando:', e);
+    console.error('Error sincronizando con Firebase:', e);
   }
 }
 
