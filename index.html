@@ -1170,56 +1170,65 @@ function normalize(s){
 
 
 document.getElementById('search-input').addEventListener('input',function(){
-  const q=normalize(this.value.trim());
-  const treeRoot=document.getElementById('tree-root');
+  // Ignorar espacios — colapsar múltiples y quitar extremos
+  const raw = this.value.replace(/\s+/g,' ').trim();
+  const q = normalize(raw);
+  const treeRoot = document.getElementById('tree-root');
+  const fbPanel  = getOrCreateFbPanel(treeRoot);
 
+  // Sin búsqueda: restaurar árbol y ocultar panel
   if(!q){
-    // Sin búsqueda: mostrar árbol normal, ocultar resultados Firebase
-    document.getElementById('fb-results')?.remove();
-    treeRoot.style.display='';
-    document.getElementById('search-count').textContent='';
+    treeRoot.style.display = '';
+    // Mostrar todas las carpetas/archivos del árbol
+    treeRoot.querySelectorAll('.tree-item,.tree-leaf').forEach(el=>{
+      el.classList.remove('hidden');
+    });
+    fbPanel.innerHTML = '';
+    document.getElementById('search-count').textContent = '';
     return;
   }
 
-  // Buscar en árbol del DOM (carpetas/archivos ya expandidos)
-  const domItems=treeRoot.querySelectorAll('.tree-item,.tree-leaf');
-  let domMatches=0;
-  domItems.forEach(el=>{
-    const match=normalize(el.dataset.name||'').includes(q);
-    el.classList.toggle('hidden',!match);
-    if(match)domMatches++;
+  // Ocultar árbol del DOM mientras mostramos resultados Firebase
+  // (el árbol solo tiene lo expandido; Firebase tiene TODO)
+  treeRoot.style.display = 'none';
+
+  // Buscar en TODOS los archivos de Firebase (nombre + carpeta)
+  const fbMatches = _allArchivos.filter(f => {
+    const fullPath = normalize((f.carpeta || '') + '/' + f.name);
+    return normalize(f.name).includes(q) || fullPath.includes(q);
   });
 
-  // Buscar en todos los archivos de Firebase
-  const fbMatches=_allArchivos.filter(f=>normalize(f.name).includes(q));
-
-  // Mostrar panel de resultados Firebase
-  let fbPanel=document.getElementById('fb-results');
-  if(!fbPanel){
-    fbPanel=document.createElement('div');
-    fbPanel.id='fb-results';
-    fbPanel.style.cssText='margin-top:12px;';
-    treeRoot.parentNode.insertBefore(fbPanel, treeRoot.nextSibling);
-  }
-
   if(fbMatches.length){
-    fbPanel.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;margin-bottom:8px;">// ${fbMatches.length} archivo${fbMatches.length!==1?'s':''} en Firebase</div>`;
+    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;margin-bottom:10px;">// ${fbMatches.length} archivo${fbMatches.length!==1?'s':''} encontrado${fbMatches.length!==1?'s':''}</div>`;
     fbMatches.forEach(f=>{
-      const el=document.createElement('div');
-      el.className='tree-leaf';
-      el.dataset.name=f.name.toLowerCase();
-      const lang=getLang(f.name);
-      el.innerHTML=`<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span><span style="font-size:9px;opacity:.45;margin-left:6px">${f.path}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
-      el.addEventListener('click',()=>openFileFromFirebase(f));
+      const el  = document.createElement('div');
+      el.className = 'tree-leaf';
+      el.dataset.name = f.name.toLowerCase();
+      const lang = getLang(f.name);
+      const carpetaLabel = f.carpeta ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
+      el.innerHTML = `<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
+      el.addEventListener('click', ()=>openFileFromFirebase(f));
       fbPanel.appendChild(el);
     });
   } else {
-    fbPanel.innerHTML='';
+    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#64748b;text-align:center;padding:24px 0;">Sin resultados para "<strong style="color:#94a3b8">${raw}</strong>"</div>`;
   }
 
-  const total=domMatches+fbMatches.length;
-  document.getElementById('search-count').textContent=`${total} resultado${total!==1?'s':''}`;
+  document.getElementById('search-count').textContent = fbMatches.length
+    ? `${fbMatches.length} resultado${fbMatches.length!==1?'s':''}`
+    : '';
 });
+
+function getOrCreateFbPanel(treeRoot){
+  let p = document.getElementById('fb-results');
+  if(!p){
+    p = document.createElement('div');
+    p.id = 'fb-results';
+    p.style.cssText = 'margin-top:4px;';
+    treeRoot.parentNode.insertBefore(p, treeRoot.nextSibling);
+  }
+  return p;
+}
 
 function openFileFromFirebase(f){
   const bd2=document.getElementById('modal-backdrop');
