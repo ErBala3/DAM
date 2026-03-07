@@ -195,6 +195,23 @@
     }
     #upload-btn:hover { border-color:#60a5fa; box-shadow:0 0 30px rgba(96,165,250,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
 
+    /* ══════════ SYNC BUTTON ══════════ */
+    #sync-btn {
+      position: fixed; bottom: 24px; left: 310px; z-index: 200;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg2);
+      border: 1px solid rgba(251,191,36,.45);
+      border-radius: 999px; padding: 10px 18px 10px 14px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: #fbbf24;
+      box-shadow: 0 0 20px rgba(251,191,36,.1), 0 4px 20px rgba(0,0,0,.4);
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      animation: slideIn .5s .7s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #sync-btn:hover { border-color:#fbbf24; box-shadow:0 0 30px rgba(251,191,36,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
+    #sync-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
     /* ══════════ UPLOAD MODAL ══════════ */
     #upload-backdrop {
       position:fixed;inset:0;z-index:600;
@@ -504,6 +521,12 @@
 <button id="upload-btn" title="Subir código">
   <span style="font-size:16px">📤</span>
   <span>Subir código</span>
+</button>
+
+<!-- ══ SYNC BUTTON ══ -->
+<button id="sync-btn" title="Sincronizar archivos con Firebase">
+  <span style="font-size:16px">🔄</span>
+  <span>Sincronizar BD</span>
 </button>
 
 <!-- ══ UPLOAD MODAL ══ -->
@@ -1040,7 +1063,6 @@ document.getElementById('cal-next').onclick=()=>{calYear++;buildCalendar(calYear
 
 /* ══ Firebase Códigos ══
    Colección plana: Codigo/Codigos/Archivos
-   Cada documento = un archivo del repo
    { id(sha), name, path, carpeta, lang, download_url, html_url, content, updatedAt }
 ══════════════════════════════════════ */
 
@@ -1055,52 +1077,70 @@ async function saveCodigoFile(fileDoc){
   await setDoc(doc(_db, 'Codigo', 'Codigos', 'Archivos', fileDoc.id), fileDoc);
 }
 
-async function syncRepoToFirebase(ghPath){
-  const items = await apiFetch(ghPath);
-  for(const item of items){
-    if(item.type === 'dir'){
-      await syncRepoToFirebase(item.path);
-    } else {
-      // Carpeta relativa al ROOT (ej: "Programacion/Java")
-      const relative = item.path.startsWith(ROOT+'/') ? item.path.slice(ROOT.length+1) : item.path;
-      const parts = relative.split('/');
-      const carpeta = parts.slice(0, -1).join('/') || '/';
+/* Sincronización completa GitHub → Firebase, con callback de progreso */
+async function forceSyncArchivos(statusCb){
+  statusCb('Obteniendo árbol del repo desde GitHub…');
+  const treeRes = await fetch(
+    'https://api.github.com/repos/ErBala3/DAM/git/trees/main?recursive=1',
+    {headers:{Accept:'application/vnd.github.v3+json'}}
+  );
+  if(!treeRes.ok) throw new Error(`GitHub Trees API ${treeRes.status}: ${await treeRes.text()}`);
+  const treeData = await treeRes.json();
+
+  const blobs = treeData.tree.filter(item =>
+    item.type === 'blob' && item.path.startsWith('GitTodo/')
+  );
+  statusCb(`${blobs.length} archivos encontrados, guardando en Firebase…`);
+
+  _allArchivos = [];
+  let done = 0;
+
+  for(let i = 0; i < blobs.length; i += 5){
+    const batch = blobs.slice(i, i + 5);
+    await Promise.all(batch.map(async item => {
+      const relative = item.path.slice('GitTodo/'.length);
+      const parts    = relative.split('/');
+      const name     = parts[parts.length - 1];
+      const carpeta  = parts.slice(0, -1).join('/') || '/';
+      const ext      = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+      const lang     = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':'other';
+      const dl_url   = `https://raw.githubusercontent.com/ErBala3/DAM/main/${item.path}`;
+      const html_url = `https://github.com/ErBala3/DAM/blob/main/${item.path}`;
+
       let content = '';
       try{
-        const r = await fetch(item.download_url);
-        if(r.ok) content = await r.text();
-      } catch(e){}
-      const fileDoc = {
-        id:           item.sha,
-        name:         item.name,
-        path:         item.path,
-        carpeta:      carpeta,
-        lang:         getLang(item.name),
-        download_url: item.download_url,
-        html_url:     item.html_url,
-        content:      content.slice(0, 50000),
-        updatedAt:    Date.now()
-      };
+        const r = await fetch(dl_url);
+        if(r.ok) content = (await r.text()).slice(0, 50000);
+      } catch(e){ console.warn('Sin contenido para', name); }
+
+      const fileDoc = { id: item.sha, name, path: item.path, carpeta, lang, download_url: dl_url, html_url, content, updatedAt: Date.now() };
       await saveCodigoFile(fileDoc);
       _allArchivos.push(fileDoc);
-    }
+      done++;
+      statusCb(`Guardando en Firebase… ${done}/${blobs.length}`);
+    }));
   }
+  statusCb(`✅ ${_allArchivos.length} archivos sincronizados`);
 }
 
 async function initArchivos(){
   const label = document.getElementById('section-label');
-  // Intentar cargar desde Firebase
-  const existing = await loadCodigosFlat().catch(()=>[]);
-  if(existing.length > 0){
-    _allArchivos = existing;
-    return;
-  }
-  // Primera vez: sincronizar desde GitHub → Firebase
-  label.textContent = '// Sincronizando archivos con Firebase (primera vez, espera un momento)…';
   try{
-    await syncRepoToFirebase(ROOT);
+    const existing = await loadCodigosFlat();
+    if(existing.length > 0){
+      _allArchivos = existing;
+      label.textContent = label.textContent.replace('expandir', `expandir · 🔍 ${existing.length} archivos indexados`);
+      return;
+    }
+  } catch(e){ console.warn('loadCodigosFlat error:', e); }
+
+  // Firebase vacío → sincronizar automáticamente
+  try{
+    await forceSyncArchivos(msg => { label.textContent = '// ' + msg; });
+    label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
   } catch(e){
-    console.error('Error sincronizando con Firebase:', e);
+    console.error('Error sync:', e);
+    label.textContent = '// Error sincronizando: ' + e.message;
   }
 }
 
@@ -1169,54 +1209,58 @@ function normalize(s){
 }
 
 
-document.getElementById('search-input').addEventListener('input',function(){
-  // Ignorar espacios — colapsar múltiples y quitar extremos
-  const raw = this.value.replace(/\s+/g,' ').trim();
-  const q = normalize(raw);
+/* Buscador con debounce */
+let _searchTimer = null;
+
+document.getElementById('search-input').addEventListener('input', function(){
+  clearTimeout(_searchTimer);
+  const raw = this.value.replace(/\s+/g, ' ').trim();
+  const q   = normalize(raw);
   const treeRoot = document.getElementById('tree-root');
   const fbPanel  = getOrCreateFbPanel(treeRoot);
 
-  // Sin búsqueda: restaurar árbol y ocultar panel
   if(!q){
     treeRoot.style.display = '';
-    // Mostrar todas las carpetas/archivos del árbol
-    treeRoot.querySelectorAll('.tree-item,.tree-leaf').forEach(el=>{
-      el.classList.remove('hidden');
-    });
+    treeRoot.querySelectorAll('.tree-item,.tree-leaf').forEach(el => el.classList.remove('hidden'));
     fbPanel.innerHTML = '';
     document.getElementById('search-count').textContent = '';
     return;
   }
 
-  // Ocultar árbol del DOM mientras mostramos resultados Firebase
-  // (el árbol solo tiene lo expandido; Firebase tiene TODO)
   treeRoot.style.display = 'none';
 
-  // Buscar en TODOS los archivos de Firebase (nombre + carpeta)
-  const fbMatches = _allArchivos.filter(f => {
-    const fullPath = normalize((f.carpeta || '') + '/' + f.name);
-    return normalize(f.name).includes(q) || fullPath.includes(q);
-  });
-
-  if(fbMatches.length){
-    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;margin-bottom:10px;">// ${fbMatches.length} archivo${fbMatches.length!==1?'s':''} encontrado${fbMatches.length!==1?'s':''}</div>`;
-    fbMatches.forEach(f=>{
-      const el  = document.createElement('div');
-      el.className = 'tree-leaf';
-      el.dataset.name = f.name.toLowerCase();
-      const lang = getLang(f.name);
-      const carpetaLabel = f.carpeta ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
-      el.innerHTML = `<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
-      el.addEventListener('click', ()=>openFileFromFirebase(f));
-      fbPanel.appendChild(el);
-    });
-  } else {
-    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#64748b;text-align:center;padding:24px 0;">Sin resultados para "<strong style="color:#94a3b8">${raw}</strong>"</div>`;
+  if(!_allArchivos.length){
+    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;padding:16px 0;">⏳ Aún indexando archivos, espera un momento…</div>`;
+    return;
   }
 
-  document.getElementById('search-count').textContent = fbMatches.length
-    ? `${fbMatches.length} resultado${fbMatches.length!==1?'s':''}`
-    : '';
+  _searchTimer = setTimeout(() => {
+    const matches = _allArchivos.filter(f =>
+      normalize(f.name).includes(q) ||
+      normalize(f.carpeta || '').includes(q)
+    );
+
+    if(matches.length){
+      fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;margin-bottom:10px;">// ${matches.length} archivo${matches.length!==1?'s':''} encontrado${matches.length!==1?'s':''}</div>`;
+      matches.forEach(f => {
+        const el = document.createElement('div');
+        el.className = 'tree-leaf';
+        el.dataset.name = f.name.toLowerCase();
+        const ext  = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
+        const lang = f.lang || 'other';
+        const icon = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'}[ext] || '📄';
+        const carpetaLabel = f.carpeta && f.carpeta !== '/'
+          ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
+        el.innerHTML = `<span class="tree-icon" style="font-size:14px">${icon}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
+        el.addEventListener('click', () => openFileFromFirebase(f));
+        fbPanel.appendChild(el);
+      });
+      document.getElementById('search-count').textContent = `${matches.length} resultado${matches.length!==1?'s':''}`;
+    } else {
+      fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#64748b;text-align:center;padding:24px 0;">Sin resultados para "<strong style="color:#94a3b8">${raw}</strong>"</div>`;
+      document.getElementById('search-count').textContent = '';
+    }
+  }, 200);
 });
 
 function getOrCreateFbPanel(treeRoot){
@@ -1235,11 +1279,28 @@ function openFileFromFirebase(f){
   document.getElementById('modal-title').textContent=f.name;
   document.getElementById('modal-icon').textContent=ICONS[getExt(f.name)]||'📄';
   document.getElementById('modal-gh').href=f.html_url||'#';
-  rawCode=f.content||'';
-  document.getElementById('modal-body').innerHTML=rawCode
-    ? `<pre>${highlight(rawCode,getLang(f.name))}</pre>`
-    : '<div class="modal-loading"><span>Sin contenido guardado</span></div>';
   bd2.classList.add('open');
+
+  if(f.content){
+    // Contenido ya en caché (Firebase)
+    rawCode = f.content;
+    document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`;
+  } else if(f.download_url){
+    // Cargar desde GitHub raw
+    document.getElementById('modal-body').innerHTML='<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';
+    rawCode = '';
+    fetch(f.download_url)
+      .then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); })
+      .then(text=>{
+        rawCode = text;
+        document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`;
+      })
+      .catch(err=>{
+        document.getElementById('modal-body').innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`;
+      });
+  } else {
+    document.getElementById('modal-body').innerHTML='<div class="modal-loading"><span>Sin contenido disponible</span></div>';
+  }
 }
 
 async function init(){
@@ -1255,12 +1316,8 @@ async function init(){
     label.textContent='// error al cargar';
     root.innerHTML=`<div class="error-box">❌ No se pudo conectar con el repositorio.<br><br><strong>Error:</strong> ${e.message}</div>`;
   }
-  // Cargar/sincronizar archivos en Firebase en paralelo (para el buscador)
-  try{
-    await initArchivos();
-    const n=_allArchivos.length;
-    if(n) label.textContent=label.textContent.replace('expandir',`expandir · 🔍 ${n} archivos indexados`);
-  } catch(e){ console.warn('Firebase códigos no disponible:', e); }
+  // Cargar/sincronizar archivos en Firebase (para el buscador)
+  initArchivos().catch(e => console.warn('Firebase códigos:', e));
 }
 /* ══ Upload modal ══ */
 const BLOCKED_FOLDERS = ['Programacion', 'Entornos', 'Lenguaje de marcas'];
@@ -1395,6 +1452,34 @@ function setUploadMsg(txt, cls){
 
 document.getElementById('upload-btn').addEventListener('click', openUploadModal);
 document.getElementById('upload-close').addEventListener('click', closeUploadModal);
+/* ══ Sync button ══ */
+document.getElementById('sync-btn').addEventListener('click', async () => {
+  const btn   = document.getElementById('sync-btn');
+  const label = document.getElementById('section-label');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="font-size:16px">⏳</span><span>Sincronizando…</span>';
+  try{
+    await forceSyncArchivos(msg => {
+      btn.querySelector('span:last-child').textContent = msg.length > 30 ? msg.slice(0,30)+'…' : msg;
+      label.textContent = '// ' + msg;
+    });
+    btn.innerHTML = '<span style="font-size:16px">✅</span><span>Sincronizado</span>';
+    label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.innerHTML = '<span style="font-size:16px">🔄</span><span>Sincronizar BD</span>';
+    }, 3000);
+  } catch(e){
+    btn.innerHTML = '<span style="font-size:16px">❌</span><span>Error</span>';
+    label.textContent = '// Error: ' + e.message;
+    console.error('Sync error:', e);
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.innerHTML = '<span style="font-size:16px">🔄</span><span>Sincronizar BD</span>';
+    }, 4000);
+  }
+});
+
 init();
 appInit();
 </script>
