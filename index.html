@@ -178,10 +178,11 @@
     #cal-open-btn:hover { border-color:var(--accent); box-shadow:0 0 30px rgba(74,222,128,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
     #cal-open-btn .ci { font-size:16px; }
     @keyframes slideIn { from{opacity:0;transform:translateX(-30px) scale(.9);}to{opacity:1;transform:translateX(0) scale(1);} }
+    @keyframes slideInRight { from{opacity:0;transform:translateX(30px) scale(.9);}to{opacity:1;transform:translateX(0) scale(1);} }
 
     /* ══════════ UPLOAD BUTTON ══════════ */
     #upload-btn {
-      position: fixed; bottom: 24px; left: 160px; z-index: 200;
+      position: fixed; bottom: 24px; right: 20px; z-index: 200;
       display: flex; align-items: center; gap: 8px;
       background: var(--bg2);
       border: 1px solid rgba(96,165,250,.45);
@@ -191,26 +192,10 @@
       color: #60a5fa;
       box-shadow: 0 0 20px rgba(96,165,250,.1), 0 4px 20px rgba(0,0,0,.4);
       transition: border-color .2s, box-shadow .2s, transform .15s;
-      animation: slideIn .5s .5s cubic-bezier(.34,1.56,.64,1) both;
+      animation: slideInRight .5s .5s cubic-bezier(.34,1.56,.64,1) both;
     }
     #upload-btn:hover { border-color:#60a5fa; box-shadow:0 0 30px rgba(96,165,250,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
 
-    /* ══════════ SYNC BUTTON ══════════ */
-    #sync-btn {
-      position: fixed; bottom: 24px; left: 310px; z-index: 200;
-      display: flex; align-items: center; gap: 8px;
-      background: var(--bg2);
-      border: 1px solid rgba(251,191,36,.45);
-      border-radius: 999px; padding: 10px 18px 10px 14px;
-      cursor: pointer;
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
-      color: #fbbf24;
-      box-shadow: 0 0 20px rgba(251,191,36,.1), 0 4px 20px rgba(0,0,0,.4);
-      transition: border-color .2s, box-shadow .2s, transform .15s;
-      animation: slideIn .5s .7s cubic-bezier(.34,1.56,.64,1) both;
-    }
-    #sync-btn:hover { border-color:#fbbf24; box-shadow:0 0 30px rgba(251,191,36,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
-    #sync-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
 
     /* ══════════ UPLOAD MODAL ══════════ */
     #upload-backdrop {
@@ -523,11 +508,6 @@
   <span>Subir código</span>
 </button>
 
-<!-- ══ SYNC BUTTON ══ -->
-<button id="sync-btn" title="Sincronizar archivos con Firebase">
-  <span style="font-size:16px">🔄</span>
-  <span>Sincronizar BD</span>
-</button>
 
 <!-- ══ UPLOAD MODAL ══ -->
 <div id="upload-backdrop">
@@ -1452,34 +1432,6 @@ function setUploadMsg(txt, cls){
 
 document.getElementById('upload-btn').addEventListener('click', openUploadModal);
 document.getElementById('upload-close').addEventListener('click', closeUploadModal);
-/* ══ Sync button ══ */
-document.getElementById('sync-btn').addEventListener('click', async () => {
-  const btn   = document.getElementById('sync-btn');
-  const label = document.getElementById('section-label');
-  btn.disabled = true;
-  btn.innerHTML = '<span style="font-size:16px">⏳</span><span>Sincronizando…</span>';
-  try{
-    await forceSyncArchivos(msg => {
-      btn.querySelector('span:last-child').textContent = msg.length > 30 ? msg.slice(0,30)+'…' : msg;
-      label.textContent = '// ' + msg;
-    });
-    btn.innerHTML = '<span style="font-size:16px">✅</span><span>Sincronizado</span>';
-    label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
-    setTimeout(()=>{
-      btn.disabled = false;
-      btn.innerHTML = '<span style="font-size:16px">🔄</span><span>Sincronizar BD</span>';
-    }, 3000);
-  } catch(e){
-    btn.innerHTML = '<span style="font-size:16px">❌</span><span>Error</span>';
-    label.textContent = '// Error: ' + e.message;
-    console.error('Sync error:', e);
-    setTimeout(()=>{
-      btn.disabled = false;
-      btn.innerHTML = '<span style="font-size:16px">🔄</span><span>Sincronizar BD</span>';
-    }, 4000);
-  }
-});
-
 init();
 appInit();
 </script>
