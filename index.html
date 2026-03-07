@@ -269,6 +269,8 @@
     .cal-cell.hol .cn{color:#7a5c10;font-weight:600;}
     .cal-cell.bday{background:#dbeaf4;}
     .cal-cell.bday .cn{color:#4a7fa5;font-weight:600;}
+    .cal-cell.has-exam{background:#f0e6ff;}
+    .cal-cell.has-exam .cn{color:#7c3aed;font-weight:600;}
     .cal-cell.today{outline:2px solid #b5432a;outline-offset:-1px;}
     .cal-cell.today .cn{color:#b5432a;font-weight:700;}
     .cal-cell.clickable{cursor:pointer;}
@@ -766,7 +768,7 @@ function renderEvPopupEvents(dayEvs){
     const typeClass=e.type==='exam'?'ev-exam':e.type==='hol'?'ev-hol':'ev-bday';
     const icon=e.type==='exam'?'📝':e.type==='hol'?'🗓️':'🎂';
     const typeLabel=e.type==='exam'?'Examen':e.type==='hol'?'Festivo':'Cumpleaños';
-    const labelText=e.type==='bday'?`Cumpleaños de <strong>${e.label}</strong>`:`<strong>${typeLabel}:</strong> ${e.label}`;
+    const labelText=e.type==='bday'?`<strong>${e.label}</strong>`:e.type==='exam'?`<strong>Examen:</strong> ${e.label}`:`${e.label}`;
     const d=document.createElement('div');d.className=`ev-item ${typeClass}`;
     d.innerHTML=`<span class="ev-icon">${icon}</span><span>${labelText}</span>`;
     const del=document.createElement('button');del.className='ev-del';del.title='Eliminar';del.textContent='🗑';
