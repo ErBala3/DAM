@@ -1106,53 +1106,53 @@ let _allEvents = [];
 
 async function appInit(){
   _allEvents = await initEvents();
+  refreshTodayWidgets();
+  buildCalendar(calYear);
+}
 
-  // Birthday widget
-  const now=new Date(), tm=now.getMonth()+1, td=now.getDate();
-  const todayBdays   =_allEvents.filter(e=>e.type==='bday'  &&e.month===tm&&e.day===td).map(e=>e.label);
-  const todayExams   =_allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===now.getFullYear()).map(e=>e.label);
-  const todayHols    =_allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label);
-  const todayEventos =_allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td).map(e=>e.label);
+const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
 
-  const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+function refreshTodayWidgets(){
+  const now=new Date(), tm=now.getMonth()+1, td=now.getDate(), ty=now.getFullYear();
+
+  const configs = [
+    { type:'bday',   widgetId:'bday-widget',   nameId:'bday-name-text',   filter: e=>e.type==='bday'  &&e.month===tm&&e.day===td },
+    { type:'exam',   widgetId:'exam-widget',   nameId:'exam-name-text',   filter: e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty },
+    { type:'hol',    widgetId:'event-widget',  nameId:'event-name-text',  filter: e=>e.type==='hol'   &&e.month===tm&&e.day===td },
+    { type:'evento', widgetId:'evento-widget', nameId:'evento-name-text', filter: e=>e.type==='evento'&&e.month===tm&&e.day===td },
+  ];
 
   let stackBottom = 76;
 
-  if(todayBdays.length){
-    document.getElementById('bday-name-text').textContent=joinNames(todayBdays);
-    const w=document.getElementById('bday-widget');
-    w.style.bottom=stackBottom+'px';
-    setTimeout(()=>{ w.style.display='block'; },900);
-    document.getElementById('cal-bday-dot').style.display='block';
-    stackBottom += 130;
-  }
-  if(todayExams.length){
-    document.getElementById('exam-name-text').textContent=joinNames(todayExams);
-    const w=document.getElementById('exam-widget');
-    w.style.bottom=stackBottom+'px';
-    setTimeout(()=>{ w.style.display='block'; },1100);
-    stackBottom += 130;
-  }
-  if(todayHols.length){
-    document.getElementById('event-name-text').textContent=joinNames(todayHols);
-    const w=document.getElementById('event-widget');
-    w.style.bottom=stackBottom+'px';
-    setTimeout(()=>{ w.style.display='block'; },1300);
-    stackBottom += 130;
-  }
-  if(todayEventos.length){
-    document.getElementById('evento-name-text').textContent=joinNames(todayEventos);
-    const w=document.getElementById('evento-widget');
-    w.style.bottom=stackBottom+'px';
-    setTimeout(()=>{ w.style.display='block'; },1500);
-  }
+  configs.forEach(({ type, widgetId, nameId, filter }, i) => {
+    const labels = _allEvents.filter(filter).map(e=>e.label);
+    const w = document.getElementById(widgetId);
+    if(labels.length){
+      document.getElementById(nameId).textContent = joinNames(labels);
+      w.style.bottom = stackBottom+'px';
+      w.style.display = 'block';
+      if(type==='bday') document.getElementById('cal-bday-dot').style.display='block';
+      stackBottom += 130;
+    } else {
+      w.style.display = 'none';
+      if(type==='bday') document.getElementById('cal-bday-dot').style.display='none';
+    }
+  });
 
-  document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';};
-  document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';};
-  document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';};
-  document.getElementById('evento-close').onclick=()=>{document.getElementById('evento-widget').style.display='none';};
+  // Close buttons
+  document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';reStackWidgets();};
+  document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';reStackWidgets();};
+  document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';reStackWidgets();};
+  document.getElementById('evento-close').onclick=()=>{document.getElementById('evento-widget').style.display='none';reStackWidgets();};
+}
 
-  buildCalendar(calYear);
+function reStackWidgets(){
+  const ids=['bday-widget','exam-widget','event-widget','evento-widget'];
+  let bottom=76;
+  ids.forEach(id=>{
+    const w=document.getElementById(id);
+    if(w.style.display!=='none'){ w.style.bottom=bottom+'px'; bottom+=130; }
+  });
 }
 
 function showCalLoading(on){
@@ -1260,6 +1260,7 @@ function renderEvPopupEvents(dayEvs){
       del.textContent='⏳'; del.disabled=true;
       await deleteEvent(e.id);
       _allEvents = await loadEvents();
+      refreshTodayWidgets();
       buildCalendar(calYear);
       const fresh=getEventsForDay(_allEvents,_popupCtx.month,_popupCtx.day,_popupCtx.year);
       _popupCtx.dayEvs=fresh;
