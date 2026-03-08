@@ -287,6 +287,46 @@
     .bday-x{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px;border-radius:4px;transition:color .15s;}
     .bday-x:hover{color:#fff;}
 
+    /* ══════════ EXAM WIDGET ══════════ */
+    #exam-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.1s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .exam-card {
+      background:var(--bg2); border:1px solid rgba(168,85,247,.4);
+      border-radius:14px; padding:12px 15px 10px;
+      box-shadow:0 0 22px rgba(168,85,247,.1),0 8px 28px rgba(0,0,0,.4);
+      position:relative; overflow:hidden; max-width:200px;
+    }
+    .exam-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,#a855f7,transparent);
+      animation:shimmer 2.5s ease-in-out infinite;
+    }
+    .exam-lbl { font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a855f7;margin-bottom:4px;display:flex;align-items:center;gap:5px; }
+    .exam-lbl::before{content:'●';font-size:7px;animation:pulse 1.4s ease-in-out infinite;}
+
+    /* ══════════ EVENT WIDGET ══════════ */
+    #event-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .event-card {
+      background:var(--bg2); border:1px solid rgba(251,191,36,.4);
+      border-radius:14px; padding:12px 15px 10px;
+      box-shadow:0 0 22px rgba(251,191,36,.1),0 8px 28px rgba(0,0,0,.4);
+      position:relative; overflow:hidden; max-width:200px;
+    }
+    .event-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,#fbbf24,transparent);
+      animation:shimmer 2.5s ease-in-out infinite;
+    }
+    .event-lbl { font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:4px;display:flex;align-items:center;gap:5px; }
+    .event-lbl::before{content:'●';font-size:7px;animation:pulse 1.4s ease-in-out infinite;}
+
     /* ══════════ CALENDAR POPUP ══════════ */
     #cal-backdrop {
       display:none; position:fixed; inset:0;
@@ -479,6 +519,28 @@
     <span class="bday-emoji">🎉</span>
     <div class="bday-sub">¡Felicidades!</div>
     <div class="bday-name-text" id="bday-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ EXAM WIDGET ══ -->
+<div id="exam-widget">
+  <div class="exam-card">
+    <button class="bday-x" id="exam-close">✕</button>
+    <div class="exam-lbl">Examen hoy</div>
+    <span class="bday-emoji">📝</span>
+    <div class="bday-sub">¡Mucha suerte!</div>
+    <div class="bday-name-text" id="exam-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ EVENT WIDGET ══ -->
+<div id="event-widget">
+  <div class="event-card">
+    <button class="bday-x" id="event-close">✕</button>
+    <div class="event-lbl">Hoy es festivo</div>
+    <span class="bday-emoji">🎊</span>
+    <div class="bday-sub">¡Disfrútalo!</div>
+    <div class="bday-name-text" id="event-name-text"></div>
   </div>
 </div>
 
@@ -866,14 +928,43 @@ async function appInit(){
   // Birthday widget
   const now=new Date(), tm=now.getMonth()+1, td=now.getDate();
   const todayBdays=_allEvents.filter(e=>e.type==='bday'&&e.month===tm&&e.day===td).map(e=>e.label);
+  const todayExams=_allEvents.filter(e=>e.type==='exam'&&e.month===tm&&e.day===td&&e.year===now.getFullYear()).map(e=>e.label);
+  const todayHols =_allEvents.filter(e=>e.type==='hol' &&e.month===tm&&e.day===td).map(e=>e.label);
+
+  // Stack widgets: bday at bottom (76px), exam above, event above that
+  let stackBottom = 76;
+
   if(todayBdays.length){
     const ns=todayBdays;
     document.getElementById('bday-name-text').textContent=
       ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
-    setTimeout(()=>{document.getElementById('bday-widget').style.display='block';},900);
+    const w=document.getElementById('bday-widget');
+    w.style.bottom=stackBottom+'px';
+    setTimeout(()=>{ w.style.display='block'; },900);
     document.getElementById('cal-bday-dot').style.display='block';
+    stackBottom += 130;
   }
+  if(todayExams.length){
+    const ns=todayExams;
+    document.getElementById('exam-name-text').textContent=
+      ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+    const w=document.getElementById('exam-widget');
+    w.style.bottom=stackBottom+'px';
+    setTimeout(()=>{ w.style.display='block'; },1100);
+    stackBottom += 130;
+  }
+  if(todayHols.length){
+    const ns=todayHols;
+    document.getElementById('event-name-text').textContent=
+      ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+    const w=document.getElementById('event-widget');
+    w.style.bottom=stackBottom+'px';
+    setTimeout(()=>{ w.style.display='block'; },1300);
+  }
+
   document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';};
+  document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';};
+  document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';};
 
   buildCalendar(calYear);
 }
