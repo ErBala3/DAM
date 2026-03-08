@@ -253,6 +253,13 @@
     /* rename box, hidden by default */
     #upload-rename-box { display:none; }
 
+    .upload-tab {
+      flex:1; background:#0d1117; border:1px solid rgba(96,165,250,.2);
+      border-radius:8px; padding:8px; font-family:'JetBrains Mono',monospace;
+      font-size:11px; color:#64748b; cursor:pointer; transition:all .15s;
+    }
+    .upload-tab.active { border-color:#60a5fa; color:#60a5fa; background:#0f1a2e; }
+
     #cal-bday-dot {
       display:none; width:8px; height:8px;
       background:#f472b6; border-radius:50%; border:1.5px solid var(--bg2);
@@ -577,9 +584,25 @@
     <button class="upload-close" id="upload-close">✕</button>
     <h3>📤 Subir código</h3>
 
-    <div>
-      <label>Archivo</label>
-      <input type="file" id="upload-file" style="
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:4px;">
+      <button class="upload-tab active" id="tab-files" data-tab="files">📄 Archivos</button>
+      <button class="upload-tab" id="tab-folder" data-tab="folder">📁 Carpeta</button>
+    </div>
+
+    <!-- Archivos sueltos -->
+    <div id="upload-panel-files">
+      <label>Selecciona uno o varios archivos</label>
+      <input type="file" id="upload-file" multiple style="
+        width:100%;background:#0d1117;border:1px solid rgba(96,165,250,.2);
+        border-radius:8px;padding:10px 12px;color:#c9d1d9;cursor:pointer;
+        font-family:'JetBrains Mono',monospace;font-size:12px;box-sizing:border-box;">
+    </div>
+
+    <!-- Carpeta completa -->
+    <div id="upload-panel-folder" style="display:none;">
+      <label>Selecciona una carpeta completa</label>
+      <input type="file" id="upload-folder-input" webkitdirectory multiple style="
         width:100%;background:#0d1117;border:1px solid rgba(96,165,250,.2);
         border-radius:8px;padding:10px 12px;color:#c9d1d9;cursor:pointer;
         font-family:'JetBrains Mono',monospace;font-size:12px;box-sizing:border-box;">
@@ -587,14 +610,40 @@
 
     <div>
       <label>Carpeta destino</label>
-      <select id="upload-folder">
-        <option value="">Cargando carpetas…</option>
-      </select>
+      <!-- Mini buscador -->
+      <div class="search-box" style="margin-bottom:6px;">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="upload-folder-search" placeholder="Buscar carpeta…" autocomplete="off" style="font-size:12px;">
+      </div>
+      <!-- Mini árbol de carpetas -->
+      <div id="upload-folder-tree" style="
+        max-height:160px;overflow-y:auto;
+        background:var(--bg);border:1px solid var(--border);border-radius:10px;
+        padding:6px 8px;display:flex;flex-direction:column;gap:3px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Cargando carpetas…</div>
+      </div>
+      <!-- Carpeta seleccionada -->
+      <div id="upload-folder-selected" style="
+        display:none;margin-top:6px;
+        font-family:'JetBrains Mono',monospace;font-size:11px;
+        color:var(--accent);background:rgba(74,222,128,.07);
+        border:1px solid rgba(74,222,128,.25);border-radius:7px;
+        padding:6px 12px;display:none;align-items:center;gap:7px;">
+        <span>📁</span><span id="upload-folder-selected-text"></span>
+        <button id="upload-folder-clear" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;">✕</button>
+      </div>
     </div>
 
-    <div id="upload-rename-box">
-      <label>⚠️ Ya existe un archivo con ese nombre. Escribe un nombre para la nueva subcarpeta:</label>
-      <input type="text" id="upload-subfolder-name" placeholder="Ej: MiNombre">
+    <div id="upload-manual-box" style="display:none;"></div>
+
+    <!-- Preview de archivos a subir -->
+    <div id="upload-preview" style="display:none;">
+      <label>Archivos a subir (<span id="upload-count">0</span>)</label>
+      <div id="upload-preview-list" style="
+        max-height:120px;overflow-y:auto;background:#0d1117;
+        border:1px solid rgba(96,165,250,.15);border-radius:8px;
+        padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;
+        color:#64748b;display:flex;flex-direction:column;gap:3px;"></div>
     </div>
 
     <div id="upload-msg"></div>
@@ -1430,13 +1479,34 @@ async function init(){
 /* ══ Upload modal ══ */
 const BLOCKED_FOLDERS = ['Programacion', 'Entornos', 'Lenguaje de marcas'];
 
+// ── Tab switching ──
+document.querySelectorAll('.upload-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('upload-panel-files').style.display  = tab === 'files'  ? '' : 'none';
+    document.getElementById('upload-panel-folder').style.display = tab === 'folder' ? '' : 'none';
+    clearUploadPreview();
+  });
+});
+
 function openUploadModal(){
-  document.getElementById('upload-msg').textContent='';
-  document.getElementById('upload-msg').className='';
-  document.getElementById('upload-file').value='';
-  document.getElementById('upload-rename-box').style.display='none';
-  document.getElementById('upload-subfolder-name').value='';
-  document.getElementById('upload-submit').disabled=true;
+  document.getElementById('upload-msg').textContent = '';
+  document.getElementById('upload-msg').className   = '';
+  document.getElementById('upload-file').value        = '';
+  document.getElementById('upload-folder-input').value = '';
+  document.getElementById('upload-submit').disabled   = true;
+  document.getElementById('upload-manual-box').style.display = 'none';
+  document.getElementById('upload-folder-selected').style.display = 'none';
+  document.getElementById('upload-folder-selected').dataset.folder = '';
+  document.getElementById('upload-folder-search').value = '';
+  clearUploadPreview();
+  // Reset to files tab
+  document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-files').classList.add('active');
+  document.getElementById('upload-panel-files').style.display  = '';
+  document.getElementById('upload-panel-folder').style.display = 'none';
   document.getElementById('upload-backdrop').classList.add('open');
   populateFolderSelect();
 }
@@ -1445,112 +1515,182 @@ function closeUploadModal(){
   document.getElementById('upload-backdrop').classList.remove('open');
 }
 
+function clearUploadPreview(){
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-preview-list').innerHTML = '';
+  document.getElementById('upload-count').textContent = '0';
+  document.getElementById('upload-submit').disabled = true;
+}
+
 async function populateFolderSelect(){
-  const sel = document.getElementById('upload-folder');
-  sel.innerHTML = '<option value="">Cargando…</option>';
-  // Obtener carpetas únicas de _allArchivos, excluyendo las bloqueadas
-  let folders = [...new Set(_allArchivos.map(f => {
-    // Carpeta raíz es el primer segmento
-    const root = f.carpeta ? f.carpeta.split('/')[0] : '';
-    return f.carpeta || '';
-  }))].filter(f => {
-    if(!f) return false;
+  const tree = document.getElementById('upload-folder-tree');
+  // Get unique folders from _allArchivos, excluding blocked
+  let folders = [...new Set(_allArchivos.map(f => f.carpeta || ''))].filter(f => {
+    if(!f || f === '/') return false;
     const root = f.split('/')[0];
     return !BLOCKED_FOLDERS.includes(root);
   }).sort();
 
-  // Si no hay archivos cargados todavía, poner opción manual
   if(!folders.length){
-    sel.innerHTML = '<option value="__manual__">Escribir ruta manualmente</option>';
+    tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin carpetas disponibles</div>`;
     return;
   }
-  sel.innerHTML = folders.map(f=>`<option value="${f}">${f}</option>`).join('');
-  sel.innerHTML += '<option value="__manual__">✏️ Escribir ruta manualmente…</option>';
+  renderFolderTree(folders, '');
 }
 
-// Cuando cambia el archivo seleccionado
-document.getElementById('upload-file').addEventListener('change', async function(){
-  const file = this.files[0];
-  if(!file) return;
-  document.getElementById('upload-submit').disabled = false;
-  // Comprobar si ya existe en Firebase
-  checkDuplicate(file.name);
-});
+function renderFolderTree(folders, filter){
+  const tree = document.getElementById('upload-folder-tree');
+  const q = normalize(filter);
+  const filtered = q ? folders.filter(f => normalize(f).includes(q)) : folders;
 
-document.getElementById('upload-folder').addEventListener('change', function(){
-  const file = document.getElementById('upload-file').files[0];
-  if(file) checkDuplicate(file.name);
-});
-
-function checkDuplicate(fileName){
-  const folder = document.getElementById('upload-folder').value;
-  if(!folder || folder === '__manual__') return;
-  const exists = _allArchivos.some(f =>
-    normalize(f.name) === normalize(fileName) &&
-    f.carpeta === folder
-  );
-  const renameBox = document.getElementById('upload-rename-box');
-  const msg = document.getElementById('upload-msg');
-  if(exists){
-    renameBox.style.display = 'block';
-    msg.textContent = 'Ya hay un código con ese nombre en esa carpeta.';
-    msg.className = 'warn';
-  } else {
-    renameBox.style.display = 'none';
-    msg.textContent = '';
-    msg.className = '';
+  if(!filtered.length){
+    tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin resultados</div>`;
+    return;
   }
+  tree.innerHTML = '';
+  filtered.forEach(folder => {
+    const parts = folder.split('/');
+    const last  = parts[parts.length - 1];
+    const depth = parts.length - 1;
+    const el = document.createElement('div');
+    el.className = 'tree-leaf';
+    el.style.paddingLeft = (11 + depth * 14) + 'px';
+    el.innerHTML = `<span class="tree-icon" style="font-size:14px">📁</span><span class="leaf-name">${last}</span><span style="font-size:9px;opacity:.35;margin-left:4px;">${depth > 0 ? folder : ''}</span>`;
+    el.addEventListener('click', () => selectUploadFolder(folder));
+    tree.appendChild(el);
+  });
 }
 
-document.getElementById('upload-submit').addEventListener('click', async ()=>{
-  const fileInput = document.getElementById('upload-file');
-  const file = fileInput.files[0];
-  if(!file){ setUploadMsg('Selecciona un archivo primero.','err'); return; }
+function selectUploadFolder(folder){
+  const sel = document.getElementById('upload-folder-selected');
+  document.getElementById('upload-folder-selected-text').textContent = folder;
+  sel.style.display = 'flex';
+  // store on element for retrieval
+  sel.dataset.folder = folder;
+  // clear search
+  document.getElementById('upload-folder-search').value = '';
+}
 
-  let folder = document.getElementById('upload-folder').value;
-  if(!folder){ setUploadMsg('Selecciona una carpeta destino.','err'); return; }
-  if(folder === '__manual__'){
-    folder = prompt('Escribe la ruta de la carpeta (ej: MisCodigos/Java):','');
-    if(!folder) return;
-    const root = folder.split('/')[0];
-    if(BLOCKED_FOLDERS.includes(root)){
-      setUploadMsg(`La carpeta "${root}" no está permitida.`,'err'); return;
-    }
-  }
+document.getElementById('upload-folder-clear').addEventListener('click', () => {
+  const sel = document.getElementById('upload-folder-selected');
+  sel.style.display = 'none';
+  sel.dataset.folder = '';
+});
 
-  // ¿Hay duplicado? Si hay caja de renombre visible, usar subcarpeta
-  const renameBox = document.getElementById('upload-rename-box');
-  if(renameBox.style.display !== 'none'){
-    const subName = document.getElementById('upload-subfolder-name').value.trim();
-    if(!subName){ setUploadMsg('Escribe un nombre para la subcarpeta.','warn'); return; }
-    folder = folder + '/' + subName;
+let _folderSearchTimer = null;
+document.getElementById('upload-folder-search').addEventListener('input', function(){
+  clearTimeout(_folderSearchTimer);
+  const q = this.value;
+  _folderSearchTimer = setTimeout(() => {
+    const folders = [...new Set(_allArchivos.map(f => f.carpeta||''))].filter(f => {
+      if(!f||f==='/') return false;
+      return !BLOCKED_FOLDERS.includes(f.split('/')[0]);
+    }).sort();
+    renderFolderTree(folders, q);
+  }, 150);
+});
+
+document.getElementById('upload-folder-sel')?.addEventListener('change', function(){});
+
+// Collect files from either input into a unified list
+function getSelectedFiles(){
+  const tab = document.querySelector('.upload-tab.active').dataset.tab;
+  const input = tab === 'folder'
+    ? document.getElementById('upload-folder-input')
+    : document.getElementById('upload-file');
+  return Array.from(input.files || []);
+}
+
+function showPreview(files){
+  const list = document.getElementById('upload-preview-list');
+  list.innerHTML = '';
+  files.forEach(f => {
+    const ext = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
+    const icons = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',kt:'🟣'};
+    const icon = icons[ext] || '📄';
+    const rel = f.webkitRelativePath ? f.webkitRelativePath.split('/').slice(1).join('/') || f.name : f.name;
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:2px 0;';
+    d.innerHTML = `<span>${icon}</span><span style="color:#c9d1d9">${rel}</span>`;
+    list.appendChild(d);
+  });
+  document.getElementById('upload-count').textContent = files.length;
+  document.getElementById('upload-preview').style.display = '';
+  document.getElementById('upload-submit').disabled = files.length === 0;
+}
+
+document.getElementById('upload-file').addEventListener('change', function(){
+  const files = Array.from(this.files);
+  if(files.length) showPreview(files);
+  else clearUploadPreview();
+});
+
+document.getElementById('upload-folder-input').addEventListener('change', function(){
+  const files = Array.from(this.files);
+  if(files.length) showPreview(files);
+  else clearUploadPreview();
+});
+
+document.getElementById('upload-submit').addEventListener('click', async () => {
+  const files = getSelectedFiles();
+  if(!files.length){ setUploadMsg('Selecciona archivos primero.', 'err'); return; }
+
+  let baseFolder = (document.getElementById('upload-folder-selected').dataset.folder || '').trim().replace(/^\/+|\/+$/g, '');
+  if(baseFolder){
+    const root = baseFolder.split('/')[0];
+    if(BLOCKED_FOLDERS.includes(root)){ setUploadMsg(`La carpeta "${root}" no está permitida.`, 'err'); return; }
   }
 
   const btn = document.getElementById('upload-submit');
-  btn.disabled = true; btn.textContent = 'Subiendo…';
+  btn.disabled = true;
+  let done = 0, errors = 0;
 
-  try{
-    const content = await file.text();
-    const id = 'upload_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const fileDoc = {
-      id,
-      name:         file.name,
-      path:         'GitTodo/' + folder + '/' + file.name,
-      carpeta:      folder,
-      lang:         getLang(file.name),
-      download_url: '',
-      html_url:     '',
-      content:      content.slice(0, 50000),
-      updatedAt:    Date.now()
-    };
-    await saveCodigoFile(fileDoc);
-    _allArchivos.push(fileDoc);
-    setUploadMsg(`✅ "${file.name}" subido a "${folder}" correctamente.`,'ok');
-    setTimeout(closeUploadModal, 1800);
-  } catch(e){
-    setUploadMsg('Error al subir: ' + e.message,'err');
+  for(const file of files){
+    try{
+      // Para carpetas: webkitRelativePath = "CarpetaRaiz/sub/archivo.java"
+      // Quitamos el primer segmento (nombre de la carpeta raíz seleccionada) y usamos el resto
+      let relPath = file.webkitRelativePath || file.name;
+      const parts = relPath.split('/');
+      // Si viene de carpeta, quitar el primer segmento (nombre carpeta local)
+      const fileParts = parts.length > 1 ? parts.slice(1) : parts;
+      const fileName  = fileParts[fileParts.length - 1];
+      const subPath   = fileParts.slice(0, -1).join('/'); // subdirectorios dentro de la carpeta
+
+      let carpeta = baseFolder || '';
+      if(subPath) carpeta = carpeta ? carpeta + '/' + subPath : subPath;
+      if(!carpeta) carpeta = '/';
+
+      const content = await file.text().catch(() => '');
+      const ext  = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
+      const lang = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':'other';
+      const id   = 'upload_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+
+      const fileDoc = {
+        id, name: fileName,
+        path: 'GitTodo/' + (carpeta !== '/' ? carpeta + '/' : '') + fileName,
+        carpeta, lang,
+        download_url: '', html_url: '',
+        content: content.slice(0, 50000),
+        updatedAt: Date.now()
+      };
+      await saveCodigoFile(fileDoc);
+      _allArchivos.push(fileDoc);
+      done++;
+      btn.textContent = `Subiendo… ${done}/${files.length}`;
+    } catch(e){
+      errors++;
+      console.error('Error subiendo', file.name, e);
+    }
   }
-  btn.disabled = false; btn.textContent = 'Subir a Firebase';
+
+  btn.disabled = false;
+  btn.textContent = 'Subir a Firebase';
+  if(errors === 0){
+    setUploadMsg(`✅ ${done} archivo${done!==1?'s':''} subido${done!==1?'s':''} correctamente.`, 'ok');
+    setTimeout(closeUploadModal, 1800);
+  } else {
+    setUploadMsg(`✅ ${done} subidos, ⚠️ ${errors} con error.`, 'warn');
+  }
 });
 
 function setUploadMsg(txt, cls){
