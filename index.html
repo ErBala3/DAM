@@ -344,7 +344,8 @@
 
     #cal-modal {
       background:#f5f0e8; border-radius:20px;
-      width:100%; max-width:1080px; max-height:92vh;
+      width:100%; max-width:1120px;
+      height:96vh; max-height:820px;
       display:flex; flex-direction:column;
       box-shadow:0 40px 100px rgba(0,0,0,.65);
       animation:calIn .3s cubic-bezier(.34,1.2,.64,1);
@@ -360,28 +361,42 @@
     #cal-modal-close { background:none;border:none;color:#f5f0e8;cursor:pointer;font-size:20px;opacity:.55;transition:opacity .15s,transform .15s;padding:4px 8px;border-radius:6px; }
     #cal-modal-close:hover{opacity:1;transform:rotate(90deg);}
 
-    #cal-modal-body { overflow-y:auto; flex:1; }
+    .cal-add-type-btn {
+      width:36px;height:36px;border-radius:8px;border:1.5px solid #e8e1d4;
+      background:#fafafa;cursor:pointer;font-size:18px;
+      display:flex;align-items:center;justify-content:center;
+      transition:border-color .15s,background .15s,transform .12s;
+    }
+    .cal-add-type-btn:hover { border-color:#888;background:#f5f0e8;transform:scale(1.08); }
+    .cal-add-type-btn.sel-bday  { border-color:#4a7fa5!important;background:#dbeaf4!important; }
+    .cal-add-type-btn.sel-exam  { border-color:#a855f7!important;background:#fde8ff!important; }
+    .cal-add-type-btn.sel-hol   { border-color:#c9a84c!important;background:#fef4d0!important; }
+    .cal-add-type-btn.sel-evento{ border-color:#22c55e!important;background:#dcfce7!important; }
+    #cal-add-submit:hover:not(:disabled){background:#b5432a;transform:scale(1.03);}
+    #cal-add-submit:disabled{opacity:.35;cursor:not-allowed;}
+
+    #cal-modal-body { overflow:hidden; flex:1; display:flex; flex-direction:column; }
 
     /* ── calendar internals ── */
-    .cal-wrap { padding:20px 18px 28px; font-family:'DM Sans',sans-serif; color:#1a1612; }
+    .cal-wrap { padding:10px 14px 12px; font-family:'DM Sans',sans-serif; color:#1a1612; flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
-    .cal-top { display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px; }
-    .cal-year-title { font-family:'Playfair Display',serif;font-size:28px;font-weight:900;letter-spacing:-1px;color:#1a1612; }
+    .cal-top { display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;flex-shrink:0; }
+    .cal-year-title { font-family:'Playfair Display',serif;font-size:22px;font-weight:900;letter-spacing:-1px;color:#1a1612; }
     .cal-nav { background:#1a1612;color:#f5f0e8;border:none;border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;flex-shrink:0; }
     .cal-nav:hover{background:#b5432a;transform:scale(1.1);}
 
-    .cal-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
-    @media(max-width:860px){.cal-grid{grid-template-columns:repeat(3,1fr);}}
-    @media(max-width:560px){.cal-grid{grid-template-columns:repeat(2,1fr);}}
+    .cal-grid { display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:8px;flex:1;overflow:hidden; }
+    @media(max-width:860px){.cal-grid{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);}}
+    @media(max-width:560px){.cal-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(6,1fr);}}
 
-    .cal-month { background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 2px 10px rgba(26,22,18,.07); }
-    .cal-month-name { background:#1a1612;color:#f5f0e8;font-family:'Playfair Display',serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:8px 4px; }
+    .cal-month { background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 2px 10px rgba(26,22,18,.07);display:flex;flex-direction:column; }
+    .cal-month-name { background:#1a1612;color:#f5f0e8;font-family:'Playfair Display',serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:5px 4px;flex-shrink:0; }
     .cal-day-labels { display:grid;grid-template-columns:repeat(7,1fr);background:#ede5d4; }
     .cal-day-lbl { text-align:center;font-size:8px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;padding:4px 0;opacity:.55; }
     .cal-day-lbl.s{color:#b5432a;opacity:.8;}
 
-    .cal-days { display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:3px; }
-    .cal-cell { aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;position:relative;min-height:22px;transition:transform .12s,box-shadow .12s; }
+    .cal-days { display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:2px;flex:1; }
+    .cal-cell { border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;position:relative;transition:transform .12s,box-shadow .12s; }
     .cal-cell.empty{pointer-events:none;}
     .cal-cell.sat{background:#f0ece3;}
     .cal-cell.sun{background:#fae8e5;}
@@ -504,6 +519,19 @@
     .cal-cell.has-exam .cn{color:#a855f7;font-weight:600;}
     .cal-cell.has-custom-hol .cn{color:#e07b39;font-weight:600;}
     .cal-cell.has-custom-bday .cn{color:#4a7fa5;font-weight:600;}
+    .cal-cell.has-evento{background:#d1fae5;}
+    .cal-cell.has-evento .cn{color:#065f46;font-weight:600;}
+    .ev-type-btn.sel-evento{border-color:#22c55e!important;background:#dcfce7!important;}
+    .ev-evento{background:#dcfce7;border-left:3px solid #22c55e;}
+    /* multi-day date picker in add form */
+    #evento-dates-wrap{margin-bottom:14px;display:none;}
+    #evento-dates-wrap label{display:block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:6px;}
+    .evento-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;}
+    .evento-day-hdr{font-size:8px;text-align:center;color:#64748b;font-weight:600;padding:2px 0;}
+    .evento-day-cell{font-size:10px;text-align:center;padding:4px 2px;border-radius:5px;cursor:pointer;border:1.5px solid transparent;transition:all .12s;color:#1a1612;}
+    .evento-day-cell:hover{background:#f0fdf4;border-color:#86efac;}
+    .evento-day-cell.sel{background:#22c55e;color:#fff;border-color:#16a34a;}
+    .evento-day-cell.empty{pointer-events:none;opacity:0;}
   </style>
 </head>
 <body>
@@ -551,13 +579,102 @@
   </div>
 </div>
 
+<!-- ══ EVENTO WIDGET ══ -->
+<div id="evento-widget">
+  <div class="event-card" style="border-color:rgba(34,197,94,.4);box-shadow:0 0 22px rgba(34,197,94,.1),0 8px 28px rgba(0,0,0,.4);">
+    <button class="bday-x" id="evento-close">✕</button>
+    <div class="event-lbl" style="color:#22c55e;">Evento hoy</div>
+    <span class="bday-emoji">🟢</span>
+    <div class="bday-sub">¡Que vaya bien!</div>
+    <div class="bday-name-text" id="evento-name-text"></div>
+  </div>
+</div>
+
 <!-- ══ CALENDAR POPUP ══ -->
 <div id="cal-backdrop">
   <div id="cal-modal">
     <div id="cal-modal-header">
       <span>📅 Calendario</span>
+      <button id="cal-add-toggle" title="Añadir evento" style="
+        background:rgba(245,240,232,.12);border:1px solid rgba(245,240,232,.25);
+        border-radius:8px;color:#f5f0e8;cursor:pointer;
+        font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+        padding:6px 14px;transition:all .15s;margin-left:auto;margin-right:10px;">
+        ＋ Añadir
+      </button>
       <button id="cal-modal-close">✕</button>
     </div>
+
+    <!-- ══ Add event panel (collapsible, inside calendar) ══ -->
+    <div id="cal-add-panel" style="
+      display:none;background:#fff8f0;border-bottom:1px solid #e8e1d4;
+      padding:14px 20px;flex-shrink:0;">
+      <div style="display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+
+        <!-- Type selector -->
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:7px;">Tipo</div>
+          <div style="display:flex;gap:6px;">
+            <button class="cal-add-type-btn" data-type="bday" title="Cumpleaños">🎂</button>
+            <button class="cal-add-type-btn" data-type="exam" title="Examen">📝</button>
+            <button class="cal-add-type-btn" data-type="hol"  title="Festivo">🎉</button>
+            <button class="cal-add-type-btn" data-type="evento" title="Evento">🟢</button>
+          </div>
+        </div>
+
+        <!-- Name input -->
+        <div style="flex:1;min-width:140px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:7px;" id="cal-add-name-lbl">Nombre</div>
+          <input type="text" id="cal-add-name" maxlength="60" placeholder="Ej: Física, Ana…" style="
+            width:100%;border:1.5px solid #e8e1d4;border-radius:8px;
+            padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:13px;
+            color:#1a1612;background:#fafafa;outline:none;transition:border-color .15s;box-sizing:border-box;">
+        </div>
+
+        <!-- Month + Day selector -->
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:7px;">Mes / Día</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="cal-add-month" style="
+              background:#fafafa;border:1.5px solid #e8e1d4;border-radius:8px;
+              padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;
+              color:#1a1612;outline:none;cursor:pointer;">
+            </select>
+            <select id="cal-add-day" style="
+              background:#fafafa;border:1.5px solid #e8e1d4;border-radius:8px;
+              padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;
+              color:#1a1612;outline:none;cursor:pointer;width:60px;">
+            </select>
+          </div>
+          <!-- Multi-day hint for evento -->
+          <div id="cal-add-evento-hint" style="display:none;font-size:9px;opacity:.5;margin-top:4px;font-family:'JetBrains Mono',monospace;">
+            Para varios días, usa el popup del día
+          </div>
+        </div>
+
+        <!-- Year (only for exam) -->
+        <div id="cal-add-year-wrap" style="display:none;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:7px;">Año</div>
+          <select id="cal-add-year" style="
+            background:#fafafa;border:1.5px solid #e8e1d4;border-radius:8px;
+            padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;
+            color:#1a1612;outline:none;cursor:pointer;">
+          </select>
+        </div>
+
+        <!-- Submit -->
+        <div style="display:flex;align-items:flex-end;padding-bottom:1px;">
+          <button id="cal-add-submit" disabled style="
+            background:#1a1612;color:#f5f0e8;border:none;border-radius:9px;
+            padding:8px 20px;font-family:'JetBrains Mono',monospace;
+            font-size:11px;font-weight:700;letter-spacing:.08em;
+            cursor:pointer;transition:background .15s,transform .12s;white-space:nowrap;">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="cal-modal-body">
       <div class="cal-wrap">
         <div class="cal-top">
@@ -666,7 +783,7 @@
     <button id="add-ev-close">✕</button>
     <div id="add-ev-title">Nuevo evento</div>
     <div id="add-ev-subtitle" id="add-ev-subtitle-date"></div>
-    <div class="ev-type-grid">
+    <div class="ev-type-grid" style="grid-template-columns:repeat(4,1fr);">
       <button class="ev-type-btn" data-type="bday">
         <span class="ev-type-icon">🎂</span>
         <span class="ev-type-label">Cumple&shy;años</span>
@@ -679,6 +796,22 @@
         <span class="ev-type-icon">🎉</span>
         <span class="ev-type-label">Festivo</span>
       </button>
+      <button class="ev-type-btn" data-type="evento">
+        <span class="ev-type-icon">🟢</span>
+        <span class="ev-type-label">Evento</span>
+      </button>
+    </div>
+    <!-- Multi-day picker (only for evento) -->
+    <div id="evento-dates-wrap">
+      <label>Días del evento (selecciona varios)</label>
+      <div class="evento-day-grid" id="evento-day-hdrs">
+        <div class="evento-day-hdr">L</div><div class="evento-day-hdr">M</div>
+        <div class="evento-day-hdr">X</div><div class="evento-day-hdr">J</div>
+        <div class="evento-day-hdr">V</div><div class="evento-day-hdr">S</div>
+        <div class="evento-day-hdr">D</div>
+      </div>
+      <div class="evento-day-grid" id="evento-day-grid"></div>
+      <div style="font-size:9px;opacity:.45;margin-top:3px;" id="evento-sel-summary">Sin días seleccionados</div>
     </div>
     <div class="ev-input-wrap">
       <label id="add-ev-input-label">Nombre / descripción</label>
@@ -851,7 +984,7 @@ const _fbApp = initializeApp(firebaseConfig);
 const _db    = getFirestore(_fbApp);
 
 // Mapa type → colección Firestore
-const TYPE_COL = { bday: 'Cumpleaños', hol: 'Eventos', exam: 'Examenes' };
+const TYPE_COL = { bday: 'Cumpleaños', hol: 'Eventos', exam: 'Examenes', evento: 'EventosPersonales' };
 const DOC_PATH  = 'Calendario/Calendarios';  // ruta del documento padre
 
 /* ══ Presencia en tiempo real (Firestore) ══ */
@@ -976,17 +1109,17 @@ async function appInit(){
 
   // Birthday widget
   const now=new Date(), tm=now.getMonth()+1, td=now.getDate();
-  const todayBdays=_allEvents.filter(e=>e.type==='bday'&&e.month===tm&&e.day===td).map(e=>e.label);
-  const todayExams=_allEvents.filter(e=>e.type==='exam'&&e.month===tm&&e.day===td&&e.year===now.getFullYear()).map(e=>e.label);
-  const todayHols =_allEvents.filter(e=>e.type==='hol' &&e.month===tm&&e.day===td).map(e=>e.label);
+  const todayBdays   =_allEvents.filter(e=>e.type==='bday'  &&e.month===tm&&e.day===td).map(e=>e.label);
+  const todayExams   =_allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===now.getFullYear()).map(e=>e.label);
+  const todayHols    =_allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label);
+  const todayEventos =_allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td).map(e=>e.label);
 
-  // Stack widgets: bday at bottom (76px), exam above, event above that
+  const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+
   let stackBottom = 76;
 
   if(todayBdays.length){
-    const ns=todayBdays;
-    document.getElementById('bday-name-text').textContent=
-      ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+    document.getElementById('bday-name-text').textContent=joinNames(todayBdays);
     const w=document.getElementById('bday-widget');
     w.style.bottom=stackBottom+'px';
     setTimeout(()=>{ w.style.display='block'; },900);
@@ -994,26 +1127,30 @@ async function appInit(){
     stackBottom += 130;
   }
   if(todayExams.length){
-    const ns=todayExams;
-    document.getElementById('exam-name-text').textContent=
-      ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+    document.getElementById('exam-name-text').textContent=joinNames(todayExams);
     const w=document.getElementById('exam-widget');
     w.style.bottom=stackBottom+'px';
     setTimeout(()=>{ w.style.display='block'; },1100);
     stackBottom += 130;
   }
   if(todayHols.length){
-    const ns=todayHols;
-    document.getElementById('event-name-text').textContent=
-      ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
+    document.getElementById('event-name-text').textContent=joinNames(todayHols);
     const w=document.getElementById('event-widget');
     w.style.bottom=stackBottom+'px';
     setTimeout(()=>{ w.style.display='block'; },1300);
+    stackBottom += 130;
+  }
+  if(todayEventos.length){
+    document.getElementById('evento-name-text').textContent=joinNames(todayEventos);
+    const w=document.getElementById('evento-widget');
+    w.style.bottom=stackBottom+'px';
+    setTimeout(()=>{ w.style.display='block'; },1500);
   }
 
   document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';};
   document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';};
   document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';};
+  document.getElementById('evento-close').onclick=()=>{document.getElementById('evento-widget').style.display='none';};
 
   buildCalendar(calYear);
 }
@@ -1059,16 +1196,18 @@ function buildCalendar(year){
     for(let d=1;d<=dim;d++){
       const jd=new Date(year,m-1,d).getDay();
       const dayEvs=getEventsForDay(_allEvents,m,d,year);
-      const hasExam =dayEvs.some(e=>e.type==='exam');
-      const hasBday =dayEvs.some(e=>e.type==='bday');
-      const hasHol  =dayEvs.some(e=>e.type==='hol');
+      const hasExam   =dayEvs.some(e=>e.type==='exam');
+      const hasBday   =dayEvs.some(e=>e.type==='bday');
+      const hasHol    =dayEvs.some(e=>e.type==='hol');
+      const hasEvento =dayEvs.some(e=>e.type==='evento');
       const isToday =d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
       const cell=document.createElement('div');
       let cls='cal-cell clickable';
       if(jd===0)cls+=' sun'; else if(jd===6)cls+=' sat';
-      if(hasHol) cls+=' hol';
-      if(hasBday)cls+=' bday';
-      if(hasExam)cls+=' has-exam';
+      if(hasHol)    cls+=' hol';
+      if(hasBday)   cls+=' bday';
+      if(hasExam)   cls+=' has-exam';
+      if(hasEvento) cls+=' has-evento';
       if(isToday)cls+=' today';
       cell.className=cls;
       const cn=document.createElement('span');cn.className='cn';cn.textContent=d;cell.appendChild(cn);
@@ -1078,6 +1217,8 @@ function buildCalendar(year){
         const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);
       } else if(hasHol){
         const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);
+      } else if(hasEvento){
+        const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#22c55e';cell.appendChild(ci);
       }
       cell.addEventListener('click',()=>openEvPopup(year,m,d,dayEvs));
       dg.appendChild(cell);
@@ -1108,10 +1249,10 @@ function renderEvPopupEvents(dayEvs){
   }
 
   dayEvs.forEach(e=>{
-    const typeClass=e.type==='exam'?'ev-exam':e.type==='hol'?'ev-hol':'ev-bday';
-    const icon=e.type==='exam'?'📝':e.type==='hol'?'🗓️':'🎂';
-    const typeLabel=e.type==='exam'?'Examen':e.type==='hol'?'Festivo':'Cumpleaños';
-    const labelText=e.type==='bday'?`<strong>${e.label}</strong>`:e.type==='exam'?`<strong>Examen:</strong> ${e.label}`:`${e.label}`;
+    const typeClass=e.type==='exam'?'ev-exam':e.type==='hol'?'ev-hol':e.type==='evento'?'ev-evento':'ev-bday';
+    const icon=e.type==='exam'?'📝':e.type==='hol'?'🗓️':e.type==='evento'?'🟢':'🎂';
+    const typeLabel=e.type==='exam'?'Examen':e.type==='hol'?'Festivo':e.type==='evento'?'Evento':'Cumpleaños';
+    const labelText=e.type==='bday'?`<strong>${e.label}</strong>`:e.type==='exam'?`<strong>Examen:</strong> ${e.label}`:e.type==='evento'?`<strong>Evento:</strong> ${e.label}`:`${e.label}`;
     const d=document.createElement('div');d.className=`ev-item ${typeClass}`;
     d.innerHTML=`<span class="ev-icon">${icon}</span><span>${labelText}</span>`;
     const del=document.createElement('button');del.className='ev-del';del.title='Eliminar';del.textContent='🗑';
@@ -1140,29 +1281,69 @@ document.getElementById('ev-add-btn').addEventListener('click',()=>{
 /* ══ Add event form ══ */
 let _addCtx={year:0,month:0,day:0};
 let _selType=null;
+let _eventoDays=new Set(); // selected days for evento
 
 function openAddForm(year,month,day){
   _addCtx={year,month,day};
   _selType=null;
+  _eventoDays=new Set([day]); // pre-select the clicked day
   document.getElementById('add-ev-subtitle').textContent=`${day} de ${MONTHS[month-1]} de ${year}`;
   document.getElementById('add-ev-input').value='';
   document.getElementById('add-ev-input-label').textContent='Nombre / descripción';
   document.getElementById('add-ev-input').placeholder='Ej: Física, Navidad…';
   document.getElementById('add-ev-submit').disabled=true;
-  document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol'));
+  document.getElementById('evento-dates-wrap').style.display='none';
+  document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
   document.getElementById('add-ev-overlay').classList.add('open');
+}
+
+function buildEventoDayGrid(year, month){
+  const grid = document.getElementById('evento-day-grid');
+  grid.innerHTML = '';
+  const dim = new Date(year, month, 0).getDate();
+  const fd  = new Date(year, month-1, 1).getDay();
+  const off = fd===0?6:fd-1; // Monday-first offset
+  for(let i=0;i<off;i++){
+    const el=document.createElement('div');el.className='evento-day-cell empty';el.textContent='';grid.appendChild(el);
+  }
+  for(let d=1;d<=dim;d++){
+    const el=document.createElement('div');
+    el.className='evento-day-cell'+((_eventoDays.has(d))?' sel':'');
+    el.textContent=d;
+    el.addEventListener('click',()=>{
+      if(_eventoDays.has(d)) _eventoDays.delete(d); else _eventoDays.add(d);
+      el.classList.toggle('sel');
+      updateEventoSummary();
+      checkSubmit();
+    });
+    grid.appendChild(el);
+  }
+  updateEventoSummary();
+}
+
+function updateEventoSummary(){
+  const days=[..._eventoDays].sort((a,b)=>a-b);
+  document.getElementById('evento-sel-summary').textContent=
+    days.length===0?'Sin días seleccionados':
+    `${days.length} día${days.length!==1?'s':''} seleccionado${days.length!==1?'s':''}: ${days.join(', ')}`;
 }
 
 document.querySelectorAll('.ev-type-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     _selType=btn.dataset.type;
-    document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol'));
+    document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
     btn.classList.add(`sel-${_selType}`);
-    // update label hint
-    const labels={bday:'Nombre de la persona',exam:'Nombre del examen / asignatura',hol:'Nombre del festivo'};
-    const placeholders={bday:'Ej: Ana García',exam:'Ej: Matemáticas',hol:'Ej: Día del pueblo'};
+    const labels={bday:'Nombre de la persona',exam:'Nombre del examen / asignatura',hol:'Nombre del festivo',evento:'Nombre del evento'};
+    const placeholders={bday:'Ej: Ana García',exam:'Ej: Matemáticas',hol:'Ej: Día del pueblo',evento:'Ej: Viaje a Madrid'};
     document.getElementById('add-ev-input-label').textContent=labels[_selType];
     document.getElementById('add-ev-input').placeholder=placeholders[_selType];
+    const evWrap=document.getElementById('evento-dates-wrap');
+    if(_selType==='evento'){
+      evWrap.style.display='block';
+      buildEventoDayGrid(_addCtx.year,_addCtx.month);
+    } else {
+      evWrap.style.display='none';
+    }
     checkSubmit();
   });
 });
@@ -1172,7 +1353,8 @@ document.getElementById('add-ev-input').addEventListener('input',checkSubmit);
 function checkSubmit(){
   const hasType=!!_selType;
   const hasText=document.getElementById('add-ev-input').value.trim().length>0;
-  document.getElementById('add-ev-submit').disabled=!(hasType&&hasText);
+  const hasEventoDays=_selType==='evento'?_eventoDays.size>0:true;
+  document.getElementById('add-ev-submit').disabled=!(hasType&&hasText&&hasEventoDays);
 }
 
 document.getElementById('add-ev-submit').addEventListener('click', async ()=>{
@@ -1180,15 +1362,28 @@ document.getElementById('add-ev-submit').addEventListener('click', async ()=>{
   if(!label||!_selType) return;
   const btn=document.getElementById('add-ev-submit');
   btn.textContent='Guardando…'; btn.disabled=true;
-  const ev={
-    id: Date.now()+Math.random().toString(36).slice(2),
-    type: _selType,
-    label,
-    month: _addCtx.month,
-    day:   _addCtx.day,
-    year:  _selType==='exam' ? _addCtx.year : null,
-  };
-  await saveNewEvent(ev);
+
+  if(_selType==='evento'){
+    // Save one event per selected day
+    const days=[..._eventoDays].sort((a,b)=>a-b);
+    for(const d of days){
+      const ev={
+        id: Date.now()+Math.random().toString(36).slice(2),
+        type:'evento', label,
+        month:_addCtx.month, day:d, year:_addCtx.year
+      };
+      await saveNewEvent(ev);
+    }
+  } else {
+    const ev={
+      id: Date.now()+Math.random().toString(36).slice(2),
+      type: _selType, label,
+      month: _addCtx.month, day: _addCtx.day,
+      year:  _selType==='exam' ? _addCtx.year : null,
+    };
+    await saveNewEvent(ev);
+  }
+
   _allEvents = await loadEvents();
   document.getElementById('add-ev-overlay').classList.remove('open');
   buildCalendar(calYear);
@@ -1217,6 +1412,102 @@ document.getElementById('cal-modal-close').onclick=closeCalModal;
 document.getElementById('cal-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('cal-backdrop'))closeCalModal();});
 document.getElementById('cal-prev').onclick=()=>{calYear--;buildCalendar(calYear);};
 document.getElementById('cal-next').onclick=()=>{calYear++;buildCalendar(calYear);};
+
+/* ══ Calendar add-event panel ══ */
+const MONTHS_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+let _calAddType = null;
+
+// Populate month select
+(()=>{
+  const sel = document.getElementById('cal-add-month');
+  MONTHS_SHORT.forEach((m,i) => {
+    const o = document.createElement('option');
+    o.value = i+1; o.textContent = m; sel.appendChild(o);
+  });
+  sel.value = new Date().getMonth()+1;
+  populateCalAddDays();
+})();
+
+// Populate year select for exam
+(()=>{
+  const sel = document.getElementById('cal-add-year');
+  const y = new Date().getFullYear();
+  for(let i=y;i<=y+3;i++){
+    const o = document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o);
+  }
+})();
+
+function populateCalAddDays(){
+  const month = +document.getElementById('cal-add-month').value;
+  const year  = +document.getElementById('cal-add-year').value || new Date().getFullYear();
+  const dim   = new Date(year, month, 0).getDate();
+  const sel   = document.getElementById('cal-add-day');
+  const prev  = +sel.value;
+  sel.innerHTML = '';
+  for(let d=1;d<=dim;d++){
+    const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);
+  }
+  sel.value = prev <= dim ? prev : 1;
+}
+
+document.getElementById('cal-add-month').addEventListener('change', populateCalAddDays);
+document.getElementById('cal-add-year').addEventListener('change', populateCalAddDays);
+
+document.getElementById('cal-add-toggle').addEventListener('click', ()=>{
+  const panel = document.getElementById('cal-add-panel');
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  document.getElementById('cal-add-toggle').style.background =
+    open ? 'rgba(245,240,232,.12)' : 'rgba(181,67,42,.5)';
+});
+
+document.querySelectorAll('.cal-add-type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    _calAddType = btn.dataset.type;
+    document.querySelectorAll('.cal-add-type-btn').forEach(b =>
+      b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
+    btn.classList.add('sel-'+_calAddType);
+    const lbl={bday:'Nombre de la persona',exam:'Asignatura / examen',hol:'Nombre del festivo',evento:'Nombre del evento'};
+    document.getElementById('cal-add-name-lbl').textContent = lbl[_calAddType];
+    document.getElementById('cal-add-year-wrap').style.display = _calAddType==='exam' ? '' : 'none';
+    document.getElementById('cal-add-evento-hint').style.display = _calAddType==='evento' ? '' : 'none';
+    checkCalAddSubmit();
+  });
+});
+
+document.getElementById('cal-add-name').addEventListener('input', checkCalAddSubmit);
+
+function checkCalAddSubmit(){
+  const ok = !!_calAddType && document.getElementById('cal-add-name').value.trim().length > 0;
+  document.getElementById('cal-add-submit').disabled = !ok;
+}
+
+document.getElementById('cal-add-submit').addEventListener('click', async () => {
+  const label = document.getElementById('cal-add-name').value.trim();
+  if(!label || !_calAddType) return;
+  const month = +document.getElementById('cal-add-month').value;
+  const day   = +document.getElementById('cal-add-day').value;
+  const year  = +document.getElementById('cal-add-year').value || new Date().getFullYear();
+  const btn   = document.getElementById('cal-add-submit');
+  btn.textContent = 'Guardando…'; btn.disabled = true;
+
+  const ev = {
+    id: Date.now()+Math.random().toString(36).slice(2),
+    type: _calAddType, label, month, day,
+    year: (_calAddType==='exam'||_calAddType==='evento') ? year : null,
+  };
+  await saveNewEvent(ev);
+  _allEvents = await loadEvents();
+  buildCalendar(calYear);
+
+  // Reset form
+  document.getElementById('cal-add-name').value = '';
+  _calAddType = null;
+  document.querySelectorAll('.cal-add-type-btn').forEach(b =>
+    b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
+  btn.textContent = '✅ Guardado';
+  setTimeout(()=>{ btn.textContent='Guardar'; checkCalAddSubmit(); }, 1500);
+});
 
 /* ══ Firebase Códigos ══
    Colección plana: Codigo/Codigos/Archivos
@@ -1524,30 +1815,57 @@ function clearUploadPreview(){
 
 async function populateFolderSelect(){
   const tree = document.getElementById('upload-folder-tree');
-  // Get unique folders from _allArchivos, excluding blocked
-  let folders = [...new Set(_allArchivos.map(f => f.carpeta || ''))].filter(f => {
-    if(!f || f === '/') return false;
-    const root = f.split('/')[0];
-    return !BLOCKED_FOLDERS.includes(root);
-  }).sort();
-
-  if(!folders.length){
+  const allFolders = [...new Set(_allArchivos.map(f => f.carpeta || ''))].filter(f => f && f !== '/').sort();
+  if(!allFolders.length){
     tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin carpetas disponibles</div>`;
     return;
   }
-  renderFolderTree(folders, '');
+  renderFolderTree(allFolders, '');
 }
 
-function renderFolderTree(folders, filter){
+function renderFolderTree(allFolders, filter){
   const tree = document.getElementById('upload-folder-tree');
   const q = normalize(filter);
-  const filtered = q ? folders.filter(f => normalize(f).includes(q)) : folders;
 
-  if(!filtered.length){
-    tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin resultados</div>`;
+  // Separate blocked (shown as headers) and selectable
+  const blocked = BLOCKED_FOLDERS;
+  const selectable = allFolders.filter(f => !blocked.includes(f.split('/')[0]));
+  const filtered = q ? selectable.filter(f => normalize(f).includes(q)) : selectable;
+
+  tree.innerHTML = '';
+
+  if(!q){
+    // Show blocked folders as non-clickable section headers
+    blocked.forEach(bf => {
+      const exists = allFolders.some(f => f.split('/')[0] === bf);
+      if(!exists) return;
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 11px;opacity:.4;cursor:not-allowed;';
+      hdr.innerHTML = `<span style="font-size:14px">📁</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--muted);">${bf}</span><span style="font-size:9px;margin-left:auto;color:var(--muted);">bloqueada</span>`;
+      tree.appendChild(hdr);
+    });
+    if(selectable.length && blocked.some(bf => allFolders.some(f => f.split('/')[0] === bf))){
+      const sep = document.createElement('div');
+      sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;';
+      tree.appendChild(sep);
+    }
+  }
+
+  if(!filtered.length && !q){
+    const el = document.createElement('div');
+    el.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;";
+    el.textContent = 'Sin carpetas seleccionables';
+    tree.appendChild(el);
     return;
   }
-  tree.innerHTML = '';
+  if(!filtered.length){
+    const el = document.createElement('div');
+    el.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;";
+    el.textContent = 'Sin resultados';
+    tree.appendChild(el);
+    return;
+  }
+
   filtered.forEach(folder => {
     const parts = folder.split('/');
     const last  = parts[parts.length - 1];
@@ -1582,11 +1900,8 @@ document.getElementById('upload-folder-search').addEventListener('input', functi
   clearTimeout(_folderSearchTimer);
   const q = this.value;
   _folderSearchTimer = setTimeout(() => {
-    const folders = [...new Set(_allArchivos.map(f => f.carpeta||''))].filter(f => {
-      if(!f||f==='/') return false;
-      return !BLOCKED_FOLDERS.includes(f.split('/')[0]);
-    }).sort();
-    renderFolderTree(folders, q);
+    const allFolders = [...new Set(_allArchivos.map(f => f.carpeta||''))].filter(f => f && f !== '/').sort();
+    renderFolderTree(allFolders, q);
   }, 150);
 });
 
