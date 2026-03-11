@@ -196,8 +196,105 @@
     }
     #upload-btn:hover { border-color:#60a5fa; box-shadow:0 0 30px rgba(96,165,250,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
 
+    /* ══════════ HUELLA BUTTON ══════════ */
+    #huella-btn {
+      position: fixed; bottom: 24px; right: 170px; z-index: 200;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg2);
+      border: 1px solid rgba(34,197,94,.45);
+      border-radius: 999px; padding: 10px 18px 10px 14px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: #22c55e;
+      box-shadow: 0 0 20px rgba(34,197,94,.1), 0 4px 20px rgba(0,0,0,.4);
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      animation: slideInRight .5s .6s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #huella-btn:hover { border-color:#22c55e; box-shadow:0 0 30px rgba(34,197,94,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
 
-    /* ══════════ UPLOAD MODAL ══════════ */
+    /* ══════════ HUELLA MODAL ══════════ */
+    #huella-backdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.82); backdrop-filter:blur(6px);
+      z-index:300; align-items:center; justify-content:center; padding:14px;
+    }
+    #huella-backdrop.open { display:flex; }
+    #huella-modal {
+      background:#0d1a12; border-radius:20px;
+      width:100%; max-width:780px; max-height:92vh;
+      display:flex; flex-direction:column;
+      box-shadow:0 40px 100px rgba(0,0,0,.65);
+      animation:calIn .3s cubic-bezier(.34,1.2,.64,1);
+      overflow:hidden; border:1px solid rgba(34,197,94,.2);
+    }
+    #huella-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px; background:#071009; flex-shrink:0;
+      border-bottom:1px solid rgba(34,197,94,.15);
+    }
+    #huella-header span { font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#f0fdf4; }
+    #huella-close { background:none;border:none;color:#f0fdf4;cursor:pointer;font-size:20px;opacity:.55;transition:opacity .15s,transform .15s;padding:4px 8px;border-radius:6px; }
+    #huella-close:hover{opacity:1;transform:rotate(90deg);}
+    #huella-body { overflow-y:auto; flex:1; padding:24px 28px 28px; }
+
+    /* Steps */
+    .hstep { display:none; }
+    .hstep.active { display:block; }
+    .hstep-title { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#f0fdf4;margin-bottom:4px; }
+    .hstep-sub { font-size:12px;color:#86efac;font-family:'JetBrains Mono',monospace;margin-bottom:20px;opacity:.7; }
+
+    .hq-group { margin-bottom:20px; }
+    .hq-label { font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac;font-weight:600;letter-spacing:.5px;margin-bottom:8px;display:block; }
+    .hq-opts { display:flex;flex-wrap:wrap;gap:7px; }
+    .hq-opt {
+      border:1.5px solid rgba(34,197,94,.25); border-radius:9px;
+      padding:7px 14px; font-family:'JetBrains Mono',monospace;font-size:11px;
+      color:#86efac; background:transparent; cursor:pointer;
+      transition:all .15s;
+    }
+    .hq-opt:hover { border-color:#22c55e; background:rgba(34,197,94,.08); }
+    .hq-opt.sel { border-color:#22c55e; background:rgba(34,197,94,.18); color:#fff; font-weight:700; }
+    .hq-slider-wrap { display:flex;align-items:center;gap:12px; }
+    .hq-slider { flex:1;accent-color:#22c55e; }
+    .hq-slider-val { font-family:'JetBrains Mono',monospace;font-size:13px;color:#fff;font-weight:700;min-width:32px;text-align:right; }
+
+    /* Progress bar */
+    #huella-progress-bar-wrap { height:4px;background:rgba(34,197,94,.1);margin-bottom:24px;border-radius:2px;overflow:hidden; }
+    #huella-progress-bar { height:100%;background:#22c55e;transition:width .4s ease;border-radius:2px; }
+
+    /* Nav buttons */
+    .hnav { display:flex;justify-content:space-between;margin-top:24px;gap:10px; }
+    .hnav-btn {
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+      border:none;border-radius:10px;padding:10px 22px;cursor:pointer;transition:all .15s;
+    }
+    .hnav-back { background:rgba(34,197,94,.1);color:#86efac; }
+    .hnav-back:hover { background:rgba(34,197,94,.2); }
+    .hnav-next { background:#22c55e;color:#071009; }
+    .hnav-next:hover { background:#16a34a;transform:scale(1.03); }
+    .hnav-next:disabled { background:rgba(34,197,94,.2);color:#86efac;cursor:not-allowed;transform:none; }
+
+    /* Results */
+    #huella-result { display:none; }
+    .hresult-score {
+      text-align:center;margin-bottom:24px;padding:20px;
+      background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:16px;
+    }
+    .hresult-score-num { font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:#22c55e;line-height:1; }
+    .hresult-score-unit { font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac;margin-top:4px;opacity:.7; }
+    .hresult-score-label { font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;margin-top:8px; }
+    .hresult-analysis { font-family:'DM Sans',sans-serif;font-size:13px;color:#d1fae5;line-height:1.7;margin-bottom:20px; white-space:pre-wrap; }
+    .hresult-tips { }
+    .hresult-tip {
+      display:flex;gap:12px;align-items:flex-start;
+      padding:10px 14px;border-radius:10px;margin-bottom:8px;
+      background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);
+    }
+    .hresult-tip-icon { font-size:18px;flex-shrink:0; }
+    .hresult-tip-text { font-family:'DM Sans',sans-serif;font-size:12px;color:#bbf7d0;line-height:1.5; }
+    .hloading { text-align:center;padding:40px 0;color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px; }
+    .hloading-spinner { width:28px;height:28px;border:3px solid rgba(34,197,94,.2);border-top-color:#22c55e;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px; }
+    @keyframes spin{to{transform:rotate(360deg);}}
     #upload-backdrop {
       position:fixed;inset:0;z-index:600;
       background:rgba(10,12,18,.75);backdrop-filter:blur(6px);
@@ -684,6 +781,176 @@
         </div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HUELLA DIGITAL BUTTON ══ -->
+<button id="huella-btn" title="Calculadora de Huella Digital">
+  <span style="font-size:16px">🌱</span>
+  <span>Huella Digital</span>
+</button>
+
+<!-- ══ HUELLA MODAL ══ -->
+<div id="huella-backdrop">
+  <div id="huella-modal">
+    <div id="huella-header">
+      <span>🌱 Huella Digital</span>
+      <button id="huella-close">✕</button>
+    </div>
+    <div id="huella-body">
+
+      <!-- Progress bar -->
+      <div id="huella-progress-bar-wrap"><div id="huella-progress-bar" style="width:0%"></div></div>
+
+      <!-- STEP 1: Transporte -->
+      <div class="hstep active" id="hstep-1">
+        <div class="hstep-title">🚗 Transporte</div>
+        <div class="hstep-sub">¿Cómo te desplazas habitualmente?</div>
+        <div class="hq-group">
+          <span class="hq-label">Medio de transporte principal</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="transport" data-v="coche_gasolina">🚗 Coche gasolina</button>
+            <button class="hq-opt" data-q="transport" data-v="coche_diesel">🚙 Coche diésel</button>
+            <button class="hq-opt" data-q="transport" data-v="coche_electrico">⚡ Coche eléctrico</button>
+            <button class="hq-opt" data-q="transport" data-v="moto">🏍️ Moto</button>
+            <button class="hq-opt" data-q="transport" data-v="transporte_publico">🚌 Transporte público</button>
+            <button class="hq-opt" data-q="transport" data-v="bici_pie">🚲 Bici / a pie</button>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">Km al día en ese transporte</span>
+          <div class="hq-slider-wrap">
+            <input type="range" class="hq-slider" id="hs-km" min="0" max="150" value="20">
+            <span class="hq-slider-val" id="hsv-km">20 km</span>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">Vuelos en avión al año</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="flights" data-v="0">Ninguno</button>
+            <button class="hq-opt" data-q="flights" data-v="1">1–2</button>
+            <button class="hq-opt" data-q="flights" data-v="4">3–5</button>
+            <button class="hq-opt" data-q="flights" data-v="8">6–10</button>
+            <button class="hq-opt" data-q="flights" data-v="15">Más de 10</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Alimentación -->
+      <div class="hstep" id="hstep-2">
+        <div class="hstep-title">🥗 Alimentación</div>
+        <div class="hstep-sub">¿Qué hay en tu plato?</div>
+        <div class="hq-group">
+          <span class="hq-label">Dieta predominante</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="diet" data-v="carnivoro">🥩 Carne a diario</button>
+            <button class="hq-opt" data-q="diet" data-v="omnivoro">🍖 Omnívoro moderado</button>
+            <button class="hq-opt" data-q="diet" data-v="pescatariano">🐟 Pescatariano</button>
+            <button class="hq-opt" data-q="diet" data-v="vegetariano">🥦 Vegetariano</button>
+            <button class="hq-opt" data-q="diet" data-v="vegano">🌱 Vegano</button>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">¿Con qué frecuencia comes alimentos locales / de temporada?</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="local_food" data-v="nunca">Casi nunca</button>
+            <button class="hq-opt" data-q="local_food" data-v="aveces">A veces</button>
+            <button class="hq-opt" data-q="local_food" data-v="siempre">Siempre</button>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">Comida desperdiciada a la semana</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="food_waste" data-v="poco">Muy poca</button>
+            <button class="hq-opt" data-q="food_waste" data-v="normal">Algo</button>
+            <button class="hq-opt" data-q="food_waste" data-v="mucho">Bastante</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Hogar y energía -->
+      <div class="hstep" id="hstep-3">
+        <div class="hstep-title">🏠 Hogar y energía</div>
+        <div class="hstep-sub">Tu consumo en casa</div>
+        <div class="hq-group">
+          <span class="hq-label">Tipo de energía en casa</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="energy" data-v="gas">🔥 Gas natural</button>
+            <button class="hq-opt" data-q="energy" data-v="electrica_mix">⚡ Eléctrica (mix)</button>
+            <button class="hq-opt" data-q="energy" data-v="electrica_renovable">🌿 Eléctrica renovable</button>
+            <button class="hq-opt" data-q="energy" data-v="mixta">🔄 Mixta</button>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">Personas en el hogar</span>
+          <div class="hq-slider-wrap">
+            <input type="range" class="hq-slider" id="hs-people" min="1" max="8" value="3">
+            <span class="hq-slider-val" id="hsv-people">3</span>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">¿Tienes paneles solares o energía renovable en casa?</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="solar" data-v="no">No</button>
+            <button class="hq-opt" data-q="solar" data-v="parcial">Parcialmente</button>
+            <button class="hq-opt" data-q="solar" data-v="si">Sí</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Consumo digital y compras -->
+      <div class="hstep" id="hstep-4">
+        <div class="hstep-title">📱 Digital y compras</div>
+        <div class="hstep-sub">Tu huella invisible</div>
+        <div class="hq-group">
+          <span class="hq-label">Horas de pantalla al día (streaming, redes, etc.)</span>
+          <div class="hq-slider-wrap">
+            <input type="range" class="hq-slider" id="hs-screen" min="0" max="16" value="5">
+            <span class="hq-slider-val" id="hsv-screen">5h</span>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">Compras online al mes</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="shopping" data-v="0">Ninguna</button>
+            <button class="hq-opt" data-q="shopping" data-v="2">1–3</button>
+            <button class="hq-opt" data-q="shopping" data-v="6">4–8</button>
+            <button class="hq-opt" data-q="shopping" data-v="15">Más de 8</button>
+          </div>
+        </div>
+        <div class="hq-group">
+          <span class="hq-label">¿Con qué frecuencia compras ropa nueva?</span>
+          <div class="hq-opts">
+            <button class="hq-opt" data-q="clothes" data-v="raramente">Raramente</button>
+            <button class="hq-opt" data-q="clothes" data-v="mensual">Mensualmente</button>
+            <button class="hq-opt" data-q="clothes" data-v="semanal">Semanalmente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="huella-result">
+        <div class="hresult-score">
+          <div class="hresult-score-num" id="hr-tons">–</div>
+          <div class="hresult-score-unit">toneladas de CO₂ al año</div>
+          <div class="hresult-score-label" id="hr-label">–</div>
+        </div>
+        <div id="hr-content">
+          <div class="hloading"><div class="hloading-spinner"></div>Analizando tu impacto…</div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:10px;">
+          <button id="huella-recalc" class="hnav-btn" style="background:rgba(34,197,94,.1);color:#86efac;flex:1;">↩ Recalcular</button>
+          <button id="huella-save" class="hnav-btn hnav-next" style="flex:1;">💾 Guardar en Firebase</button>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="hnav" id="huella-nav">
+        <button class="hnav-btn hnav-back" id="huella-back" style="visibility:hidden">← Anterior</button>
+        <button class="hnav-btn hnav-next" id="huella-next" disabled>Siguiente →</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -2013,6 +2280,234 @@ function setUploadMsg(txt, cls){
   const el = document.getElementById('upload-msg');
   el.textContent = txt; el.className = cls;
 }
+
+/* ══════════════════════════════════════════════
+   HUELLA DIGITAL — Calculadora + Firebase + AI
+═══════════════════════════════════════════════ */
+const HUELLA_STEPS = 4;
+let _hStep = 1;
+let _hAnswers = {};
+
+// CO₂ factors (kg/year rough estimates)
+const H_FACTORS = {
+  transport: { coche_gasolina:2400, coche_diesel:2200, coche_electrico:600, moto:1200, transporte_publico:500, bici_pie:0 },
+  flights:   { 0:0, 1:500, 4:2000, 8:4000, 15:8000 },
+  diet:      { carnivoro:3300, omnivoro:2200, pescatariano:1700, vegetariano:1200, vegano:700 },
+  local_food:{ nunca:300, aveces:150, siempre:0 },
+  food_waste:{ poco:0, normal:200, mucho:500 },
+  energy:    { gas:2500, electrica_mix:1800, electrica_renovable:400, mixta:1500 },
+  solar:     { no:0, parcial:-400, si:-900 },
+  shopping:  { 0:0, 2:300, 6:900, 15:2200 },
+  clothes:   { raramente:100, mensual:600, semanal:1800 },
+};
+
+function calcHuella(){
+  const a = _hAnswers;
+  let co2 = 0;
+  const km = +(document.getElementById('hs-km').value)||20;
+  const people = +(document.getElementById('hs-people').value)||3;
+  const screen = +(document.getElementById('hs-screen').value)||5;
+
+  co2 += (H_FACTORS.transport[a.transport]||0) * (km/20);
+  co2 += (H_FACTORS.flights[a.flights]||0);
+  co2 += (H_FACTORS.diet[a.diet]||0);
+  co2 += (H_FACTORS.local_food[a.local_food]||0);
+  co2 += (H_FACTORS.food_waste[a.food_waste]||0);
+  co2 += (H_FACTORS.energy[a.energy]||0) / Math.max(people,1);
+  co2 += (H_FACTORS.solar[a.solar]||0);
+  co2 += screen * 50; // ~50kg CO₂/year per daily hour of streaming
+  co2 += (H_FACTORS.shopping[a.shopping]||0);
+  co2 += (H_FACTORS.clothes[a.clothes]||0);
+
+  return Math.round(co2 / 100) / 10; // tonnes
+}
+
+function huellaLabel(tons){
+  if(tons < 3)  return { text:'🌟 Muy por debajo de la media', color:'#22c55e' };
+  if(tons < 6)  return { text:'✅ Por debajo de la media española', color:'#86efac' };
+  if(tons < 9)  return { text:'⚠️ En la media española (~8t)', color:'#fbbf24' };
+  if(tons < 14) return { text:'🔴 Por encima de la media', color:'#f87171' };
+  return            { text:'🚨 Huella muy alta', color:'#ef4444' };
+}
+
+function huellaStepValid(){
+  const required = {
+    1: ['transport','flights'],
+    2: ['diet','local_food','food_waste'],
+    3: ['energy','solar'],
+    4: ['shopping','clothes'],
+  };
+  return (required[_hStep]||[]).every(k => _hAnswers[k] !== undefined);
+}
+
+function updateHuellaNav(){
+  const btn = document.getElementById('huella-next');
+  const back = document.getElementById('huella-back');
+  btn.disabled = !huellaStepValid();
+  back.style.visibility = _hStep > 1 ? 'visible' : 'hidden';
+  const pct = ((_hStep-1) / HUELLA_STEPS) * 100;
+  document.getElementById('huella-progress-bar').style.width = pct+'%';
+}
+
+function showHuellaStep(n){
+  document.querySelectorAll('.hstep').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('hstep-'+n);
+  if(el) el.classList.add('active');
+  document.getElementById('huella-result').style.display = 'none';
+  document.getElementById('huella-nav').style.display = 'flex';
+  _hStep = n;
+  updateHuellaNav();
+}
+
+// Opt buttons
+document.querySelectorAll('.hq-opt').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const q = btn.dataset.q;
+    document.querySelectorAll(`.hq-opt[data-q="${q}"]`).forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    _hAnswers[q] = btn.dataset.v;
+    updateHuellaNav();
+  });
+});
+
+// Sliders
+document.getElementById('hs-km').addEventListener('input',function(){
+  document.getElementById('hsv-km').textContent=this.value+' km';
+});
+document.getElementById('hs-people').addEventListener('input',function(){
+  document.getElementById('hsv-people').textContent=this.value;
+});
+document.getElementById('hs-screen').addEventListener('input',function(){
+  document.getElementById('hsv-screen').textContent=this.value+'h';
+});
+
+document.getElementById('huella-next').addEventListener('click',async()=>{
+  if(_hStep < HUELLA_STEPS){
+    showHuellaStep(_hStep+1);
+  } else {
+    // Show results
+    document.querySelectorAll('.hstep').forEach(s=>s.classList.remove('active'));
+    document.getElementById('huella-nav').style.display = 'none';
+    document.getElementById('huella-result').style.display = 'block';
+    document.getElementById('huella-progress-bar').style.width='100%';
+
+    const tons = calcHuella();
+    const lbl  = huellaLabel(tons);
+    document.getElementById('hr-tons').textContent = tons.toFixed(1)+'t';
+    document.getElementById('hr-tons').style.color = lbl.color;
+    document.getElementById('hr-label').textContent = lbl.text;
+    document.getElementById('hr-label').style.color = lbl.color;
+
+    // Call Claude API for personalised analysis
+    document.getElementById('hr-content').innerHTML =
+      '<div class="hloading"><div class="hloading-spinner"></div>Analizando tu impacto…</div>';
+
+    try{
+      const a = _hAnswers;
+      const km = document.getElementById('hs-km').value;
+      const people = document.getElementById('hs-people').value;
+      const screen = document.getElementById('hs-screen').value;
+
+      const prompt = `Eres un experto en sostenibilidad ambiental. Un usuario ha calculado su huella de carbono personal y obtiene ${tons} toneladas de CO₂ al año (la media española es ~8t).
+
+Sus datos:
+- Transporte: ${a.transport}, ${km}km/día, ${a.flights} vuelos/año
+- Dieta: ${a.diet}, alimentos locales: ${a.local_food}, desperdicio: ${a.food_waste}
+- Energía del hogar: ${a.energy}, ${people} personas, solar: ${a.solar}
+- Pantalla: ${screen}h/día, compras online: ${a.shopping}/mes, ropa: ${a.clothes}
+
+Responde en español con este formato JSON exacto (sin markdown, solo JSON):
+{
+  "resumen": "2-3 frases sobre su impacto personal, directo y empático",
+  "puntos_fuertes": ["aspecto positivo 1", "aspecto positivo 2"],
+  "consejos": [
+    {"icono":"🚗","titulo":"Título corto","texto":"Consejo concreto y accionable"},
+    {"icono":"🥗","titulo":"Título corto","texto":"Consejo concreto y accionable"},
+    {"icono":"⚡","titulo":"Título corto","texto":"Consejo concreto y accionable"},
+    {"icono":"♻️","titulo":"Título corto","texto":"Consejo concreto y accionable"}
+  ]
+}`;
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          messages:[{role:'user',content:prompt}]
+        })
+      });
+      const data = await resp.json();
+      const raw = data.content.find(b=>b.type==='text')?.text || '{}';
+      const clean = raw.replace(/```json|```/g,'').trim();
+      const result = JSON.parse(clean);
+
+      let html = `<div class="hresult-analysis">${result.resumen}</div>`;
+      if(result.puntos_fuertes?.length){
+        html += `<div style="margin-bottom:14px;">`;
+        html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:8px;">✅ TUS PUNTOS FUERTES</div>`;
+        result.puntos_fuertes.forEach(p=>{
+          html+=`<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:#bbf7d0;margin-bottom:5px;">• ${p}</div>`;
+        });
+        html+=`</div>`;
+      }
+      if(result.consejos?.length){
+        html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:10px;">💡 CÓMO MEJORAR</div>`;
+        result.consejos.forEach(c=>{
+          html+=`<div class="hresult-tip"><div class="hresult-tip-icon">${c.icono}</div><div class="hresult-tip-text"><strong style="color:#f0fdf4">${c.titulo}</strong><br>${c.texto}</div></div>`;
+        });
+      }
+      document.getElementById('hr-content').innerHTML = html;
+    } catch(e){
+      document.getElementById('hr-content').innerHTML =
+        `<div class="hresult-analysis">No se pudo generar el análisis detallado, pero tu huella estimada es de <strong>${tons}t CO₂/año</strong>. ${tons>8?'Estás por encima de la media española (8t). Considera reducir desplazamientos en coche y consumo de carne.':'¡Estás por debajo de la media española! Sigue así.'}</div>`;
+    }
+  }
+});
+
+document.getElementById('huella-back').addEventListener('click',()=>{
+  if(_hStep > 1) showHuellaStep(_hStep-1);
+});
+
+document.getElementById('huella-recalc').addEventListener('click',()=>{
+  _hAnswers = {};
+  document.querySelectorAll('.hq-opt').forEach(b=>b.classList.remove('sel'));
+  showHuellaStep(1);
+});
+
+document.getElementById('huella-save').addEventListener('click', async()=>{
+  const btn = document.getElementById('huella-save');
+  btn.textContent='Guardando…'; btn.disabled=true;
+  try{
+    const tons = calcHuella();
+    const entry = {
+      id: Date.now().toString(),
+      tons,
+      answers: {..._hAnswers},
+      km: +document.getElementById('hs-km').value,
+      people: +document.getElementById('hs-people').value,
+      screen: +document.getElementById('hs-screen').value,
+      savedAt: Date.now()
+    };
+    await setDoc(doc(_db,'HuellaDigital','Registros','Entradas',entry.id), entry);
+    btn.textContent='✅ Guardado';
+    setTimeout(()=>{ btn.textContent='💾 Guardar en Firebase'; btn.disabled=false; },2000);
+  } catch(e){
+    btn.textContent='❌ Error'; btn.disabled=false;
+    console.error('huella save error:',e);
+  }
+});
+
+document.getElementById('huella-btn').addEventListener('click',()=>{
+  document.getElementById('huella-backdrop').classList.add('open');
+});
+document.getElementById('huella-close').addEventListener('click',()=>{
+  document.getElementById('huella-backdrop').classList.remove('open');
+});
+document.getElementById('huella-backdrop').addEventListener('click',e=>{
+  if(e.target===document.getElementById('huella-backdrop'))
+    document.getElementById('huella-backdrop').classList.remove('open');
+});
 
 document.getElementById('upload-btn').addEventListener('click', openUploadModal);
 document.getElementById('upload-close').addEventListener('click', closeUploadModal);
