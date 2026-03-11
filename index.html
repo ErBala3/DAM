@@ -1254,7 +1254,12 @@ const _db    = getFirestore(_fbApp);
 const TYPE_COL = { bday: 'Cumpleaños', hol: 'Eventos', exam: 'Examenes', evento: 'EventosPersonales' };
 const DOC_PATH  = 'Calendario/Calendarios';  // ruta del documento padre
 
-/* ══ Presencia en tiempo real (Firestore) ══ */
+/* ══ ID de navegador persistente (localStorage) ══ */
+const BROWSER_ID = (() => {
+  let id = localStorage.getItem('_dam_browser_id');
+  if(!id){ id = 'nav_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2); localStorage.setItem('_dam_browser_id', id); }
+  return id;
+})();
 const PRESENCE_COL = 'presencia';
 const _sessionId = Math.random().toString(36).slice(2);
 
@@ -2481,7 +2486,7 @@ document.getElementById('huella-save').addEventListener('click', async()=>{
   try{
     const tons = calcHuella();
     const entry = {
-      id: Date.now().toString(),
+      browserId: BROWSER_ID,
       tons,
       answers: {..._hAnswers},
       km: +document.getElementById('hs-km').value,
@@ -2489,7 +2494,8 @@ document.getElementById('huella-save').addEventListener('click', async()=>{
       screen: +document.getElementById('hs-screen').value,
       savedAt: Date.now()
     };
-    await setDoc(doc(_db,'HuellaDigital','Registros','Entradas',entry.id), entry);
+    // Cada navegador tiene su propio documento — varias personas pueden guardar a la vez
+    await setDoc(doc(_db,'HuellaDigital','Registros','Entradas', BROWSER_ID), entry);
     btn.textContent='✅ Guardado';
     setTimeout(()=>{ btn.textContent='💾 Guardar en Firebase'; btn.disabled=false; },2000);
   } catch(e){
