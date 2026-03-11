@@ -1383,7 +1383,7 @@ async function initEvents(){
 function getEventsForDay(evs, month, day, year){
   return evs.filter(ev=>{
     if(ev.month!==month||ev.day!==day) return false;
-    if(ev.type==='exam') return ev.year===year;
+    if(ev.type==='exam'||ev.type==='evento') return ev.year===year;
     return true;
   });
 }
@@ -1414,7 +1414,7 @@ function refreshTodayWidgets(){
     { widgetId:'bday-tmrw-widget', nameId:'bday-tmrw-name-text', labels: bdayTmrw,  dot: false },
     { widgetId:'exam-widget',      nameId:'exam-name-text',      labels: _allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
     { widgetId:'event-widget',     nameId:'event-name-text',     labels: _allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label) },
-    { widgetId:'evento-widget',    nameId:'evento-name-text',    labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td).map(e=>e.label) },
+    { widgetId:'evento-widget',    nameId:'evento-name-text',    labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
   ];
 
   let stackBottom = 76;
