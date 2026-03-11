@@ -402,6 +402,11 @@
       display:none;
       animation:slideIn .5s 1.1s cubic-bezier(.34,1.56,.64,1) both;
     }
+    #exam-tmrw-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.2s cubic-bezier(.34,1.56,.64,1) both;
+    }
     .exam-card {
       background:var(--bg2); border:1px solid rgba(168,85,247,.4);
       border-radius:14px; padding:12px 15px 10px;
@@ -421,6 +426,21 @@
       position:fixed; bottom:76px; left:20px; z-index:200;
       display:none;
       animation:slideIn .5s 1.4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #event-tmrw-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #evento-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.6s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #evento-tmrw-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s 1.7s cubic-bezier(.34,1.56,.64,1) both;
     }
     .event-card {
       background:var(--bg2); border:1px solid rgba(251,191,36,.4);
@@ -670,36 +690,69 @@
   </div>
 </div>
 
-<!-- ══ EXAM WIDGET ══ -->
+<!-- ══ EXAM WIDGET (hoy) ══ -->
 <div id="exam-widget">
   <div class="exam-card">
     <button class="bday-x" id="exam-close">✕</button>
-    <div class="exam-lbl">Examen mañana</div>
+    <div class="exam-lbl">Examen hoy</div>
     <span class="bday-emoji">📝</span>
     <div class="bday-sub">¡Mucha suerte!</div>
     <div class="bday-name-text" id="exam-name-text"></div>
   </div>
 </div>
 
-<!-- ══ EVENT WIDGET ══ -->
+<!-- ══ EXAM TOMORROW WIDGET ══ -->
+<div id="exam-tmrw-widget">
+  <div class="exam-card" style="opacity:.85;">
+    <button class="bday-x" id="exam-tmrw-close">✕</button>
+    <div class="exam-lbl" style="opacity:.7;">Examen mañana</div>
+    <span class="bday-emoji">📝</span>
+    <div class="bday-sub">Repasa esta noche</div>
+    <div class="bday-name-text" id="exam-tmrw-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ EVENT WIDGET (hoy) ══ -->
 <div id="event-widget">
   <div class="event-card">
     <button class="bday-x" id="event-close">✕</button>
-    <div class="event-lbl">Festivo mañana</div>
+    <div class="event-lbl">Festivo hoy</div>
     <span class="bday-emoji">🎊</span>
     <div class="bday-sub">¡Disfrútalo!</div>
     <div class="bday-name-text" id="event-name-text"></div>
   </div>
 </div>
 
-<!-- ══ EVENTO WIDGET ══ -->
+<!-- ══ EVENT TOMORROW WIDGET ══ -->
+<div id="event-tmrw-widget">
+  <div class="event-card" style="opacity:.85;">
+    <button class="bday-x" id="event-tmrw-close">✕</button>
+    <div class="event-lbl" style="opacity:.7;">Festivo mañana</div>
+    <span class="bday-emoji">🎊</span>
+    <div class="bday-sub">¡Mañana es fiesta!</div>
+    <div class="bday-name-text" id="event-tmrw-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ EVENTO WIDGET (hoy) ══ -->
 <div id="evento-widget">
   <div class="event-card" style="border-color:rgba(34,197,94,.4);box-shadow:0 0 22px rgba(34,197,94,.1),0 8px 28px rgba(0,0,0,.4);">
     <button class="bday-x" id="evento-close">✕</button>
-    <div class="event-lbl" style="color:#22c55e;">Evento mañana</div>
+    <div class="event-lbl" style="color:#22c55e;">Evento hoy</div>
     <span class="bday-emoji">🟢</span>
     <div class="bday-sub">¡Que vaya bien!</div>
     <div class="bday-name-text" id="evento-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ EVENTO TOMORROW WIDGET ══ -->
+<div id="evento-tmrw-widget">
+  <div class="event-card" style="border-color:rgba(34,197,94,.25);box-shadow:0 0 22px rgba(34,197,94,.07),0 8px 28px rgba(0,0,0,.4);opacity:.85;">
+    <button class="bday-x" id="evento-tmrw-close">✕</button>
+    <div class="event-lbl" style="color:#22c55e;opacity:.7;">Evento mañana</div>
+    <span class="bday-emoji">🟢</span>
+    <div class="bday-sub">Recuérdalo</div>
+    <div class="bday-name-text" id="evento-tmrw-name-text"></div>
   </div>
 </div>
 
@@ -1402,19 +1455,17 @@ const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,
 function refreshTodayWidgets(){
   const now=new Date(), tm=now.getMonth()+1, td=now.getDate(), ty=now.getFullYear();
   const tmrw=new Date(now); tmrw.setDate(td+1);
-  const nm=tmrw.getMonth()+1, nd=tmrw.getDate();
-
-  // Birthdays today
-  const bdayToday = _allEvents.filter(e=>e.type==='bday'&&e.month===tm&&e.day===td).map(e=>e.label);
-  // Birthdays tomorrow
-  const bdayTmrw  = _allEvents.filter(e=>e.type==='bday'&&e.month===nm&&e.day===nd).map(e=>e.label);
+  const nm=tmrw.getMonth()+1, nd=tmrw.getDate(), ny=tmrw.getFullYear();
 
   const configs = [
-    { widgetId:'bday-widget',      nameId:'bday-name-text',      labels: bdayToday, dot: true },
-    { widgetId:'bday-tmrw-widget', nameId:'bday-tmrw-name-text', labels: bdayTmrw,  dot: false },
-    { widgetId:'exam-widget',      nameId:'exam-name-text',      labels: _allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
-    { widgetId:'event-widget',     nameId:'event-name-text',     labels: _allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label) },
-    { widgetId:'evento-widget',    nameId:'evento-name-text',    labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
+    { widgetId:'bday-widget',       nameId:'bday-name-text',       dot:true,  labels: _allEvents.filter(e=>e.type==='bday'  &&e.month===tm&&e.day===td).map(e=>e.label) },
+    { widgetId:'bday-tmrw-widget',  nameId:'bday-tmrw-name-text',  dot:false, labels: _allEvents.filter(e=>e.type==='bday'  &&e.month===nm&&e.day===nd).map(e=>e.label) },
+    { widgetId:'exam-widget',       nameId:'exam-name-text',       dot:false, labels: _allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
+    { widgetId:'exam-tmrw-widget',  nameId:'exam-tmrw-name-text',  dot:false, labels: _allEvents.filter(e=>e.type==='exam'  &&e.month===nm&&e.day===nd&&e.year===ny).map(e=>e.label) },
+    { widgetId:'event-widget',      nameId:'event-name-text',      dot:false, labels: _allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label) },
+    { widgetId:'event-tmrw-widget', nameId:'event-tmrw-name-text', dot:false, labels: _allEvents.filter(e=>e.type==='hol'   &&e.month===nm&&e.day===nd).map(e=>e.label) },
+    { widgetId:'evento-widget',     nameId:'evento-name-text',     dot:false, labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
+    { widgetId:'evento-tmrw-widget',nameId:'evento-tmrw-name-text',dot:false, labels: _allEvents.filter(e=>e.type==='evento'&&e.month===nm&&e.day===nd&&e.year===ny).map(e=>e.label) },
   ];
 
   let stackBottom = 76;
@@ -1432,15 +1483,18 @@ function refreshTodayWidgets(){
     }
   });
 
-  document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';reStackWidgets();};
-  document.getElementById('bday-tmrw-close').onclick=()=>{document.getElementById('bday-tmrw-widget').style.display='none';reStackWidgets();};
-  document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';reStackWidgets();};
-  document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';reStackWidgets();};
-  document.getElementById('evento-close').onclick=()=>{document.getElementById('evento-widget').style.display='none';reStackWidgets();};
+  document.getElementById('bday-close').onclick       = ()=>{document.getElementById('bday-widget').style.display='none';reStackWidgets();};
+  document.getElementById('bday-tmrw-close').onclick  = ()=>{document.getElementById('bday-tmrw-widget').style.display='none';reStackWidgets();};
+  document.getElementById('exam-close').onclick       = ()=>{document.getElementById('exam-widget').style.display='none';reStackWidgets();};
+  document.getElementById('exam-tmrw-close').onclick  = ()=>{document.getElementById('exam-tmrw-widget').style.display='none';reStackWidgets();};
+  document.getElementById('event-close').onclick      = ()=>{document.getElementById('event-widget').style.display='none';reStackWidgets();};
+  document.getElementById('event-tmrw-close').onclick = ()=>{document.getElementById('event-tmrw-widget').style.display='none';reStackWidgets();};
+  document.getElementById('evento-close').onclick     = ()=>{document.getElementById('evento-widget').style.display='none';reStackWidgets();};
+  document.getElementById('evento-tmrw-close').onclick= ()=>{document.getElementById('evento-tmrw-widget').style.display='none';reStackWidgets();};
 }
 
 function reStackWidgets(){
-  const ids=['bday-widget','bday-tmrw-widget','exam-widget','event-widget','evento-widget'];
+  const ids=['bday-widget','bday-tmrw-widget','exam-widget','exam-tmrw-widget','event-widget','event-tmrw-widget','evento-widget','evento-tmrw-widget'];
   let bottom=76;
   ids.forEach(id=>{
     const w=document.getElementById(id);
