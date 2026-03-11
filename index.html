@@ -371,6 +371,11 @@
       display:none;
       animation:slideIn .5s .8s cubic-bezier(.34,1.56,.64,1) both;
     }
+    #bday-tmrw-widget {
+      position:fixed; bottom:76px; left:20px; z-index:200;
+      display:none;
+      animation:slideIn .5s .9s cubic-bezier(.34,1.56,.64,1) both;
+    }
     .bday-card {
       background:var(--bg2); border:1px solid rgba(244,114,182,.4);
       border-radius:14px; padding:12px 15px 10px;
@@ -647,10 +652,21 @@
 <div id="bday-widget">
   <div class="bday-card">
     <button class="bday-x" id="bday-close">✕</button>
-    <div class="bday-lbl">Cumple hoy</div>
+    <div class="bday-lbl" id="bday-lbl-text">Cumple hoy</div>
     <span class="bday-emoji">🎉</span>
-    <div class="bday-sub">¡Felicidades!</div>
+    <div class="bday-sub" id="bday-sub-text">¡Felicidades!</div>
     <div class="bday-name-text" id="bday-name-text"></div>
+  </div>
+</div>
+
+<!-- ══ BDAY TOMORROW WIDGET ══ -->
+<div id="bday-tmrw-widget">
+  <div class="bday-card" style="border-color:rgba(244,114,182,.25);opacity:.9;">
+    <button class="bday-x" id="bday-tmrw-close">✕</button>
+    <div class="bday-lbl" style="color:#f472b6;opacity:.7;">Cumple mañana</div>
+    <span class="bday-emoji">🎂</span>
+    <div class="bday-sub">Recuérdalo</div>
+    <div class="bday-name-text" id="bday-tmrw-name-text"></div>
   </div>
 </div>
 
@@ -658,7 +674,7 @@
 <div id="exam-widget">
   <div class="exam-card">
     <button class="bday-x" id="exam-close">✕</button>
-    <div class="exam-lbl">Examen hoy</div>
+    <div class="exam-lbl">Examen mañana</div>
     <span class="bday-emoji">📝</span>
     <div class="bday-sub">¡Mucha suerte!</div>
     <div class="bday-name-text" id="exam-name-text"></div>
@@ -669,7 +685,7 @@
 <div id="event-widget">
   <div class="event-card">
     <button class="bday-x" id="event-close">✕</button>
-    <div class="event-lbl">Hoy es festivo</div>
+    <div class="event-lbl">Festivo mañana</div>
     <span class="bday-emoji">🎊</span>
     <div class="bday-sub">¡Disfrútalo!</div>
     <div class="bday-name-text" id="event-name-text"></div>
@@ -680,7 +696,7 @@
 <div id="evento-widget">
   <div class="event-card" style="border-color:rgba(34,197,94,.4);box-shadow:0 0 22px rgba(34,197,94,.1),0 8px 28px rgba(0,0,0,.4);">
     <button class="bday-x" id="evento-close">✕</button>
-    <div class="event-lbl" style="color:#22c55e;">Evento hoy</div>
+    <div class="event-lbl" style="color:#22c55e;">Evento mañana</div>
     <span class="bday-emoji">🟢</span>
     <div class="bday-sub">¡Que vaya bien!</div>
     <div class="bday-name-text" id="evento-name-text"></div>
@@ -1385,40 +1401,46 @@ const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,
 
 function refreshTodayWidgets(){
   const now=new Date(), tm=now.getMonth()+1, td=now.getDate(), ty=now.getFullYear();
+  const tmrw=new Date(now); tmrw.setDate(td+1);
+  const nm=tmrw.getMonth()+1, nd=tmrw.getDate();
+
+  // Birthdays today
+  const bdayToday = _allEvents.filter(e=>e.type==='bday'&&e.month===tm&&e.day===td).map(e=>e.label);
+  // Birthdays tomorrow
+  const bdayTmrw  = _allEvents.filter(e=>e.type==='bday'&&e.month===nm&&e.day===nd).map(e=>e.label);
 
   const configs = [
-    { type:'bday',   widgetId:'bday-widget',   nameId:'bday-name-text',   filter: e=>e.type==='bday'  &&e.month===tm&&e.day===td },
-    { type:'exam',   widgetId:'exam-widget',   nameId:'exam-name-text',   filter: e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty },
-    { type:'hol',    widgetId:'event-widget',  nameId:'event-name-text',  filter: e=>e.type==='hol'   &&e.month===tm&&e.day===td },
-    { type:'evento', widgetId:'evento-widget', nameId:'evento-name-text', filter: e=>e.type==='evento'&&e.month===tm&&e.day===td },
+    { widgetId:'bday-widget',      nameId:'bday-name-text',      labels: bdayToday, dot: true },
+    { widgetId:'bday-tmrw-widget', nameId:'bday-tmrw-name-text', labels: bdayTmrw,  dot: false },
+    { widgetId:'exam-widget',      nameId:'exam-name-text',      labels: _allEvents.filter(e=>e.type==='exam'  &&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
+    { widgetId:'event-widget',     nameId:'event-name-text',     labels: _allEvents.filter(e=>e.type==='hol'   &&e.month===tm&&e.day===td).map(e=>e.label) },
+    { widgetId:'evento-widget',    nameId:'evento-name-text',    labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td).map(e=>e.label) },
   ];
 
   let stackBottom = 76;
-
-  configs.forEach(({ type, widgetId, nameId, filter }, i) => {
-    const labels = _allEvents.filter(filter).map(e=>e.label);
+  configs.forEach(({ widgetId, nameId, labels, dot }) => {
     const w = document.getElementById(widgetId);
     if(labels.length){
       document.getElementById(nameId).textContent = joinNames(labels);
       w.style.bottom = stackBottom+'px';
       w.style.display = 'block';
-      if(type==='bday') document.getElementById('cal-bday-dot').style.display='block';
+      if(dot) document.getElementById('cal-bday-dot').style.display='block';
       stackBottom += 130;
     } else {
       w.style.display = 'none';
-      if(type==='bday') document.getElementById('cal-bday-dot').style.display='none';
+      if(dot) document.getElementById('cal-bday-dot').style.display='none';
     }
   });
 
-  // Close buttons
   document.getElementById('bday-close').onclick=()=>{document.getElementById('bday-widget').style.display='none';reStackWidgets();};
+  document.getElementById('bday-tmrw-close').onclick=()=>{document.getElementById('bday-tmrw-widget').style.display='none';reStackWidgets();};
   document.getElementById('exam-close').onclick=()=>{document.getElementById('exam-widget').style.display='none';reStackWidgets();};
   document.getElementById('event-close').onclick=()=>{document.getElementById('event-widget').style.display='none';reStackWidgets();};
   document.getElementById('evento-close').onclick=()=>{document.getElementById('evento-widget').style.display='none';reStackWidgets();};
 }
 
 function reStackWidgets(){
-  const ids=['bday-widget','exam-widget','event-widget','evento-widget'];
+  const ids=['bday-widget','bday-tmrw-widget','exam-widget','event-widget','evento-widget'];
   let bottom=76;
   ids.forEach(id=>{
     const w=document.getElementById(id);
