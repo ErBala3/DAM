@@ -493,7 +493,6 @@
     #upload-msg.ok{color:#4ade80;}
     #upload-msg.err{color:#f87171;}
     #upload-msg.warn{color:#fbbf24;}
-    /* rename box, hidden by default */
     #upload-rename-box { display:none; }
 
     .upload-tab {
@@ -645,7 +644,6 @@
 
     #cal-modal-body { overflow:hidden; flex:1; display:flex; flex-direction:column; }
 
-    /* ── calendar internals ── */
     .cal-wrap { padding:10px 14px 12px; font-family:'DM Sans',sans-serif; color:#1a1612; flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
     .cal-top { display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;flex-shrink:0; }
@@ -682,7 +680,6 @@
     .cn{line-height:1;font-size:11px;}
     .ci{font-size:6px;line-height:1;margin-top:1px;}
 
-    /* ── event popup (on top of calendar) ── */
     #ev-popup-overlay {
       position:fixed;inset:0;z-index:500;
       display:flex;align-items:center;justify-content:center;padding:20px;
@@ -713,11 +710,9 @@
     .ev-custom-hol{background:#fff0e6;border-left:3px solid #e07b39;}
     .ev-custom-bday{background:#dbeaf4;border-left:3px solid #4a7fa5;}
 
-    /* delete button inside ev-item */
     .ev-del{margin-left:auto;background:none;border:none;cursor:pointer;font-size:12px;opacity:.3;transition:opacity .15s;padding:2px 5px;border-radius:4px;flex-shrink:0;color:#e34c26;}
     .ev-del:hover{opacity:1;}
 
-    /* add event button inside ev-popup */
     #ev-add-btn{
       margin-top:14px;width:100%;
       background:#1a1612;color:#f5f0e8;
@@ -729,7 +724,6 @@
     }
     #ev-add-btn:hover{background:#b5432a;transform:scale(1.02);}
 
-    /* ══ ADD EVENT FORM MODAL ══ */
     #add-ev-overlay{
       position:fixed;inset:0;z-index:600;
       display:flex;align-items:center;justify-content:center;padding:20px;
@@ -791,7 +785,6 @@
     .cal-cell.has-evento .cn{color:#065f46;font-weight:600;}
     .ev-type-btn.sel-evento{border-color:#22c55e!important;background:#dcfce7!important;}
     .ev-evento{background:#dcfce7;border-left:3px solid #22c55e;}
-    /* multi-day date picker in add form */
     #evento-dates-wrap{margin-bottom:14px;display:none;}
     #evento-dates-wrap label{display:block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:.45;margin-bottom:6px;}
     .evento-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;}
@@ -958,7 +951,6 @@
               color:#1a1612;outline:none;cursor:pointer;width:60px;">
             </select>
           </div>
-          <!-- Multi-day hint for evento -->
           <div id="cal-add-evento-hint" style="display:none;font-size:9px;opacity:.5;margin-top:4px;font-family:'JetBrains Mono',monospace;">
             Para varios días, usa el popup del día
           </div>
@@ -1015,7 +1007,6 @@
     </div>
     <div id="huella-body">
 
-      <!-- Progress bar -->
       <div id="huella-progress-bar-wrap"><div id="huella-progress-bar" style="width:0%"></div></div>
 
       <!-- STEP 1: Transporte -->
@@ -1212,8 +1203,6 @@
       </div>
     </div>
     <div class="ipedoc-body" id="pdi-body">
-
-      <!-- Hero: identidad -->
       <div class="ipedoc-hero">
         <div class="ipedoc-hero-icon">🗺️</div>
         <div class="ipedoc-hero-fields">
@@ -1233,8 +1222,6 @@
       </div>
 
       <div class="ipedoc-grid">
-
-        <!-- Fortalezas -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">💪 Mis fortalezas</div>
           <div class="ipedoc-tags-wrap" id="pdi-fortalezas-tags">
@@ -1250,7 +1237,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="pdi-fortalezas-extra" placeholder="Otras fortalezas…" rows="2"></textarea>
         </div>
 
-        <!-- Áreas de mejora -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">🎯 Áreas de mejora</div>
           <div class="ipedoc-tags-wrap">
@@ -1266,7 +1252,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="pdi-mejora-extra" placeholder="Otras áreas…" rows="2"></textarea>
         </div>
 
-        <!-- Motivación -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">🔥 Motivación (1–5)</div>
           <div class="ipedoc-stars" id="pdi-motivacion-stars" data-group="pdi-motivacion">
@@ -1279,7 +1264,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="pdi-motivacion-nota" placeholder="¿Qué te motiva?" rows="3"></textarea>
         </div>
 
-        <!-- Estrategias de estudio -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">📚 Estrategias de estudio</div>
           <div class="ipedoc-tags-wrap">
@@ -1292,18 +1276,15 @@
           </div>
         </div>
 
-        <!-- Plan de acción -->
         <div class="ipedoc-section" style="grid-column:1/-1;">
           <div class="ipedoc-section-title">🚀 Mi plan de acción</div>
           <textarea class="ipedoc-input ipedoc-textarea" id="pdi-plan" placeholder="Describe las acciones concretas que vas a llevar a cabo este trimestre para alcanzar tu objetivo…" rows="4" style="min-height:90px;"></textarea>
         </div>
 
-        <!-- Reflexión final -->
         <div class="ipedoc-section" style="grid-column:1/-1;">
           <div class="ipedoc-section-title">💬 Reflexión final</div>
           <textarea class="ipedoc-input ipedoc-textarea" id="pdi-reflexion" placeholder="¿Qué has aprendido sobre ti mismo? ¿Qué cambiarías?" rows="3"></textarea>
         </div>
-
       </div>
     </div>
   </div>
@@ -1322,8 +1303,6 @@
       </div>
     </div>
     <div class="ipedoc-body" id="ple-body">
-
-      <!-- Hero -->
       <div class="ipedoc-hero">
         <div class="ipedoc-hero-icon">🌐</div>
         <div class="ipedoc-hero-fields">
@@ -1343,8 +1322,6 @@
       </div>
 
       <div class="ipedoc-grid">
-
-        <!-- Herramientas digitales -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">🛠️ Herramientas digitales</div>
           <div class="ipedoc-tags-wrap">
@@ -1362,7 +1339,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-herramientas-extra" placeholder="Otras herramientas…" rows="2"></textarea>
         </div>
 
-        <!-- Fuentes de información -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">📡 Fuentes de información</div>
           <div class="ipedoc-tags-wrap">
@@ -1378,7 +1354,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-fuentes-extra" placeholder="Otras fuentes…" rows="2"></textarea>
         </div>
 
-        <!-- Estilo de aprendizaje -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">🧠 Estilo de aprendizaje</div>
           <div class="ipedoc-tags-wrap">
@@ -1391,7 +1366,6 @@
           </div>
         </div>
 
-        <!-- Red personal -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">🤝 Mi red de aprendizaje</div>
           <div class="ipedoc-tags-wrap">
@@ -1404,7 +1378,6 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-red-extra" placeholder="Describe tu red…" rows="2"></textarea>
         </div>
 
-        <!-- Satisfacción con el aprendizaje -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">😊 Satisfacción con mi aprendizaje (1–5)</div>
           <div class="ipedoc-stars" id="ple-satisfaccion-stars" data-group="ple-satisfaccion">
@@ -1417,13 +1390,11 @@
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-satisfaccion-nota" placeholder="¿Por qué esa puntuación?" rows="2"></textarea>
         </div>
 
-        <!-- Retos -->
         <div class="ipedoc-section">
           <div class="ipedoc-section-title">⚡ Retos de aprendizaje</div>
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-retos" placeholder="¿Qué te cuesta más aprender? ¿Qué barreras encuentras?" rows="4"></textarea>
         </div>
 
-        <!-- Metas -->
         <div class="ipedoc-section" style="grid-column:1/-1;">
           <div class="ipedoc-section-title">🏆 Metas a corto, medio y largo plazo</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
@@ -1442,12 +1413,10 @@
           </div>
         </div>
 
-        <!-- Reflexión -->
         <div class="ipedoc-section" style="grid-column:1/-1;">
           <div class="ipedoc-section-title">💬 Reflexión sobre mi PLE</div>
           <textarea class="ipedoc-input ipedoc-textarea" id="ple-reflexion" placeholder="¿Cómo quieres mejorar tu entorno de aprendizaje?" rows="3"></textarea>
         </div>
-
       </div>
     </div>
   </div>
@@ -1459,20 +1428,15 @@
   <span>Subir código</span>
 </button>
 
-
 <!-- ══ UPLOAD MODAL ══ -->
 <div id="upload-backdrop">
   <div id="upload-modal" style="position:relative;">
     <button class="upload-close" id="upload-close">✕</button>
     <h3>📤 Subir código</h3>
-
-    <!-- Tabs -->
     <div style="display:flex;gap:8px;margin-bottom:4px;">
       <button class="upload-tab active" id="tab-files" data-tab="files">📄 Archivos</button>
       <button class="upload-tab" id="tab-folder" data-tab="folder">📁 Carpeta</button>
     </div>
-
-    <!-- Archivos sueltos -->
     <div id="upload-panel-files">
       <label>Selecciona uno o varios archivos</label>
       <input type="file" id="upload-file" multiple style="
@@ -1480,8 +1444,6 @@
         border-radius:8px;padding:10px 12px;color:#c9d1d9;cursor:pointer;
         font-family:'JetBrains Mono',monospace;font-size:12px;box-sizing:border-box;">
     </div>
-
-    <!-- Carpeta completa -->
     <div id="upload-panel-folder" style="display:none;">
       <label>Selecciona una carpeta completa</label>
       <input type="file" id="upload-folder-input" webkitdirectory multiple style="
@@ -1489,36 +1451,29 @@
         border-radius:8px;padding:10px 12px;color:#c9d1d9;cursor:pointer;
         font-family:'JetBrains Mono',monospace;font-size:12px;box-sizing:border-box;">
     </div>
-
     <div>
       <label>Carpeta destino</label>
-      <!-- Mini buscador -->
       <div class="search-box" style="margin-bottom:6px;">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" id="upload-folder-search" placeholder="Buscar carpeta…" autocomplete="off" style="font-size:12px;">
       </div>
-      <!-- Mini árbol de carpetas -->
       <div id="upload-folder-tree" style="
         max-height:160px;overflow-y:auto;
         background:var(--bg);border:1px solid var(--border);border-radius:10px;
         padding:6px 8px;display:flex;flex-direction:column;gap:3px;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Cargando carpetas…</div>
       </div>
-      <!-- Carpeta seleccionada -->
       <div id="upload-folder-selected" style="
         display:none;margin-top:6px;
         font-family:'JetBrains Mono',monospace;font-size:11px;
         color:var(--accent);background:rgba(74,222,128,.07);
         border:1px solid rgba(74,222,128,.25);border-radius:7px;
-        padding:6px 12px;display:none;align-items:center;gap:7px;">
+        padding:6px 12px;align-items:center;gap:7px;">
         <span>📁</span><span id="upload-folder-selected-text"></span>
         <button id="upload-folder-clear" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;">✕</button>
       </div>
     </div>
-
     <div id="upload-manual-box" style="display:none;"></div>
-
-    <!-- Preview de archivos a subir -->
     <div id="upload-preview" style="display:none;">
       <label>Archivos a subir (<span id="upload-count">0</span>)</label>
       <div id="upload-preview-list" style="
@@ -1527,11 +1482,11 @@
         padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;
         color:#64748b;display:flex;flex-direction:column;gap:3px;"></div>
     </div>
-
     <div id="upload-msg"></div>
     <button id="upload-submit" disabled>Subir a Firebase</button>
   </div>
 </div>
+
 <div id="ev-popup-overlay">
   <div id="ev-popup">
     <button id="ev-popup-close">✕</button>
@@ -1566,7 +1521,6 @@
         <span class="ev-type-label">Evento</span>
       </button>
     </div>
-    <!-- Multi-day picker (only for evento) -->
     <div id="evento-dates-wrap">
       <label>Días del evento (selecciona varios)</label>
       <div class="evento-day-grid" id="evento-day-hdrs">
@@ -1671,9 +1625,6 @@
 </div>
 
 <script type="module">
-/* ══════════════════════════════════════
-   SEED DATA  (datos iniciales, se cargan en Firestore la primera vez)
-══════════════════════════════════════ */
 const SEED_BIRTHDAYS = [
   {month:1,  day:7,  label:"Julia"},
   {month:2,  day:9,  label:"Juan Carlos"},
@@ -1714,26 +1665,10 @@ function easterDate(y){
   const l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
   return {month:Math.floor((h+l-7*m+114)/31),day:((h+l-7*m+114)%31)+1};
 }
-function getMovableHols(y){
-  const e=easterDate(y),ed=new Date(y,e.month-1,e.day);
-  const ht=new Date(ed); ht.setDate(ht.getDate()-3);
-  const gf=new Date(ed); gf.setDate(gf.getDate()-2);
-  return [
-    {month:ht.getMonth()+1,day:ht.getDate(),label:"✝️ Jueves Santo"},
-    {month:gf.getMonth()+1,day:gf.getDate(),label:"✝️ Viernes Santo"},
-    {month:ed.getMonth()+1,day:ed.getDate(),label:"🐣 Pascua"},
-  ];
-}
 const MONTHS=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 const DLBLS=["L","M","X","J","V","S","D"];
 const WDFULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
-/* ══════════════════════════════════════
-   FIREBASE — almacenamiento compartido
-   Todos los usuarios ven y editan los mismos eventos.
-   Colección: "events", un documento por evento.
-   { id, type:"bday"|"exam"|"hol", label, month, day, year|null }
-══════════════════════════════════════ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -1748,11 +1683,9 @@ const firebaseConfig = {
 const _fbApp = initializeApp(firebaseConfig);
 const _db    = getFirestore(_fbApp);
 
-// Mapa type → colección Firestore
 const TYPE_COL = { bday: 'Cumpleaños', hol: 'Eventos', exam: 'Examenes', evento: 'EventosPersonales' };
-const DOC_PATH  = 'Calendario/Calendarios';  // ruta del documento padre
+const DOC_PATH  = 'Calendario/Calendarios';
 
-/* ══ ID de navegador persistente (localStorage) ══ */
 const BROWSER_ID = (() => {
   let id = localStorage.getItem('_dam_browser_id');
   if(!id){ id = 'nav_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2); localStorage.setItem('_dam_browser_id', id); }
@@ -1763,35 +1696,21 @@ const _sessionId = Math.random().toString(36).slice(2);
 
 async function registerPresence(){
   try{
-    await setDoc(doc(_db, PRESENCE_COL, _sessionId), {
-      sessionId: _sessionId,
-      ts: serverTimestamp()
-    });
-    // Limpiar al salir
-    window.addEventListener('beforeunload', ()=>{
-      // beacon no funciona con Firestore SDK, usamos fetch síncrono como fallback
-      deleteDoc(doc(_db, PRESENCE_COL, _sessionId)).catch(()=>{});
-    });
-    // Escuchar cambios en la colección presencia
+    await setDoc(doc(_db, PRESENCE_COL, _sessionId), { sessionId: _sessionId, ts: serverTimestamp() });
+    window.addEventListener('beforeunload', ()=>{ deleteDoc(doc(_db, PRESENCE_COL, _sessionId)).catch(()=>{}); });
     onSnapshot(collection(_db, PRESENCE_COL), snap => {
-      // Limpiar sesiones antiguas (>2 min)
       const now = Date.now();
       snap.docs.forEach(d => {
         const ts = d.data().ts?.toMillis?.() || 0;
         if(ts && now - ts > 120000) deleteDoc(doc(_db, PRESENCE_COL, d.id)).catch(()=>{});
       });
-      const count = snap.docs.length;
       const el = document.getElementById('online-count');
-      if(el) el.textContent = count;
+      if(el) el.textContent = snap.docs.length;
     });
-    // Renovar timestamp cada 60s para no expirar
-    setInterval(()=>{
-      setDoc(doc(_db, PRESENCE_COL, _sessionId), { sessionId: _sessionId, ts: serverTimestamp() }).catch(()=>{});
-    }, 60000);
+    setInterval(()=>{ setDoc(doc(_db, PRESENCE_COL, _sessionId), { sessionId: _sessionId, ts: serverTimestamp() }).catch(()=>{}); }, 60000);
   } catch(e){ console.warn('Presencia no disponible:', e); }
 }
 registerPresence();
-
 
 async function loadEvents(){
   const results = await Promise.all(
@@ -1843,22 +1762,17 @@ function buildSeedEvents(){
 async function initEvents(){
   showCalLoading(true);
   let evs = await loadEvents();
-
-  // Si Firestore está vacío, sembrar datos predefinidos
   if(!evs.length){
     const seeds = buildSeedEvents();
     await Promise.all(seeds.map(s=>saveNewEvent(s)));
     evs = seeds;
   }
-
-  // Limpiar exámenes pasados
   const today=new Date(); today.setHours(0,0,0,0);
   const expired = evs.filter(ev=>ev.type==='exam' && new Date(ev.year,ev.month-1,ev.day)<today);
   if(expired.length){
     await Promise.all(expired.map(ev=>deleteEvent(ev.id)));
     evs = evs.filter(ev=>!expired.includes(ev));
   }
-
   showCalLoading(false);
   return evs;
 }
@@ -1871,7 +1785,6 @@ function getEventsForDay(evs, month, day, year){
   });
 }
 
-/* ══ Arranque principal ══ */
 let _allEvents = [];
 
 async function appInit(){
@@ -1886,7 +1799,6 @@ function refreshTodayWidgets(){
   const now=new Date(), tm=now.getMonth()+1, td=now.getDate(), ty=now.getFullYear();
   const tmrw=new Date(now); tmrw.setDate(td+1);
   const nm=tmrw.getMonth()+1, nd=tmrw.getDate(), ny=tmrw.getFullYear();
-
   const configs = [
     { widgetId:'bday-widget',       nameId:'bday-name-text',       dot:true,  labels: _allEvents.filter(e=>e.type==='bday'  &&e.month===tm&&e.day===td).map(e=>e.label) },
     { widgetId:'bday-tmrw-widget',  nameId:'bday-tmrw-name-text',  dot:false, labels: _allEvents.filter(e=>e.type==='bday'  &&e.month===nm&&e.day===nd).map(e=>e.label) },
@@ -1897,7 +1809,6 @@ function refreshTodayWidgets(){
     { widgetId:'evento-widget',     nameId:'evento-name-text',     dot:false, labels: _allEvents.filter(e=>e.type==='evento'&&e.month===tm&&e.day===td&&e.year===ty).map(e=>e.label) },
     { widgetId:'evento-tmrw-widget',nameId:'evento-tmrw-name-text',dot:false, labels: _allEvents.filter(e=>e.type==='evento'&&e.month===nm&&e.day===nd&&e.year===ny).map(e=>e.label) },
   ];
-
   let stackBottom = 76;
   configs.forEach(({ widgetId, nameId, labels, dot }) => {
     const w = document.getElementById(widgetId);
@@ -1912,7 +1823,6 @@ function refreshTodayWidgets(){
       if(dot) document.getElementById('cal-bday-dot').style.display='none';
     }
   });
-
   document.getElementById('bday-close').onclick       = ()=>{document.getElementById('bday-widget').style.display='none';reStackWidgets();};
   document.getElementById('bday-tmrw-close').onclick  = ()=>{document.getElementById('bday-tmrw-widget').style.display='none';reStackWidgets();};
   document.getElementById('exam-close').onclick       = ()=>{document.getElementById('exam-widget').style.display='none';reStackWidgets();};
@@ -1959,7 +1869,6 @@ function buildCalendar(year){
   document.getElementById('cal-year-title').textContent=year;
   const grid=document.getElementById('cal-grid'); grid.innerHTML='';
   const now=new Date();
-
   for(let m=1;m<=12;m++){
     const mc=document.createElement('div'); mc.className='cal-month';
     const mh=document.createElement('div'); mh.className='cal-month-name'; mh.textContent=MONTHS[m-1]; mc.appendChild(mh);
@@ -1973,30 +1882,25 @@ function buildCalendar(year){
     for(let d=1;d<=dim;d++){
       const jd=new Date(year,m-1,d).getDay();
       const dayEvs=getEventsForDay(_allEvents,m,d,year);
-      const hasExam   =dayEvs.some(e=>e.type==='exam');
-      const hasBday   =dayEvs.some(e=>e.type==='bday');
-      const hasHol    =dayEvs.some(e=>e.type==='hol');
-      const hasEvento =dayEvs.some(e=>e.type==='evento');
-      const isToday =d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
+      const hasExam=dayEvs.some(e=>e.type==='exam');
+      const hasBday=dayEvs.some(e=>e.type==='bday');
+      const hasHol=dayEvs.some(e=>e.type==='hol');
+      const hasEvento=dayEvs.some(e=>e.type==='evento');
+      const isToday=d===now.getDate()&&m===now.getMonth()+1&&year===now.getFullYear();
       const cell=document.createElement('div');
       let cls='cal-cell clickable';
       if(jd===0)cls+=' sun'; else if(jd===6)cls+=' sat';
-      if(hasHol)    cls+=' hol';
-      if(hasBday)   cls+=' bday';
-      if(hasExam)   cls+=' has-exam';
-      if(hasEvento) cls+=' has-evento';
+      if(hasHol)cls+=' hol';
+      if(hasBday)cls+=' bday';
+      if(hasExam)cls+=' has-exam';
+      if(hasEvento)cls+=' has-evento';
       if(isToday)cls+=' today';
       cell.className=cls;
       const cn=document.createElement('span');cn.className='cn';cn.textContent=d;cell.appendChild(cn);
-      if(hasExam){
-        const ci=document.createElement('span');ci.className='ci';ci.textContent='📝';ci.style.fontSize='6px';cell.appendChild(ci);
-      } else if(hasBday){
-        const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);
-      } else if(hasHol){
-        const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);
-      } else if(hasEvento){
-        const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#22c55e';cell.appendChild(ci);
-      }
+      if(hasExam){const ci=document.createElement('span');ci.className='ci';ci.textContent='📝';ci.style.fontSize='6px';cell.appendChild(ci);}
+      else if(hasBday){const ci=document.createElement('span');ci.className='ci';ci.textContent='🎂';cell.appendChild(ci);}
+      else if(hasHol){const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#c9a84c';cell.appendChild(ci);}
+      else if(hasEvento){const ci=document.createElement('span');ci.className='ci';ci.textContent='●';ci.style.color='#22c55e';cell.appendChild(ci);}
       cell.addEventListener('click',()=>openEvPopup(year,m,d,dayEvs));
       dg.appendChild(cell);
     }
@@ -2004,7 +1908,6 @@ function buildCalendar(year){
   }
 }
 
-/* ══ Event popup ══ */
 function openEvPopup(year,month,day,dayEvs){
   _popupCtx={year,month,day,dayEvs};
   const jd=new Date(year,month-1,day);
@@ -2016,19 +1919,15 @@ function openEvPopup(year,month,day,dayEvs){
 
 function renderEvPopupEvents(dayEvs){
   const ev=document.getElementById('ev-popup-events'); ev.innerHTML='';
-
   if(!dayEvs.length){
     const empty=document.createElement('div');
     empty.style.cssText='text-align:center;padding:14px 0;font-size:12px;opacity:.4;';
     empty.textContent='Sin eventos este día';
-    ev.appendChild(empty);
-    return;
+    ev.appendChild(empty); return;
   }
-
   dayEvs.forEach(e=>{
     const typeClass=e.type==='exam'?'ev-exam':e.type==='hol'?'ev-hol':e.type==='evento'?'ev-evento':'ev-bday';
     const icon=e.type==='exam'?'📝':e.type==='hol'?'🗓️':e.type==='evento'?'🟢':'🎂';
-    const typeLabel=e.type==='exam'?'Examen':e.type==='hol'?'Festivo':e.type==='evento'?'Evento':'Cumpleaños';
     const labelText=e.type==='bday'?`<strong>${e.label}</strong>`:e.type==='exam'?`<strong>Examen:</strong> ${e.label}`:e.type==='evento'?`<strong>Evento:</strong> ${e.label}`:`${e.label}`;
     const d=document.createElement('div');d.className=`ev-item ${typeClass}`;
     d.innerHTML=`<span class="ev-icon">${icon}</span><span>${labelText}</span>`;
@@ -2050,21 +1949,16 @@ function renderEvPopupEvents(dayEvs){
 
 document.getElementById('ev-popup-close').onclick=()=>document.getElementById('ev-popup-overlay').classList.remove('open');
 document.getElementById('ev-popup-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('ev-popup-overlay'))document.getElementById('ev-popup-overlay').classList.remove('open');});
+document.getElementById('ev-add-btn').addEventListener('click',()=>{ openAddForm(_popupCtx.year,_popupCtx.month,_popupCtx.day); });
 
-/* ══ Add event button in popup ══ */
-document.getElementById('ev-add-btn').addEventListener('click',()=>{
-  openAddForm(_popupCtx.year,_popupCtx.month,_popupCtx.day);
-});
-
-/* ══ Add event form ══ */
 let _addCtx={year:0,month:0,day:0};
 let _selType=null;
-let _eventoDays=new Set(); // selected days for evento
+let _eventoDays=new Set();
 
 function openAddForm(year,month,day){
   _addCtx={year,month,day};
   _selType=null;
-  _eventoDays=new Set([day]); // pre-select the clicked day
+  _eventoDays=new Set([day]);
   document.getElementById('add-ev-subtitle').textContent=`${day} de ${MONTHS[month-1]} de ${year}`;
   document.getElementById('add-ev-input').value='';
   document.getElementById('add-ev-input-label').textContent='Nombre / descripción';
@@ -2080,10 +1974,8 @@ function buildEventoDayGrid(year, month){
   grid.innerHTML = '';
   const dim = new Date(year, month, 0).getDate();
   const fd  = new Date(year, month-1, 1).getDay();
-  const off = fd===0?6:fd-1; // Monday-first offset
-  for(let i=0;i<off;i++){
-    const el=document.createElement('div');el.className='evento-day-cell empty';el.textContent='';grid.appendChild(el);
-  }
+  const off = fd===0?6:fd-1;
+  for(let i=0;i<off;i++){ const el=document.createElement('div');el.className='evento-day-cell empty';el.textContent='';grid.appendChild(el); }
   for(let d=1;d<=dim;d++){
     const el=document.createElement('div');
     el.className='evento-day-cell'+((_eventoDays.has(d))?' sel':'');
@@ -2091,8 +1983,7 @@ function buildEventoDayGrid(year, month){
     el.addEventListener('click',()=>{
       if(_eventoDays.has(d)) _eventoDays.delete(d); else _eventoDays.add(d);
       el.classList.toggle('sel');
-      updateEventoSummary();
-      checkSubmit();
+      updateEventoSummary(); checkSubmit();
     });
     grid.appendChild(el);
   }
@@ -2116,12 +2007,8 @@ document.querySelectorAll('.ev-type-btn').forEach(btn=>{
     document.getElementById('add-ev-input-label').textContent=labels[_selType];
     document.getElementById('add-ev-input').placeholder=placeholders[_selType];
     const evWrap=document.getElementById('evento-dates-wrap');
-    if(_selType==='evento'){
-      evWrap.style.display='block';
-      buildEventoDayGrid(_addCtx.year,_addCtx.month);
-    } else {
-      evWrap.style.display='none';
-    }
+    if(_selType==='evento'){ evWrap.style.display='block'; buildEventoDayGrid(_addCtx.year,_addCtx.month); }
+    else { evWrap.style.display='none'; }
     checkSubmit();
   });
 });
@@ -2140,79 +2027,48 @@ document.getElementById('add-ev-submit').addEventListener('click', async ()=>{
   if(!label||!_selType) return;
   const btn=document.getElementById('add-ev-submit');
   btn.textContent='Guardando…'; btn.disabled=true;
-
   if(_selType==='evento'){
-    // Save one event per selected day
     const days=[..._eventoDays].sort((a,b)=>a-b);
     for(const d of days){
-      const ev={
-        id: Date.now()+Math.random().toString(36).slice(2),
-        type:'evento', label,
-        month:_addCtx.month, day:d, year:_addCtx.year
-      };
+      const ev={id: Date.now()+Math.random().toString(36).slice(2), type:'evento', label, month:_addCtx.month, day:d, year:_addCtx.year};
       await saveNewEvent(ev);
     }
   } else {
-    const ev={
-      id: Date.now()+Math.random().toString(36).slice(2),
-      type: _selType, label,
-      month: _addCtx.month, day: _addCtx.day,
-      year:  _selType==='exam' ? _addCtx.year : null,
-    };
+    const ev={id: Date.now()+Math.random().toString(36).slice(2), type: _selType, label, month: _addCtx.month, day: _addCtx.day, year: _selType==='exam' ? _addCtx.year : null};
     await saveNewEvent(ev);
   }
-
   _allEvents = await loadEvents();
   document.getElementById('add-ev-overlay').classList.remove('open');
   buildCalendar(calYear);
   const fresh=getEventsForDay(_allEvents,_popupCtx.month,_popupCtx.day,_popupCtx.year);
-  _popupCtx.dayEvs=fresh;
-  renderEvPopupEvents(fresh);
+  _popupCtx.dayEvs=fresh; renderEvPopupEvents(fresh);
   btn.textContent='+ Guardar evento'; btn.disabled=false;
 });
 
-document.getElementById('add-ev-close').addEventListener('click',()=>{
-  document.getElementById('add-ev-overlay').classList.remove('open');
-});
-document.getElementById('add-ev-overlay').addEventListener('click',e=>{
-  if(e.target===document.getElementById('add-ev-overlay'))
-    document.getElementById('add-ev-overlay').classList.remove('open');
-});
+document.getElementById('add-ev-close').addEventListener('click',()=>{ document.getElementById('add-ev-overlay').classList.remove('open'); });
+document.getElementById('add-ev-overlay').addEventListener('click',e=>{ if(e.target===document.getElementById('add-ev-overlay')) document.getElementById('add-ev-overlay').classList.remove('open'); });
 
-/* ══ Calendar open/close ══ */
-document.getElementById('cal-open-btn').addEventListener('click',()=>{
-  buildCalendar(calYear);
-  document.getElementById('cal-backdrop').classList.add('open');
-  document.body.style.overflow='hidden';
-});
+document.getElementById('cal-open-btn').addEventListener('click',()=>{ buildCalendar(calYear); document.getElementById('cal-backdrop').classList.add('open'); document.body.style.overflow='hidden'; });
 function closeCalModal(){document.getElementById('cal-backdrop').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('cal-modal-close').onclick=closeCalModal;
 document.getElementById('cal-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('cal-backdrop'))closeCalModal();});
 document.getElementById('cal-prev').onclick=()=>{calYear--;buildCalendar(calYear);};
 document.getElementById('cal-next').onclick=()=>{calYear++;buildCalendar(calYear);};
 
-/* ══ Calendar add-event panel ══ */
 const MONTHS_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 let _calAddType = null;
 
-// Populate month select
 (()=>{
   const sel = document.getElementById('cal-add-month');
-  MONTHS_SHORT.forEach((m,i) => {
-    const o = document.createElement('option');
-    o.value = i+1; o.textContent = m; sel.appendChild(o);
-  });
+  MONTHS_SHORT.forEach((m,i) => { const o = document.createElement('option'); o.value = i+1; o.textContent = m; sel.appendChild(o); });
   sel.value = new Date().getMonth()+1;
   populateCalAddDays();
 })();
 
-// Populate year select for exam
 (()=>{
   const sel = document.getElementById('cal-add-year');
   const y = new Date().getFullYear();
-  for(let i=y;i<=y+3;i++){
-    const o = document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o);
-  }
+  for(let i=y;i<=y+3;i++){ const o = document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o); }
 })();
 
 function populateCalAddDays(){
@@ -2222,9 +2078,7 @@ function populateCalAddDays(){
   const sel   = document.getElementById('cal-add-day');
   const prev  = +sel.value;
   sel.innerHTML = '';
-  for(let d=1;d<=dim;d++){
-    const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);
-  }
+  for(let d=1;d<=dim;d++){ const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o); }
   sel.value = prev <= dim ? prev : 1;
 }
 
@@ -2235,15 +2089,13 @@ document.getElementById('cal-add-toggle').addEventListener('click', ()=>{
   const panel = document.getElementById('cal-add-panel');
   const open = panel.style.display !== 'none';
   panel.style.display = open ? 'none' : 'block';
-  document.getElementById('cal-add-toggle').style.background =
-    open ? 'rgba(245,240,232,.12)' : 'rgba(181,67,42,.5)';
+  document.getElementById('cal-add-toggle').style.background = open ? 'rgba(245,240,232,.12)' : 'rgba(181,67,42,.5)';
 });
 
 document.querySelectorAll('.cal-add-type-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     _calAddType = btn.dataset.type;
-    document.querySelectorAll('.cal-add-type-btn').forEach(b =>
-      b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
+    document.querySelectorAll('.cal-add-type-btn').forEach(b => b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
     btn.classList.add('sel-'+_calAddType);
     const lbl={bday:'Nombre de la persona',exam:'Asignatura / examen',hol:'Nombre del festivo',evento:'Nombre del evento'};
     document.getElementById('cal-add-name-lbl').textContent = lbl[_calAddType];
@@ -2268,29 +2120,16 @@ document.getElementById('cal-add-submit').addEventListener('click', async () => 
   const year  = +document.getElementById('cal-add-year').value || new Date().getFullYear();
   const btn   = document.getElementById('cal-add-submit');
   btn.textContent = 'Guardando…'; btn.disabled = true;
-
-  const ev = {
-    id: Date.now()+Math.random().toString(36).slice(2),
-    type: _calAddType, label, month, day,
-    year: (_calAddType==='exam'||_calAddType==='evento') ? year : null,
-  };
+  const ev = { id: Date.now()+Math.random().toString(36).slice(2), type: _calAddType, label, month, day, year: (_calAddType==='exam'||_calAddType==='evento') ? year : null };
   await saveNewEvent(ev);
   _allEvents = await loadEvents();
   buildCalendar(calYear);
-
-  // Reset form
   document.getElementById('cal-add-name').value = '';
   _calAddType = null;
-  document.querySelectorAll('.cal-add-type-btn').forEach(b =>
-    b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
+  document.querySelectorAll('.cal-add-type-btn').forEach(b => b.classList.remove('sel-bday','sel-exam','sel-hol','sel-evento'));
   btn.textContent = '✅ Guardado';
   setTimeout(()=>{ btn.textContent='Guardar'; checkCalAddSubmit(); }, 1500);
 });
-
-/* ══ Firebase Códigos ══
-   Colección plana: Codigo/Codigos/Archivos
-   { id(sha), name, path, carpeta, lang, download_url, html_url, content, updatedAt }
-══════════════════════════════════════ */
 
 let _allArchivos = [];
 
@@ -2303,24 +2142,15 @@ async function saveCodigoFile(fileDoc){
   await setDoc(doc(_db, 'Codigo', 'Codigos', 'Archivos', fileDoc.id), fileDoc);
 }
 
-/* Sincronización completa GitHub → Firebase, con callback de progreso */
 async function forceSyncArchivos(statusCb){
   statusCb('Obteniendo árbol del repo desde GitHub…');
-  const treeRes = await fetch(
-    'https://api.github.com/repos/ErBala3/DAM/git/trees/main?recursive=1',
-    {headers:{Accept:'application/vnd.github.v3+json'}}
-  );
+  const treeRes = await fetch('https://api.github.com/repos/ErBala3/DAM/git/trees/main?recursive=1', {headers:{Accept:'application/vnd.github.v3+json'}});
   if(!treeRes.ok) throw new Error(`GitHub Trees API ${treeRes.status}: ${await treeRes.text()}`);
   const treeData = await treeRes.json();
-
-  const blobs = treeData.tree.filter(item =>
-    item.type === 'blob' && item.path.startsWith('GitTodo/')
-  );
+  const blobs = treeData.tree.filter(item => item.type === 'blob' && item.path.startsWith('GitTodo/'));
   statusCb(`${blobs.length} archivos encontrados, guardando en Firebase…`);
-
   _allArchivos = [];
   let done = 0;
-
   for(let i = 0; i < blobs.length; i += 5){
     const batch = blobs.slice(i, i + 5);
     await Promise.all(batch.map(async item => {
@@ -2332,13 +2162,8 @@ async function forceSyncArchivos(statusCb){
       const lang     = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':'other';
       const dl_url   = `https://raw.githubusercontent.com/ErBala3/DAM/main/${item.path}`;
       const html_url = `https://github.com/ErBala3/DAM/blob/main/${item.path}`;
-
       let content = '';
-      try{
-        const r = await fetch(dl_url);
-        if(r.ok) content = (await r.text()).slice(0, 50000);
-      } catch(e){ console.warn('Sin contenido para', name); }
-
+      try{ const r = await fetch(dl_url); if(r.ok) content = (await r.text()).slice(0, 50000); } catch(e){ console.warn('Sin contenido para', name); }
       const fileDoc = { id: item.sha, name, path: item.path, carpeta, lang, download_url: dl_url, html_url, content, updatedAt: Date.now() };
       await saveCodigoFile(fileDoc);
       _allArchivos.push(fileDoc);
@@ -2353,24 +2178,14 @@ async function initArchivos(){
   const label = document.getElementById('section-label');
   try{
     const existing = await loadCodigosFlat();
-    if(existing.length > 0){
-      _allArchivos = existing;
-      label.textContent = label.textContent.replace('expandir', `expandir · 🔍 ${existing.length} archivos indexados`);
-      return;
-    }
+    if(existing.length > 0){ _allArchivos = existing; label.textContent = label.textContent.replace('expandir', `expandir · 🔍 ${existing.length} archivos indexados`); return; }
   } catch(e){ console.warn('loadCodigosFlat error:', e); }
-
-  // Firebase vacío → sincronizar automáticamente
   try{
     await forceSyncArchivos(msg => { label.textContent = '// ' + msg; });
     label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
-  } catch(e){
-    console.error('Error sync:', e);
-    label.textContent = '// Error sincronizando: ' + e.message;
-  }
+  } catch(e){ console.error('Error sync:', e); label.textContent = '// Error sincronizando: ' + e.message; }
 }
 
-/* ══ GitHub Tree ══ */
 const OWNER='ErBala3',REPO='DAM',BRANCH='main',ROOT='GitTodo';
 const getExt=n=>n.includes('.')?n.split('.').pop().toLowerCase():'';
 const ICONS={java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'};
@@ -2429,22 +2244,16 @@ function renderFolder(item,delay=0){
   });
   wrap.appendChild(header);wrap.appendChild(children);return wrap;
 }
-/* Normaliza texto: quita tildes y pasa a minúsculas */
-function normalize(s){
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-}
 
+function normalize(s){ return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
-/* Buscador con debounce */
 let _searchTimer = null;
-
 document.getElementById('search-input').addEventListener('input', function(){
   clearTimeout(_searchTimer);
   const raw = this.value.replace(/\s+/g, ' ').trim();
   const q   = normalize(raw);
   const treeRoot = document.getElementById('tree-root');
   const fbPanel  = getOrCreateFbPanel(treeRoot);
-
   if(!q){
     treeRoot.style.display = '';
     treeRoot.querySelectorAll('.tree-item,.tree-leaf').forEach(el => el.classList.remove('hidden'));
@@ -2452,31 +2261,18 @@ document.getElementById('search-input').addEventListener('input', function(){
     document.getElementById('search-count').textContent = '';
     return;
   }
-
   treeRoot.style.display = 'none';
-
-  if(!_allArchivos.length){
-    fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;padding:16px 0;">⏳ Aún indexando archivos, espera un momento…</div>`;
-    return;
-  }
-
+  if(!_allArchivos.length){ fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;padding:16px 0;">⏳ Aún indexando archivos, espera un momento…</div>`; return; }
   _searchTimer = setTimeout(() => {
-    const matches = _allArchivos.filter(f =>
-      normalize(f.name).includes(q) ||
-      normalize(f.carpeta || '').includes(q)
-    );
-
+    const matches = _allArchivos.filter(f => normalize(f.name).includes(q) || normalize(f.carpeta || '').includes(q));
     if(matches.length){
       fbPanel.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;margin-bottom:10px;">// ${matches.length} archivo${matches.length!==1?'s':''} encontrado${matches.length!==1?'s':''}</div>`;
       matches.forEach(f => {
-        const el = document.createElement('div');
-        el.className = 'tree-leaf';
-        el.dataset.name = f.name.toLowerCase();
+        const el = document.createElement('div'); el.className = 'tree-leaf'; el.dataset.name = f.name.toLowerCase();
         const ext  = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
         const lang = f.lang || 'other';
         const icon = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'}[ext] || '📄';
-        const carpetaLabel = f.carpeta && f.carpeta !== '/'
-          ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
+        const carpetaLabel = f.carpeta && f.carpeta !== '/' ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
         el.innerHTML = `<span class="tree-icon" style="font-size:14px">${icon}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
         el.addEventListener('click', () => openFileFromFirebase(f));
         fbPanel.appendChild(el);
@@ -2491,12 +2287,7 @@ document.getElementById('search-input').addEventListener('input', function(){
 
 function getOrCreateFbPanel(treeRoot){
   let p = document.getElementById('fb-results');
-  if(!p){
-    p = document.createElement('div');
-    p.id = 'fb-results';
-    p.style.cssText = 'margin-top:4px;';
-    treeRoot.parentNode.insertBefore(p, treeRoot.nextSibling);
-  }
+  if(!p){ p = document.createElement('div'); p.id = 'fb-results'; p.style.cssText = 'margin-top:4px;'; treeRoot.parentNode.insertBefore(p, treeRoot.nextSibling); }
   return p;
 }
 
@@ -2506,32 +2297,16 @@ function openFileFromFirebase(f){
   document.getElementById('modal-icon').textContent=ICONS[getExt(f.name)]||'📄';
   document.getElementById('modal-gh').href=f.html_url||'#';
   bd2.classList.add('open');
-
-  if(f.content){
-    // Contenido ya en caché (Firebase)
-    rawCode = f.content;
-    document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`;
-  } else if(f.download_url){
-    // Cargar desde GitHub raw
+  if(f.content){ rawCode = f.content; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`; }
+  else if(f.download_url){
     document.getElementById('modal-body').innerHTML='<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';
     rawCode = '';
-    fetch(f.download_url)
-      .then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); })
-      .then(text=>{
-        rawCode = text;
-        document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`;
-      })
-      .catch(err=>{
-        document.getElementById('modal-body').innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`;
-      });
-  } else {
-    document.getElementById('modal-body').innerHTML='<div class="modal-loading"><span>Sin contenido disponible</span></div>';
-  }
+    fetch(f.download_url).then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); }).then(text=>{ rawCode = text; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`; }).catch(err=>{ document.getElementById('modal-body').innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`; });
+  } else { document.getElementById('modal-body').innerHTML='<div class="modal-loading"><span>Sin contenido disponible</span></div>'; }
 }
 
 async function init(){
   const root=document.getElementById('tree-root'),label=document.getElementById('section-label');
-  // Cargar árbol desde GitHub normalmente
   try{
     const items=await apiFetch(ROOT);
     root.innerHTML='';
@@ -2542,13 +2317,12 @@ async function init(){
     label.textContent='// error al cargar';
     root.innerHTML=`<div class="error-box">❌ No se pudo conectar con el repositorio.<br><br><strong>Error:</strong> ${e.message}</div>`;
   }
-  // Cargar/sincronizar archivos en Firebase (para el buscador)
   initArchivos().catch(e => console.warn('Firebase códigos:', e));
 }
+
 /* ══ Upload modal ══ */
 const BLOCKED_FOLDERS = ['Programacion', 'Entornos', 'Lenguaje de marcas'];
 
-// ── Tab switching ──
 document.querySelectorAll('.upload-tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('active'));
@@ -2571,7 +2345,6 @@ function openUploadModal(){
   document.getElementById('upload-folder-selected').dataset.folder = '';
   document.getElementById('upload-folder-search').value = '';
   clearUploadPreview();
-  // Reset to files tab
   document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-files').classList.add('active');
   document.getElementById('upload-panel-files').style.display  = '';
@@ -2580,9 +2353,7 @@ function openUploadModal(){
   populateFolderSelect();
 }
 
-function closeUploadModal(){
-  document.getElementById('upload-backdrop').classList.remove('open');
-}
+function closeUploadModal(){ document.getElementById('upload-backdrop').classList.remove('open'); }
 
 function clearUploadPreview(){
   document.getElementById('upload-preview').style.display = 'none';
@@ -2594,26 +2365,18 @@ function clearUploadPreview(){
 async function populateFolderSelect(){
   const tree = document.getElementById('upload-folder-tree');
   const allFolders = [...new Set(_allArchivos.map(f => f.carpeta || ''))].filter(f => f && f !== '/').sort();
-  if(!allFolders.length){
-    tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin carpetas disponibles</div>`;
-    return;
-  }
+  if(!allFolders.length){ tree.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;">Sin carpetas disponibles</div>`; return; }
   renderFolderTree(allFolders, '');
 }
 
 function renderFolderTree(allFolders, filter){
   const tree = document.getElementById('upload-folder-tree');
   const q = normalize(filter);
-
-  // Separate blocked (shown as headers) and selectable
   const blocked = BLOCKED_FOLDERS;
   const selectable = allFolders.filter(f => !blocked.includes(f.split('/')[0]));
   const filtered = q ? selectable.filter(f => normalize(f).includes(q)) : selectable;
-
   tree.innerHTML = '';
-
   if(!q){
-    // Show blocked folders as non-clickable section headers
     blocked.forEach(bf => {
       const exists = allFolders.some(f => f.split('/')[0] === bf);
       if(!exists) return;
@@ -2622,35 +2385,14 @@ function renderFolderTree(allFolders, filter){
       hdr.innerHTML = `<span style="font-size:14px">📁</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--muted);">${bf}</span><span style="font-size:9px;margin-left:auto;color:var(--muted);">bloqueada</span>`;
       tree.appendChild(hdr);
     });
-    if(selectable.length && blocked.some(bf => allFolders.some(f => f.split('/')[0] === bf))){
-      const sep = document.createElement('div');
-      sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;';
-      tree.appendChild(sep);
-    }
-  }
-
-  if(!filtered.length && !q){
-    const el = document.createElement('div');
-    el.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;";
-    el.textContent = 'Sin carpetas seleccionables';
-    tree.appendChild(el);
-    return;
+    if(selectable.length && blocked.some(bf => allFolders.some(f => f.split('/')[0] === bf))){ const sep = document.createElement('div'); sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;'; tree.appendChild(sep); }
   }
   if(!filtered.length){
-    const el = document.createElement('div');
-    el.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;";
-    el.textContent = 'Sin resultados';
-    tree.appendChild(el);
-    return;
+    const el = document.createElement('div'); el.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;text-align:center;"; el.textContent = q ? 'Sin resultados' : 'Sin carpetas seleccionables'; tree.appendChild(el); return;
   }
-
   filtered.forEach(folder => {
-    const parts = folder.split('/');
-    const last  = parts[parts.length - 1];
-    const depth = parts.length - 1;
-    const el = document.createElement('div');
-    el.className = 'tree-leaf';
-    el.style.paddingLeft = (11 + depth * 14) + 'px';
+    const parts = folder.split('/'); const last = parts[parts.length - 1]; const depth = parts.length - 1;
+    const el = document.createElement('div'); el.className = 'tree-leaf'; el.style.paddingLeft = (11 + depth * 14) + 'px';
     el.innerHTML = `<span class="tree-icon" style="font-size:14px">📁</span><span class="leaf-name">${last}</span><span style="font-size:9px;opacity:.35;margin-left:4px;">${depth > 0 ? folder : ''}</span>`;
     el.addEventListener('click', () => selectUploadFolder(folder));
     tree.appendChild(el);
@@ -2661,16 +2403,12 @@ function selectUploadFolder(folder){
   const sel = document.getElementById('upload-folder-selected');
   document.getElementById('upload-folder-selected-text').textContent = folder;
   sel.style.display = 'flex';
-  // store on element for retrieval
   sel.dataset.folder = folder;
-  // clear search
   document.getElementById('upload-folder-search').value = '';
 }
 
 document.getElementById('upload-folder-clear').addEventListener('click', () => {
-  const sel = document.getElementById('upload-folder-selected');
-  sel.style.display = 'none';
-  sel.dataset.folder = '';
+  const sel = document.getElementById('upload-folder-selected'); sel.style.display = 'none'; sel.dataset.folder = '';
 });
 
 let _folderSearchTimer = null;
@@ -2683,122 +2421,68 @@ document.getElementById('upload-folder-search').addEventListener('input', functi
   }, 150);
 });
 
-document.getElementById('upload-folder-sel')?.addEventListener('change', function(){});
-
-// Collect files from either input into a unified list
 function getSelectedFiles(){
   const tab = document.querySelector('.upload-tab.active').dataset.tab;
-  const input = tab === 'folder'
-    ? document.getElementById('upload-folder-input')
-    : document.getElementById('upload-file');
+  const input = tab === 'folder' ? document.getElementById('upload-folder-input') : document.getElementById('upload-file');
   return Array.from(input.files || []);
 }
 
 function showPreview(files){
-  const list = document.getElementById('upload-preview-list');
-  list.innerHTML = '';
+  const list = document.getElementById('upload-preview-list'); list.innerHTML = '';
   files.forEach(f => {
     const ext = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
     const icons = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',kt:'🟣'};
     const icon = icons[ext] || '📄';
     const rel = f.webkitRelativePath ? f.webkitRelativePath.split('/').slice(1).join('/') || f.name : f.name;
-    const d = document.createElement('div');
-    d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:2px 0;';
-    d.innerHTML = `<span>${icon}</span><span style="color:#c9d1d9">${rel}</span>`;
-    list.appendChild(d);
+    const d = document.createElement('div'); d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:2px 0;';
+    d.innerHTML = `<span>${icon}</span><span style="color:#c9d1d9">${rel}</span>`; list.appendChild(d);
   });
   document.getElementById('upload-count').textContent = files.length;
   document.getElementById('upload-preview').style.display = '';
   document.getElementById('upload-submit').disabled = files.length === 0;
 }
 
-document.getElementById('upload-file').addEventListener('change', function(){
-  const files = Array.from(this.files);
-  if(files.length) showPreview(files);
-  else clearUploadPreview();
-});
-
-document.getElementById('upload-folder-input').addEventListener('change', function(){
-  const files = Array.from(this.files);
-  if(files.length) showPreview(files);
-  else clearUploadPreview();
-});
+document.getElementById('upload-file').addEventListener('change', function(){ const files = Array.from(this.files); if(files.length) showPreview(files); else clearUploadPreview(); });
+document.getElementById('upload-folder-input').addEventListener('change', function(){ const files = Array.from(this.files); if(files.length) showPreview(files); else clearUploadPreview(); });
 
 document.getElementById('upload-submit').addEventListener('click', async () => {
   const files = getSelectedFiles();
   if(!files.length){ setUploadMsg('Selecciona archivos primero.', 'err'); return; }
-
   let baseFolder = (document.getElementById('upload-folder-selected').dataset.folder || '').trim().replace(/^\/+|\/+$/g, '');
-  if(baseFolder){
-    const root = baseFolder.split('/')[0];
-    if(BLOCKED_FOLDERS.includes(root)){ setUploadMsg(`La carpeta "${root}" no está permitida.`, 'err'); return; }
-  }
-
-  const btn = document.getElementById('upload-submit');
-  btn.disabled = true;
+  if(baseFolder){ const root = baseFolder.split('/')[0]; if(BLOCKED_FOLDERS.includes(root)){ setUploadMsg(`La carpeta "${root}" no está permitida.`, 'err'); return; } }
+  const btn = document.getElementById('upload-submit'); btn.disabled = true;
   let done = 0, errors = 0;
-
   for(const file of files){
     try{
-      // Para carpetas: webkitRelativePath = "CarpetaRaiz/sub/archivo.java"
-      // Quitamos el primer segmento (nombre de la carpeta raíz seleccionada) y usamos el resto
       let relPath = file.webkitRelativePath || file.name;
       const parts = relPath.split('/');
-      // Si viene de carpeta, quitar el primer segmento (nombre carpeta local)
       const fileParts = parts.length > 1 ? parts.slice(1) : parts;
       const fileName  = fileParts[fileParts.length - 1];
-      const subPath   = fileParts.slice(0, -1).join('/'); // subdirectorios dentro de la carpeta
-
+      const subPath   = fileParts.slice(0, -1).join('/');
       let carpeta = baseFolder || '';
       if(subPath) carpeta = carpeta ? carpeta + '/' + subPath : subPath;
       if(!carpeta) carpeta = '/';
-
       const content = await file.text().catch(() => '');
       const ext  = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
       const lang = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':'other';
       const id   = 'upload_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-
-      const fileDoc = {
-        id, name: fileName,
-        path: 'GitTodo/' + (carpeta !== '/' ? carpeta + '/' : '') + fileName,
-        carpeta, lang,
-        download_url: '', html_url: '',
-        content: content.slice(0, 50000),
-        updatedAt: Date.now()
-      };
+      const fileDoc = { id, name: fileName, path: 'GitTodo/' + (carpeta !== '/' ? carpeta + '/' : '') + fileName, carpeta, lang, download_url: '', html_url: '', content: content.slice(0, 50000), updatedAt: Date.now() };
       await saveCodigoFile(fileDoc);
       _allArchivos.push(fileDoc);
-      done++;
-      btn.textContent = `Subiendo… ${done}/${files.length}`;
-    } catch(e){
-      errors++;
-      console.error('Error subiendo', file.name, e);
-    }
+      done++; btn.textContent = `Subiendo… ${done}/${files.length}`;
+    } catch(e){ errors++; console.error('Error subiendo', file.name, e); }
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Subir a Firebase';
-  if(errors === 0){
-    setUploadMsg(`✅ ${done} archivo${done!==1?'s':''} subido${done!==1?'s':''} correctamente.`, 'ok');
-    setTimeout(closeUploadModal, 1800);
-  } else {
-    setUploadMsg(`✅ ${done} subidos, ⚠️ ${errors} con error.`, 'warn');
-  }
+  btn.disabled = false; btn.textContent = 'Subir a Firebase';
+  if(errors === 0){ setUploadMsg(`✅ ${done} archivo${done!==1?'s':''} subido${done!==1?'s':''} correctamente.`, 'ok'); setTimeout(closeUploadModal, 1800); }
+  else { setUploadMsg(`✅ ${done} subidos, ⚠️ ${errors} con error.`, 'warn'); }
 });
 
-function setUploadMsg(txt, cls){
-  const el = document.getElementById('upload-msg');
-  el.textContent = txt; el.className = cls;
-}
+function setUploadMsg(txt, cls){ const el = document.getElementById('upload-msg'); el.textContent = txt; el.className = cls; }
 
-/* ══════════════════════════════════════════════
-   HUELLA DIGITAL — Calculadora + Firebase + AI
-═══════════════════════════════════════════════ */
+/* ══════════ HUELLA DIGITAL ══════════ */
 const HUELLA_STEPS = 4;
 let _hStep = 1;
 let _hAnswers = {};
-
-// CO₂ factors (kg/year rough estimates)
 const H_FACTORS = {
   transport: { coche_gasolina:2400, coche_diesel:2200, coche_electrico:600, moto:1200, transporte_publico:500, bici_pie:0 },
   flights:   { 0:0, 1:500, 4:2000, 8:4000, 15:8000 },
@@ -2817,7 +2501,6 @@ function calcHuella(){
   const km = +(document.getElementById('hs-km').value)||20;
   const people = +(document.getElementById('hs-people').value)||3;
   const screen = +(document.getElementById('hs-screen').value)||5;
-
   co2 += (H_FACTORS.transport[a.transport]||0) * (km/20);
   co2 += (H_FACTORS.flights[a.flights]||0);
   co2 += (H_FACTORS.diet[a.diet]||0);
@@ -2825,11 +2508,10 @@ function calcHuella(){
   co2 += (H_FACTORS.food_waste[a.food_waste]||0);
   co2 += (H_FACTORS.energy[a.energy]||0) / Math.max(people,1);
   co2 += (H_FACTORS.solar[a.solar]||0);
-  co2 += screen * 50; // ~50kg CO₂/year per daily hour of streaming
+  co2 += screen * 50;
   co2 += (H_FACTORS.shopping[a.shopping]||0);
   co2 += (H_FACTORS.clothes[a.clothes]||0);
-
-  return Math.round(co2 / 100) / 10; // tonnes
+  return Math.round(co2 / 100) / 10;
 }
 
 function huellaLabel(tons){
@@ -2841,212 +2523,99 @@ function huellaLabel(tons){
 }
 
 function huellaStepValid(){
-  const required = {
-    1: ['transport','flights'],
-    2: ['diet','local_food','food_waste'],
-    3: ['energy','solar'],
-    4: ['shopping','clothes'],
-  };
+  const required = { 1: ['transport','flights'], 2: ['diet','local_food','food_waste'], 3: ['energy','solar'], 4: ['shopping','clothes'] };
   return (required[_hStep]||[]).every(k => _hAnswers[k] !== undefined);
 }
 
 function updateHuellaNav(){
-  const btn = document.getElementById('huella-next');
-  const back = document.getElementById('huella-back');
-  btn.disabled = !huellaStepValid();
-  back.style.visibility = _hStep > 1 ? 'visible' : 'hidden';
-  const pct = ((_hStep-1) / HUELLA_STEPS) * 100;
-  document.getElementById('huella-progress-bar').style.width = pct+'%';
+  const btn = document.getElementById('huella-next'); const back = document.getElementById('huella-back');
+  btn.disabled = !huellaStepValid(); back.style.visibility = _hStep > 1 ? 'visible' : 'hidden';
+  document.getElementById('huella-progress-bar').style.width = ((_hStep-1) / HUELLA_STEPS) * 100+'%';
 }
 
 function showHuellaStep(n){
   document.querySelectorAll('.hstep').forEach(s=>s.classList.remove('active'));
-  const el = document.getElementById('hstep-'+n);
-  if(el) el.classList.add('active');
+  const el = document.getElementById('hstep-'+n); if(el) el.classList.add('active');
   document.getElementById('huella-result').style.display = 'none';
   document.getElementById('huella-nav').style.display = 'flex';
-  _hStep = n;
-  updateHuellaNav();
+  _hStep = n; updateHuellaNav();
 }
 
-// Opt buttons
 document.querySelectorAll('.hq-opt').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const q = btn.dataset.q;
     document.querySelectorAll(`.hq-opt[data-q="${q}"]`).forEach(b=>b.classList.remove('sel'));
-    btn.classList.add('sel');
-    _hAnswers[q] = btn.dataset.v;
-    updateHuellaNav();
+    btn.classList.add('sel'); _hAnswers[q] = btn.dataset.v; updateHuellaNav();
   });
 });
 
-// Sliders
-document.getElementById('hs-km').addEventListener('input',function(){
-  document.getElementById('hsv-km').textContent=this.value+' km';
-});
-document.getElementById('hs-people').addEventListener('input',function(){
-  document.getElementById('hsv-people').textContent=this.value;
-});
-document.getElementById('hs-screen').addEventListener('input',function(){
-  document.getElementById('hsv-screen').textContent=this.value+'h';
-});
+document.getElementById('hs-km').addEventListener('input',function(){ document.getElementById('hsv-km').textContent=this.value+' km'; });
+document.getElementById('hs-people').addEventListener('input',function(){ document.getElementById('hsv-people').textContent=this.value; });
+document.getElementById('hs-screen').addEventListener('input',function(){ document.getElementById('hsv-screen').textContent=this.value+'h'; });
 
 document.getElementById('huella-next').addEventListener('click',async()=>{
-  if(_hStep < HUELLA_STEPS){
-    showHuellaStep(_hStep+1);
-  } else {
-    // Show results
+  if(_hStep < HUELLA_STEPS){ showHuellaStep(_hStep+1); } else {
     document.querySelectorAll('.hstep').forEach(s=>s.classList.remove('active'));
     document.getElementById('huella-nav').style.display = 'none';
     document.getElementById('huella-result').style.display = 'block';
     document.getElementById('huella-progress-bar').style.width='100%';
-
-    const tons = calcHuella();
-    const lbl  = huellaLabel(tons);
+    const tons = calcHuella(); const lbl = huellaLabel(tons);
     document.getElementById('hr-tons').textContent = tons.toFixed(1)+'t';
     document.getElementById('hr-tons').style.color = lbl.color;
     document.getElementById('hr-label').textContent = lbl.text;
     document.getElementById('hr-label').style.color = lbl.color;
-
-    // Auto-save immediately
     autoSaveHuella(tons);
-
-    // Call Claude API for personalised analysis
-    document.getElementById('hr-content').innerHTML =
-      '<div class="hloading"><div class="hloading-spinner"></div>Analizando tu impacto…</div>';
-
+    document.getElementById('hr-content').innerHTML = '<div class="hloading"><div class="hloading-spinner"></div>Analizando tu impacto…</div>';
     try{
       const a = _hAnswers;
       const km = document.getElementById('hs-km').value;
       const people = document.getElementById('hs-people').value;
       const screen = document.getElementById('hs-screen').value;
-
-      const prompt = `Eres un experto en sostenibilidad ambiental. Un usuario ha calculado su huella de carbono personal y obtiene ${tons} toneladas de CO₂ al año (la media española es ~8t).
-
-Sus datos:
-- Transporte: ${a.transport}, ${km}km/día, ${a.flights} vuelos/año
-- Dieta: ${a.diet}, alimentos locales: ${a.local_food}, desperdicio: ${a.food_waste}
-- Energía del hogar: ${a.energy}, ${people} personas, solar: ${a.solar}
-- Pantalla: ${screen}h/día, compras online: ${a.shopping}/mes, ropa: ${a.clothes}
-
-Responde en español con este formato JSON exacto (sin markdown, solo JSON):
-{
-  "resumen": "2-3 frases sobre su impacto personal, directo y empático",
-  "puntos_fuertes": ["aspecto positivo 1", "aspecto positivo 2"],
-  "consejos": [
-    {"icono":"🚗","titulo":"Título corto","texto":"Consejo concreto y accionable"},
-    {"icono":"🥗","titulo":"Título corto","texto":"Consejo concreto y accionable"},
-    {"icono":"⚡","titulo":"Título corto","texto":"Consejo concreto y accionable"},
-    {"icono":"♻️","titulo":"Título corto","texto":"Consejo concreto y accionable"}
-  ]
-}`;
-
-      const resp = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1000,
-          messages:[{role:'user',content:prompt}]
-        })
-      });
+      const prompt = `Eres un experto en sostenibilidad ambiental. Un usuario ha calculado su huella de carbono personal y obtiene ${tons} toneladas de CO₂ al año (la media española es ~8t).\n\nSus datos:\n- Transporte: ${a.transport}, ${km}km/día, ${a.flights} vuelos/año\n- Dieta: ${a.diet}, alimentos locales: ${a.local_food}, desperdicio: ${a.food_waste}\n- Energía del hogar: ${a.energy}, ${people} personas, solar: ${a.solar}\n- Pantalla: ${screen}h/día, compras online: ${a.shopping}/mes, ropa: ${a.clothes}\n\nResponde en español con este formato JSON exacto (sin markdown, solo JSON):\n{\n  "resumen": "2-3 frases sobre su impacto personal, directo y empático",\n  "puntos_fuertes": ["aspecto positivo 1", "aspecto positivo 2"],\n  "consejos": [\n    {"icono":"🚗","titulo":"Título corto","texto":"Consejo concreto y accionable"},\n    {"icono":"🥗","titulo":"Título corto","texto":"Consejo concreto y accionable"},\n    {"icono":"⚡","titulo":"Título corto","texto":"Consejo concreto y accionable"},\n    {"icono":"♻️","titulo":"Título corto","texto":"Consejo concreto y accionable"}\n  ]\n}`;
+      const resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
       const data = await resp.json();
       const raw = data.content.find(b=>b.type==='text')?.text || '{}';
       const clean = raw.replace(/```json|```/g,'').trim();
       const result = JSON.parse(clean);
-
       let html = `<div class="hresult-analysis">${result.resumen}</div>`;
-      if(result.puntos_fuertes?.length){
-        html += `<div style="margin-bottom:14px;">`;
-        html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:8px;">✅ TUS PUNTOS FUERTES</div>`;
-        result.puntos_fuertes.forEach(p=>{
-          html+=`<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:#bbf7d0;margin-bottom:5px;">• ${p}</div>`;
-        });
-        html+=`</div>`;
-      }
-      if(result.consejos?.length){
-        html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:10px;">💡 CÓMO MEJORAR</div>`;
-        result.consejos.forEach(c=>{
-          html+=`<div class="hresult-tip"><div class="hresult-tip-icon">${c.icono}</div><div class="hresult-tip-text"><strong style="color:#f0fdf4">${c.titulo}</strong><br>${c.texto}</div></div>`;
-        });
-      }
+      if(result.puntos_fuertes?.length){ html += `<div style="margin-bottom:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:8px;">✅ TUS PUNTOS FUERTES</div>`; result.puntos_fuertes.forEach(p=>{ html+=`<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:#bbf7d0;margin-bottom:5px;">• ${p}</div>`; }); html+=`</div>`; }
+      if(result.consejos?.length){ html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#86efac;font-weight:700;letter-spacing:.5px;margin-bottom:10px;">💡 CÓMO MEJORAR</div>`; result.consejos.forEach(c=>{ html+=`<div class="hresult-tip"><div class="hresult-tip-icon">${c.icono}</div><div class="hresult-tip-text"><strong style="color:#f0fdf4">${c.titulo}</strong><br>${c.texto}</div></div>`; }); }
       document.getElementById('hr-content').innerHTML = html;
-    } catch(e){
-      document.getElementById('hr-content').innerHTML =
-        `<div class="hresult-analysis">No se pudo generar el análisis detallado, pero tu huella estimada es de <strong>${tons}t CO₂/año</strong>. ${tons>8?'Estás por encima de la media española (8t). Considera reducir desplazamientos en coche y consumo de carne.':'¡Estás por debajo de la media española! Sigue así.'}</div>`;
-    }
+    } catch(e){ document.getElementById('hr-content').innerHTML = `<div class="hresult-analysis">No se pudo generar el análisis detallado, pero tu huella estimada es de <strong>${tons}t CO₂/año</strong>. ${tons>8?'Estás por encima de la media española (8t). Considera reducir desplazamientos en coche y consumo de carne.':'¡Estás por debajo de la media española! Sigue así.'}</div>`; }
   }
 });
 
-document.getElementById('huella-back').addEventListener('click',()=>{
-  if(_hStep > 1) showHuellaStep(_hStep-1);
-});
-
-document.getElementById('huella-recalc').addEventListener('click',()=>{
-  _hAnswers = {};
-  document.querySelectorAll('.hq-opt').forEach(b=>b.classList.remove('sel'));
-  showHuellaStep(1);
-});
+document.getElementById('huella-back').addEventListener('click',()=>{ if(_hStep > 1) showHuellaStep(_hStep-1); });
+document.getElementById('huella-recalc').addEventListener('click',()=>{ _hAnswers = {}; document.querySelectorAll('.hq-opt').forEach(b=>b.classList.remove('sel')); showHuellaStep(1); });
 
 async function autoSaveHuella(tons){
   try{
-    const entry = {
-      browserId: BROWSER_ID,
-      tons,
-      answers: {..._hAnswers},
-      km: +document.getElementById('hs-km').value,
-      people: +document.getElementById('hs-people').value,
-      screen: +document.getElementById('hs-screen').value,
-      savedAt: Date.now()
-    };
+    const entry = { browserId: BROWSER_ID, tons, answers: {..._hAnswers}, km: +document.getElementById('hs-km').value, people: +document.getElementById('hs-people').value, screen: +document.getElementById('hs-screen').value, savedAt: Date.now() };
     await setDoc(doc(_db,'HuellaDigital','Registros','Entradas', BROWSER_ID), entry);
   } catch(e){ console.error('huella autosave error:',e); }
 }
 
-document.getElementById('huella-btn').addEventListener('click',()=>{
-  document.getElementById('huella-backdrop').classList.add('open');
-});
-document.getElementById('huella-close').addEventListener('click',()=>{
-  document.getElementById('huella-backdrop').classList.remove('open');
-});
-document.getElementById('huella-backdrop').addEventListener('click',e=>{
-  if(e.target===document.getElementById('huella-backdrop'))
-    document.getElementById('huella-backdrop').classList.remove('open');
-});
+document.getElementById('huella-btn').addEventListener('click',()=>{ document.getElementById('huella-backdrop').classList.add('open'); });
+document.getElementById('huella-close').addEventListener('click',()=>{ document.getElementById('huella-backdrop').classList.remove('open'); });
+document.getElementById('huella-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('huella-backdrop')) document.getElementById('huella-backdrop').classList.remove('open'); });
 
-/* ══════════════════════════════════════════════
-   IPE — PDI + PLE  (Firebase + PDF download)
-═══════════════════════════════════════════════ */
-
-// ── State ──
+/* ══════════ IPE — PDI + PLE ══════════ */
 const _ipeState = { pdi:{stars:{}}, ple:{stars:{}} };
 
-// ── Tag toggle ──
-document.querySelectorAll('.ipedoc-tag').forEach(tag=>{
-  tag.addEventListener('click',()=>{
-    tag.classList.toggle('sel');
-  });
-});
+document.querySelectorAll('.ipedoc-tag').forEach(tag=>{ tag.addEventListener('click',()=>{ tag.classList.toggle('sel'); }); });
 
-// ── Star rating ──
 function initStars(containerId){
-  const container = document.getElementById(containerId);
-  if(!container) return;
+  const container = document.getElementById(containerId); if(!container) return;
   const stars = container.querySelectorAll('.ipedoc-star');
   stars.forEach(star=>{
     star.addEventListener('click',()=>{
-      const val = +star.dataset.val;
-      const group = container.dataset.group;
+      const val = +star.dataset.val; const group = container.dataset.group;
       _ipeState[group.startsWith('pdi')?'pdi':'ple'].stars[group] = val;
       stars.forEach(s=> s.classList.toggle('on', +s.dataset.val <= val));
     });
-    star.addEventListener('mouseenter',()=>{
-      const val = +star.dataset.val;
-      stars.forEach(s=> s.style.opacity = +s.dataset.val <= val ? '1' : '.3');
-    });
+    star.addEventListener('mouseenter',()=>{ const val = +star.dataset.val; stars.forEach(s=> s.style.opacity = +s.dataset.val <= val ? '1' : '.3'); });
     star.addEventListener('mouseleave',()=>{
-      const group = container.dataset.group;
-      const cur = (_ipeState[group.startsWith('pdi')?'pdi':'ple'].stars[group])||0;
+      const group = container.dataset.group; const cur = (_ipeState[group.startsWith('pdi')?'pdi':'ple'].stars[group])||0;
       stars.forEach(s=> s.style.opacity = +s.dataset.val <= cur ? '1' : '.3');
     });
   });
@@ -3054,86 +2623,50 @@ function initStars(containerId){
 initStars('pdi-motivacion-stars');
 initStars('ple-satisfaccion-stars');
 
-// ── Collect data ──
 function collectIpeDoc(prefix){
   const data = {};
-  // Text inputs & textareas
-  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{
-    if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id){
-      data[el.id] = el.value;
-    }
-  });
-  // Tags
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{ if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id){ data[el.id] = el.value; } });
   const tagGroups = {};
-  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{
-    if(!tagGroups[t.dataset.group]) tagGroups[t.dataset.group]=[];
-    if(t.classList.contains('sel')) tagGroups[t.dataset.group].push(t.dataset.val);
-  });
+  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{ if(!tagGroups[t.dataset.group]) tagGroups[t.dataset.group]=[]; if(t.classList.contains('sel')) tagGroups[t.dataset.group].push(t.dataset.val); });
   Object.assign(data, tagGroups);
-  // Stars
   const stateKey = prefix==='pdi'?'pdi':'ple';
   Object.assign(data, _ipeState[stateKey].stars);
   return data;
 }
 
-// ── Apply data ──
 function applyIpeDoc(prefix, data){
   if(!data) return;
-  // Text inputs & textareas
-  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{
-    if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id && data[el.id]!==undefined){
-      el.value = data[el.id];
-    }
-  });
-  // Tags
-  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{
-    const arr = data[t.dataset.group]||[];
-    t.classList.toggle('sel', arr.includes(t.dataset.val));
-  });
-  // Stars
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{ if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id && data[el.id]!==undefined){ el.value = data[el.id]; } });
+  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{ const arr = data[t.dataset.group]||[]; t.classList.toggle('sel', arr.includes(t.dataset.val)); });
   const stateKey = prefix==='pdi'?'pdi':'ple';
   ['pdi-motivacion','ple-satisfaccion'].forEach(group=>{
     if(data[group]!==undefined){
-      const val = +data[group];
-      _ipeState[stateKey].stars[group]=val;
+      const val = +data[group]; _ipeState[stateKey].stars[group]=val;
       const container = document.getElementById(group+'-stars');
-      if(container) container.querySelectorAll('.ipedoc-star').forEach(s=>{
-        s.classList.toggle('on',+s.dataset.val<=val);
-        s.style.opacity = +s.dataset.val<=val?'1':'.3';
-      });
+      if(container) container.querySelectorAll('.ipedoc-star').forEach(s=>{ s.classList.toggle('on',+s.dataset.val<=val); s.style.opacity = +s.dataset.val<=val?'1':'.3'; });
     }
   });
 }
 
-// ── Save to Firebase ──
 async function saveIpeDoc(prefix){
-  const data = collectIpeDoc(prefix);
-  data.browserId = BROWSER_ID;
-  data.savedAt = Date.now();
+  const data = collectIpeDoc(prefix); data.browserId = BROWSER_ID; data.savedAt = Date.now();
   await setDoc(doc(_db,'IPE','Registros', prefix.toUpperCase(), BROWSER_ID), data);
 }
 
-// ── Load from Firebase ──
 async function loadIpeDoc(prefix){
-  try{
-    const snap = await getDoc(doc(_db,'IPE','Registros', prefix.toUpperCase(), BROWSER_ID));
-    if(snap.exists()) applyIpeDoc(prefix, snap.data());
-  }catch(e){ console.warn('IPE load error:',e); }
+  try{ const snap = await getDoc(doc(_db,'IPE','Registros', prefix.toUpperCase(), BROWSER_ID)); if(snap.exists()) applyIpeDoc(prefix, snap.data()); } catch(e){ console.warn('IPE load error:',e); }
 }
 
-// ── Show save indicator ──
-function showSaved(lblId){
-  const lbl = document.getElementById(lblId);
-  lbl.classList.add('show');
-  setTimeout(()=>lbl.classList.remove('show'),2000);
-}
+function showSaved(lblId){ const lbl = document.getElementById(lblId); lbl.classList.add('show'); setTimeout(()=>lbl.classList.remove('show'),2000); }
 
-// ── PDF download (print dialog) ──
+/* ══════════════════════════════════════════════════════════════
+   downloadIpePdf — PDF con formato uniforme en todas las secciones
+   (igual al hero: gradiente naranja, borders naranja, labels Mono)
+══════════════════════════════════════════════════════════════ */
 function downloadIpePdf(prefix, title){
   const body = document.getElementById(prefix+'-body');
   if(!body) return;
 
-  // Clone body for print
   const win = window.open('','_blank','width=900,height=700');
   win.document.write(`<!DOCTYPE html><html><head>
     <meta charset="UTF-8">
@@ -3141,121 +2674,204 @@ function downloadIpePdf(prefix, title){
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap');
       *{box-sizing:border-box;margin:0;padding:0;}
-      body{background:#0f0a05;color:#fff7ed;font-family:'DM Sans',sans-serif;padding:24px;}
-      h1{font-family:'Playfair Display',serif;font-size:22px;color:#fb923c;margin-bottom:20px;border-bottom:1px solid rgba(251,146,60,.3);padding-bottom:10px;}
-      .hero{background:linear-gradient(135deg,#1a0f05,#2d1a08);border:1px solid rgba(251,146,60,.2);border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;gap:16px;align-items:flex-start;}
-      .hero-icon{font-size:40px;}
+      body{background:#0f0a05;color:#fff7ed;font-family:'DM Sans',sans-serif;padding:28px 32px;}
+
+      h1{
+        font-family:'Playfair Display',serif;font-size:22px;color:#fff7ed;
+        margin-bottom:24px;padding-bottom:12px;
+        border-bottom:1px solid rgba(251,146,60,.3);
+        display:flex;align-items:center;gap:10px;
+      }
+
+      /* ── Hero ── */
+      .hero{
+        border-radius:16px;padding:24px 28px;
+        background:linear-gradient(135deg,#1a0f05 0%,#2d1a08 100%);
+        border:1px solid rgba(251,146,60,.2);
+        display:flex;gap:20px;align-items:flex-start;
+        margin-bottom:20px;
+      }
+      .hero-icon{font-size:48px;flex-shrink:0;line-height:1;}
+      .hero-fields{flex:1;display:flex;flex-direction:column;gap:12px;}
+
+      /* ── Secciones (mismo estilo que el hero) ── */
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+      .section{
+        border-radius:14px;padding:18px 18px 16px;
+        background:linear-gradient(135deg,rgba(26,15,5,.8) 0%,rgba(45,26,8,.6) 100%);
+        border:1px solid rgba(251,146,60,.18);
+      }
+      .section.full{grid-column:1/-1;}
+
+      /* ── Título de sección ── */
+      .section-title{
+        font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+        letter-spacing:.08em;text-transform:uppercase;color:#fb923c;
+        margin-bottom:12px;padding-bottom:8px;
+        border-bottom:1px solid rgba(251,146,60,.15);
+      }
+
+      /* ── Campos ── */
       .field{margin-bottom:10px;}
-      .field-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#fb923c;opacity:.7;margin-bottom:3px;}
-      .field-val{font-size:13px;color:#fff7ed;border-bottom:1px solid rgba(251,146,60,.15);padding-bottom:5px;min-height:18px;}
-      .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-      .section{background:rgba(255,255,255,.02);border:1px solid rgba(251,146,60,.1);border-radius:10px;padding:14px;}
-      .section-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fb923c;margin-bottom:10px;}
-      .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
-      .tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:999px;border:1px solid rgba(251,146,60,.35);color:#fb923c;background:rgba(251,146,60,.1);}
-      .stars{font-size:16px;margin-bottom:6px;}
-      .textarea-val{font-size:12px;color:rgba(255,247,237,.75);line-height:1.5;white-space:pre-wrap;min-height:20px;}
-      .full{grid-column:1/-1;}
-      .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+      .field:last-child{margin-bottom:0;}
+      .field-label{
+        font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+        letter-spacing:.08em;text-transform:uppercase;
+        color:#fb923c;opacity:.7;margin-bottom:4px;
+      }
+      .field-value{
+        font-family:'DM Sans',sans-serif;font-size:13px;color:#fff7ed;
+        padding:7px 10px;
+        background:rgba(255,255,255,.04);
+        border:1px solid rgba(251,146,60,.15);
+        border-radius:7px;
+        min-height:32px;line-height:1.5;white-space:pre-wrap;
+      }
+      .field-value.empty{color:rgba(255,247,237,.25);font-style:italic;}
+
+      /* ── Tags ── */
+      .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+      .tag{
+        font-family:'JetBrains Mono',monospace;font-size:10px;
+        padding:3px 10px;border-radius:999px;
+        border:1px solid rgba(251,146,60,.3);
+        color:#fb923c;background:rgba(251,146,60,.1);
+      }
+      .no-tags{
+        font-family:'JetBrains Mono',monospace;font-size:10px;
+        color:rgba(255,247,237,.2);font-style:italic;margin-bottom:8px;
+      }
+
+      /* ── Estrellas ── */
+      .stars{font-size:18px;margin-bottom:10px;letter-spacing:3px;}
+
+      /* ── Grid de 3 columnas (metas) ── */
+      .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+      .meta-col-label{
+        font-family:'JetBrains Mono',monospace;font-size:9px;color:#fb923c;
+        opacity:.6;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;
+      }
+
+      @media print{
+        body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+        .section,.hero{break-inside:avoid;}
+      }
     </style>
   </head><body>`);
 
   const data = collectIpeDoc(prefix);
   const icon = prefix==='pdi'?'🗺️':'🌐';
-  win.document.write(`<h1>${icon} ${title}</h1>`);
+  win.document.write(`<h1><span>${icon}</span>${title}</h1>`);
 
-  // Hero
-  const nameKey=prefix+'-name', cursoKey=prefix+'-curso', visionKey=prefix+(prefix==='pdi'?'-objetivo':'-vision');
-  win.document.write(`<div class="hero"><div class="hero-icon">${icon}</div><div style="flex:1">
-    <div class="field"><div class="field-lbl">Nombre</div><div class="field-val">${data[nameKey]||'–'}</div></div>
-    <div class="field"><div class="field-lbl">Curso</div><div class="field-val">${data[cursoKey]||'–'}</div></div>
-    <div class="field"><div class="field-lbl">${prefix==='pdi'?'Objetivo principal':'Aprendizaje ideal'}</div><div class="field-val">${data[visionKey]||'–'}</div></div>
-  </div></div>`);
+  /* ── Hero ── */
+  const nameKey   = prefix+'-name';
+  const cursoKey  = prefix+'-curso';
+  const visionKey = prefix+(prefix==='pdi'?'-objetivo':'-vision');
+  const visionLbl = prefix==='pdi'?'Objetivo principal del ciclo':'¿Cómo defino mi aprendizaje ideal?';
 
-  // Sections — render all ipedoc-section elements from the live DOM
-  const sections = document.querySelectorAll(`#${prefix}-body .ipedoc-section`);
+  win.document.write(`
+    <div class="hero">
+      <div class="hero-icon">${icon}</div>
+      <div class="hero-fields">
+        <div class="field">
+          <div class="field-label">Nombre completo</div>
+          <div class="field-value${!data[nameKey]?' empty':''}">${data[nameKey]||'Sin completar'}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Curso / Grupo</div>
+          <div class="field-value${!data[cursoKey]?' empty':''}">${data[cursoKey]||'Sin completar'}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">${visionLbl}</div>
+          <div class="field-value${!data[visionKey]?' empty':''}">${data[visionKey]||'Sin completar'}</div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  /* ── Secciones ── */
   win.document.write('<div class="grid">');
-  sections.forEach(sec=>{
-    const isFullWidth = sec.style.gridColumn==='1 / -1'||sec.style.gridColumn==='1/-1';
+
+  const sections = document.querySelectorAll(`#${prefix}-body .ipedoc-section`);
+  const stateKey  = prefix==='pdi'?'pdi':'ple';
+
+  sections.forEach(sec => {
+    const isFullWidth = sec.style.gridColumn === '1 / -1' || sec.style.gridColumn === '1/-1';
     win.document.write(`<div class="section${isFullWidth?' full':''}">`);
+
+    /* Título */
     const titleEl = sec.querySelector('.ipedoc-section-title');
-    if(titleEl) win.document.write(`<div class="section-title">${titleEl.textContent}</div>`);
+    if(titleEl) win.document.write(`<div class="section-title">${titleEl.textContent.trim()}</div>`);
 
-    // Tags
-    const selTags = [...sec.querySelectorAll('.ipedoc-tag.sel')].map(t=>t.textContent);
-    if(selTags.length) win.document.write(`<div class="tags">${selTags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`);
+    /* Tags */
+    const hasTags = sec.querySelector('.ipedoc-tag');
+    if(hasTags){
+      const selTags = [...sec.querySelectorAll('.ipedoc-tag.sel')].map(t => t.textContent.trim());
+      if(selTags.length) win.document.write(`<div class="tags">${selTags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`);
+      else win.document.write(`<div class="no-tags">Sin selección</div>`);
+    }
 
-    // Stars
+    /* Estrellas */
     const starCont = sec.querySelector('.ipedoc-stars');
     if(starCont){
-      const val = _ipeState[prefix==='pdi'?'pdi':'ple'].stars[starCont.dataset.group]||0;
+      const val = (_ipeState[stateKey].stars[starCont.dataset.group]) || 0;
       win.document.write(`<div class="stars">${'⭐'.repeat(val)}${'☆'.repeat(5-val)}</div>`);
     }
 
-    // Textareas / inputs
-    sec.querySelectorAll('textarea, input[type="text"]').forEach(el=>{
-      if(el.value) win.document.write(`<div class="textarea-val">${el.value.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`);
-    });
-
-    // Meta grid special case
+    /* Grid de metas (3 columnas) */
     const metaGrid = sec.querySelector('div[style*="grid-template-columns:1fr 1fr 1fr"]');
     if(metaGrid){
       win.document.write('<div class="meta-grid">');
-      metaGrid.querySelectorAll('div > div:first-child').forEach((lbl,i)=>{
-        const ta = metaGrid.querySelectorAll('textarea')[i];
-        win.document.write(`<div><div class="field-lbl">${lbl.textContent}</div><div class="textarea-val">${(ta&&ta.value)||'–'}</div></div>`);
+      const lblEls = metaGrid.querySelectorAll(':scope > div > div:first-child');
+      const taEls  = metaGrid.querySelectorAll('textarea');
+      lblEls.forEach((lbl, i) => {
+        const val = taEls[i] ? taEls[i].value.trim() : '';
+        win.document.write(`
+          <div>
+            <div class="meta-col-label">${lbl.textContent.trim()}</div>
+            <div class="field-value${!val?' empty':''}">${val||'Sin completar'}</div>
+          </div>
+        `);
       });
       win.document.write('</div>');
+    } else {
+      /* Textareas e inputs normales */
+      sec.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+        const val = el.value.trim();
+        const closestLabel = el.closest('.ipedoc-field-row')?.querySelector('.ipedoc-field-label')?.textContent?.trim() || '';
+        win.document.write(`
+          <div class="field">
+            ${closestLabel ? `<div class="field-label">${closestLabel}</div>` : ''}
+            <div class="field-value${!val?' empty':''}">${val||(el.placeholder?el.placeholder.replace(/^Ej: /,'').replace(/…$/,'…'):'Sin completar')}</div>
+          </div>
+        `);
+      });
     }
 
     win.document.write('</div>');
   });
+
   win.document.write('</div></body></html>');
   win.document.close();
-  setTimeout(()=>win.print(),600);
+  setTimeout(() => win.print(), 600);
 }
 
-// ── Button wiring ──
-// Hub open/close
-document.getElementById('ipe-btn').addEventListener('click',()=>{
-  document.getElementById('ipe-backdrop').classList.add('open');
-});
-document.getElementById('ipe-hub-close').addEventListener('click',()=>{
-  document.getElementById('ipe-backdrop').classList.remove('open');
-});
-document.getElementById('ipe-backdrop').addEventListener('click',e=>{
-  if(e.target===document.getElementById('ipe-backdrop'))
-    document.getElementById('ipe-backdrop').classList.remove('open');
-});
+/* ── Button wiring ── */
+document.getElementById('ipe-btn').addEventListener('click',()=>{ document.getElementById('ipe-backdrop').classList.add('open'); });
+document.getElementById('ipe-hub-close').addEventListener('click',()=>{ document.getElementById('ipe-backdrop').classList.remove('open'); });
+document.getElementById('ipe-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('ipe-backdrop')) document.getElementById('ipe-backdrop').classList.remove('open'); });
 
-// Open PDI
-document.getElementById('ipe-open-pdi').addEventListener('click',async()=>{
-  document.getElementById('ipe-backdrop').classList.remove('open');
-  document.getElementById('pdi-backdrop').classList.add('open');
-  await loadIpeDoc('pdi');
-});
-// Open PLE
-document.getElementById('ipe-open-ple').addEventListener('click',async()=>{
-  document.getElementById('ipe-backdrop').classList.remove('open');
-  document.getElementById('ple-backdrop').classList.add('open');
-  await loadIpeDoc('ple');
-});
+document.getElementById('ipe-open-pdi').addEventListener('click',async()=>{ document.getElementById('ipe-backdrop').classList.remove('open'); document.getElementById('pdi-backdrop').classList.add('open'); await loadIpeDoc('pdi'); });
+document.getElementById('ipe-open-ple').addEventListener('click',async()=>{ document.getElementById('ipe-backdrop').classList.remove('open'); document.getElementById('ple-backdrop').classList.add('open'); await loadIpeDoc('ple'); });
 
-// PDI close / save / pdf
 document.getElementById('pdi-close').addEventListener('click',()=>document.getElementById('pdi-backdrop').classList.remove('open'));
 document.getElementById('pdi-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('pdi-backdrop')) document.getElementById('pdi-backdrop').classList.remove('open'); });
-document.getElementById('pdi-save-btn').addEventListener('click',async()=>{
-  await saveIpeDoc('pdi'); showSaved('pdi-saved-lbl');
-});
+document.getElementById('pdi-save-btn').addEventListener('click',async()=>{ await saveIpeDoc('pdi'); showSaved('pdi-saved-lbl'); });
 document.getElementById('pdi-pdf-btn').addEventListener('click',()=>downloadIpePdf('pdi','Plan de Desarrollo Individual'));
 
-// PLE close / save / pdf
 document.getElementById('ple-close').addEventListener('click',()=>document.getElementById('ple-backdrop').classList.remove('open'));
 document.getElementById('ple-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('ple-backdrop')) document.getElementById('ple-backdrop').classList.remove('open'); });
-document.getElementById('ple-save-btn').addEventListener('click',async()=>{
-  await saveIpeDoc('ple'); showSaved('ple-saved-lbl');
-});
+document.getElementById('ple-save-btn').addEventListener('click',async()=>{ await saveIpeDoc('ple'); showSaved('ple-saved-lbl'); });
 document.getElementById('ple-pdf-btn').addEventListener('click',()=>downloadIpePdf('ple','Entorno Personal de Aprendizaje'));
 
 document.getElementById('upload-btn').addEventListener('click', openUploadModal);
