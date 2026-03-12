@@ -198,7 +198,7 @@
 
     /* ══════════ HUELLA BUTTON ══════════ */
     #huella-btn {
-      position: fixed; bottom: 24px; right: 170px; z-index: 200;
+      position: fixed; bottom: 24px; left: 160px; z-index: 200;
       display: flex; align-items: center; gap: 8px;
       background: var(--bg2);
       border: 1px solid rgba(34,197,94,.45);
@@ -208,9 +208,155 @@
       color: #22c55e;
       box-shadow: 0 0 20px rgba(34,197,94,.1), 0 4px 20px rgba(0,0,0,.4);
       transition: border-color .2s, box-shadow .2s, transform .15s;
-      animation: slideInRight .5s .6s cubic-bezier(.34,1.56,.64,1) both;
+      animation: slideIn .5s .6s cubic-bezier(.34,1.56,.64,1) both;
     }
     #huella-btn:hover { border-color:#22c55e; box-shadow:0 0 30px rgba(34,197,94,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
+
+    /* ══════════ IPE BUTTON ══════════ */
+    #ipe-btn {
+      position: fixed; bottom: 24px; right: 170px; z-index: 200;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg2);
+      border: 1px solid rgba(251,146,60,.45);
+      border-radius: 999px; padding: 10px 18px 10px 14px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: #fb923c;
+      box-shadow: 0 0 20px rgba(251,146,60,.1), 0 4px 20px rgba(0,0,0,.4);
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      animation: slideInRight .5s .7s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #ipe-btn:hover { border-color:#fb923c; box-shadow:0 0 30px rgba(251,146,60,.2),0 6px 24px rgba(0,0,0,.5); transform:scale(1.05); }
+
+    /* ══════════ IPE HUB MODAL ══════════ */
+    #ipe-backdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.85); backdrop-filter:blur(8px);
+      z-index:300; align-items:center; justify-content:center; padding:20px;
+    }
+    #ipe-backdrop.open { display:flex; }
+    #ipe-hub {
+      background:#0f0a05; border-radius:24px; width:100%; max-width:560px;
+      border:1px solid rgba(251,146,60,.2); box-shadow:0 40px 100px rgba(0,0,0,.7);
+      animation:calIn .3s cubic-bezier(.34,1.2,.64,1); overflow:hidden;
+    }
+    #ipe-hub-header {
+      padding:18px 24px; background:#1a0f05;
+      border-bottom:1px solid rgba(251,146,60,.15);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    #ipe-hub-header span { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff7ed; }
+    #ipe-hub-close { background:none;border:none;color:#fff7ed;cursor:pointer;font-size:20px;opacity:.5;transition:opacity .15s,transform .15s;padding:4px 8px;border-radius:6px; }
+    #ipe-hub-close:hover{opacity:1;transform:rotate(90deg);}
+    #ipe-hub-body { padding:28px 24px 32px; display:flex; gap:16px; }
+    .ipe-card {
+      flex:1; border-radius:18px; padding:24px 20px 22px;
+      cursor:pointer; transition:transform .2s, box-shadow .2s, border-color .2s;
+      display:flex; flex-direction:column; align-items:center; gap:10px;
+      text-align:center; border:1.5px solid rgba(255,255,255,.08);
+      background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+      position:relative; overflow:hidden;
+    }
+    .ipe-card::before {
+      content:''; position:absolute; inset:0; border-radius:18px;
+      background:radial-gradient(circle at 50% 0%, rgba(251,146,60,.12) 0%, transparent 65%);
+      opacity:0; transition:opacity .2s;
+    }
+    .ipe-card:hover { transform:translateY(-4px); border-color:rgba(251,146,60,.4); }
+    .ipe-card:hover::before { opacity:1; }
+    .ipe-card-icon { font-size:40px; }
+    .ipe-card-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:#fff7ed; }
+    .ipe-card-tag { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase; color:#fb923c;
+      background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.25);
+      padding:3px 10px; border-radius:999px; }
+    .ipe-card-desc { font-family:'DM Sans',sans-serif; font-size:12px; color:rgba(255,247,237,.5); line-height:1.5; }
+
+    /* ══════════ PDI / PLE MODAL ══════════ */
+    #pdi-backdrop, #ple-backdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.88); backdrop-filter:blur(8px);
+      z-index:400; align-items:flex-start; justify-content:center;
+      padding:16px; overflow-y:auto;
+    }
+    #pdi-backdrop.open, #ple-backdrop.open { display:flex; }
+    .ipedoc-modal {
+      background:#0f0a05; border-radius:20px; width:100%; max-width:860px;
+      border:1px solid rgba(251,146,60,.2); box-shadow:0 40px 100px rgba(0,0,0,.7);
+      animation:calIn .3s cubic-bezier(.34,1.2,.64,1); overflow:hidden;
+      margin:auto;
+    }
+    .ipedoc-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px; background:#1a0f05;
+      border-bottom:1px solid rgba(251,146,60,.15);
+      gap:10px; flex-wrap:wrap;
+    }
+    .ipedoc-header-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff7ed; }
+    .ipedoc-header-btns { display:flex; gap:8px; align-items:center; }
+    .ipedoc-btn {
+      font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+      border:none; border-radius:8px; padding:7px 14px; cursor:pointer; transition:all .15s;
+    }
+    .ipedoc-btn-save { background:rgba(251,146,60,.15); color:#fb923c; }
+    .ipedoc-btn-save:hover { background:rgba(251,146,60,.25); }
+    .ipedoc-btn-pdf { background:#fb923c; color:#1a0f05; }
+    .ipedoc-btn-pdf:hover { background:#f97316; transform:scale(1.03); }
+    .ipedoc-close { background:none;border:none;color:#fff7ed;cursor:pointer;font-size:20px;opacity:.5;transition:opacity .15s,transform .15s;padding:4px 8px;border-radius:6px; }
+    .ipedoc-close:hover{opacity:1;transform:rotate(90deg);}
+
+    /* Infographic body */
+    .ipedoc-body { padding:24px; display:flex; flex-direction:column; gap:16px; }
+    .ipedoc-hero {
+      border-radius:16px; padding:24px 28px;
+      background:linear-gradient(135deg,#1a0f05 0%,#2d1a08 100%);
+      border:1px solid rgba(251,146,60,.2);
+      display:flex; gap:20px; align-items:center; flex-wrap:wrap;
+    }
+    .ipedoc-hero-icon { font-size:52px; flex-shrink:0; }
+    .ipedoc-hero-fields { flex:1; display:flex; flex-direction:column; gap:10px; min-width:200px; }
+    .ipedoc-field-row { display:flex; flex-direction:column; gap:4px; }
+    .ipedoc-field-label { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; color:#fb923c; opacity:.7; }
+    .ipedoc-input {
+      background:rgba(255,255,255,.05); border:1px solid rgba(251,146,60,.2);
+      border-radius:8px; padding:8px 12px; color:#fff7ed;
+      font-family:'DM Sans',sans-serif; font-size:13px;
+      transition:border-color .15s; width:100%; box-sizing:border-box; resize:none;
+    }
+    .ipedoc-input:focus { outline:none; border-color:rgba(251,146,60,.6); background:rgba(251,146,60,.04); }
+    .ipedoc-input::placeholder { color:rgba(255,247,237,.25); }
+
+    .ipedoc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:600px){ .ipedoc-grid{ grid-template-columns:1fr; } }
+    .ipedoc-section {
+      border-radius:14px; padding:18px 18px 16px;
+      background:rgba(255,255,255,.02); border:1px solid rgba(251,146,60,.1);
+    }
+    .ipedoc-section-title {
+      font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; color:#fb923c;
+      margin-bottom:12px; display:flex; align-items:center; gap:6px;
+    }
+    .ipedoc-tags-wrap { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .ipedoc-tag {
+      font-family:'JetBrains Mono',monospace; font-size:10px; padding:4px 10px;
+      border-radius:999px; border:1px solid rgba(251,146,60,.3);
+      color:#fb923c; background:rgba(251,146,60,.08); cursor:pointer;
+      transition:all .12s;
+    }
+    .ipedoc-tag.sel { background:rgba(251,146,60,.25); border-color:#fb923c; color:#fff7ed; font-weight:700; }
+    .ipedoc-tag:hover:not(.sel) { border-color:rgba(251,146,60,.6); }
+    .ipedoc-stars { display:flex; gap:6px; margin-bottom:8px; }
+    .ipedoc-star { font-size:20px; cursor:pointer; opacity:.3; transition:opacity .12s, transform .12s; }
+    .ipedoc-star.on { opacity:1; }
+    .ipedoc-star:hover { transform:scale(1.2); }
+    .ipedoc-textarea { min-height:70px; }
+    .ipedoc-save-indicator {
+      font-family:'JetBrains Mono',monospace; font-size:10px; color:#fb923c;
+      opacity:0; transition:opacity .3s; text-align:right; padding:0 4px;
+    }
+    .ipedoc-save-indicator.show { opacity:.7; }
 
     /* ══════════ HUELLA MODAL ══════════ */
     #huella-backdrop {
@@ -1023,6 +1169,290 @@
   </div>
 </div>
 
+<!-- ══ IPE BUTTON ══ -->
+<button id="ipe-btn" title="IPE – Plan de Desarrollo Individual / Entorno Personal de Aprendizaje">
+  <span style="font-size:16px">🎯</span>
+  <span>IPE</span>
+</button>
+
+<!-- ══ IPE HUB MODAL ══ -->
+<div id="ipe-backdrop">
+  <div id="ipe-hub">
+    <div id="ipe-hub-header">
+      <span>🎯 IPE — Instrumentos Personales de Evaluación</span>
+      <button id="ipe-hub-close">✕</button>
+    </div>
+    <div id="ipe-hub-body">
+      <div class="ipe-card" id="ipe-open-pdi">
+        <div class="ipe-card-icon">🗺️</div>
+        <div class="ipe-card-title">PDI</div>
+        <div class="ipe-card-tag">Plan de Desarrollo Individual</div>
+        <div class="ipe-card-desc">Define tus objetivos, fortalezas y plan de acción personal. Rellenable e individual por navegador.</div>
+      </div>
+      <div class="ipe-card" id="ipe-open-ple">
+        <div class="ipe-card-icon">🌐</div>
+        <div class="ipe-card-title">PLE</div>
+        <div class="ipe-card-tag">Entorno Personal de Aprendizaje</div>
+        <div class="ipe-card-desc">Mapea tus herramientas, fuentes y estrategias de aprendizaje. Exportable como PDF.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PDI MODAL ══ -->
+<div id="pdi-backdrop">
+  <div class="ipedoc-modal" id="pdi-modal">
+    <div class="ipedoc-header">
+      <span class="ipedoc-header-title">🗺️ Plan de Desarrollo Individual</span>
+      <div class="ipedoc-header-btns">
+        <span class="ipedoc-save-indicator" id="pdi-saved-lbl">✓ Guardado</span>
+        <button class="ipedoc-btn ipedoc-btn-save" id="pdi-save-btn">💾 Guardar</button>
+        <button class="ipedoc-btn ipedoc-btn-pdf" id="pdi-pdf-btn">⬇ Descargar PDF</button>
+        <button class="ipedoc-close" id="pdi-close">✕</button>
+      </div>
+    </div>
+    <div class="ipedoc-body" id="pdi-body">
+
+      <!-- Hero: identidad -->
+      <div class="ipedoc-hero">
+        <div class="ipedoc-hero-icon">🗺️</div>
+        <div class="ipedoc-hero-fields">
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">Nombre completo</span>
+            <input class="ipedoc-input" id="pdi-name" placeholder="Tu nombre y apellidos…" maxlength="80">
+          </div>
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">Curso / Grupo</span>
+            <input class="ipedoc-input" id="pdi-curso" placeholder="Ej: DAM 1º A" maxlength="50">
+          </div>
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">Objetivo principal del ciclo</span>
+            <input class="ipedoc-input" id="pdi-objetivo" placeholder="¿Qué quieres conseguir este año?" maxlength="120">
+          </div>
+        </div>
+      </div>
+
+      <div class="ipedoc-grid">
+
+        <!-- Fortalezas -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">💪 Mis fortalezas</div>
+          <div class="ipedoc-tags-wrap" id="pdi-fortalezas-tags">
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Resolución de problemas">Resolución de problemas</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Trabajo en equipo">Trabajo en equipo</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Creatividad">Creatividad</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Autodidacta">Autodidacta</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Constancia">Constancia</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Comunicación">Comunicación</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Lógica">Lógica</span>
+            <span class="ipedoc-tag" data-group="pdi-fortalezas" data-val="Iniciativa">Iniciativa</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="pdi-fortalezas-extra" placeholder="Otras fortalezas…" rows="2"></textarea>
+        </div>
+
+        <!-- Áreas de mejora -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">🎯 Áreas de mejora</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Gestión del tiempo">Gestión del tiempo</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Concentración">Concentración</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Inglés técnico">Inglés técnico</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Documentación">Documentación</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Testing">Testing</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Presentaciones">Presentaciones</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Bases de datos">Bases de datos</span>
+            <span class="ipedoc-tag" data-group="pdi-mejora" data-val="Redes">Redes</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="pdi-mejora-extra" placeholder="Otras áreas…" rows="2"></textarea>
+        </div>
+
+        <!-- Motivación -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">🔥 Motivación (1–5)</div>
+          <div class="ipedoc-stars" id="pdi-motivacion-stars" data-group="pdi-motivacion">
+            <span class="ipedoc-star" data-val="1">⭐</span>
+            <span class="ipedoc-star" data-val="2">⭐</span>
+            <span class="ipedoc-star" data-val="3">⭐</span>
+            <span class="ipedoc-star" data-val="4">⭐</span>
+            <span class="ipedoc-star" data-val="5">⭐</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="pdi-motivacion-nota" placeholder="¿Qué te motiva?" rows="3"></textarea>
+        </div>
+
+        <!-- Estrategias de estudio -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">📚 Estrategias de estudio</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Pomodoro">Pomodoro</span>
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Mapas mentales">Mapas mentales</span>
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Flashcards">Flashcards</span>
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Práctica activa">Práctica activa</span>
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Grupos de estudio">Grupos de estudio</span>
+            <span class="ipedoc-tag" data-group="pdi-estrategias" data-val="Vídeos / tutoriales">Vídeos / tutoriales</span>
+          </div>
+        </div>
+
+        <!-- Plan de acción -->
+        <div class="ipedoc-section" style="grid-column:1/-1;">
+          <div class="ipedoc-section-title">🚀 Mi plan de acción</div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="pdi-plan" placeholder="Describe las acciones concretas que vas a llevar a cabo este trimestre para alcanzar tu objetivo…" rows="4" style="min-height:90px;"></textarea>
+        </div>
+
+        <!-- Reflexión final -->
+        <div class="ipedoc-section" style="grid-column:1/-1;">
+          <div class="ipedoc-section-title">💬 Reflexión final</div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="pdi-reflexion" placeholder="¿Qué has aprendido sobre ti mismo? ¿Qué cambiarías?" rows="3"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLE MODAL ══ -->
+<div id="ple-backdrop">
+  <div class="ipedoc-modal" id="ple-modal">
+    <div class="ipedoc-header">
+      <span class="ipedoc-header-title">🌐 Entorno Personal de Aprendizaje</span>
+      <div class="ipedoc-header-btns">
+        <span class="ipedoc-save-indicator" id="ple-saved-lbl">✓ Guardado</span>
+        <button class="ipedoc-btn ipedoc-btn-save" id="ple-save-btn">💾 Guardar</button>
+        <button class="ipedoc-btn ipedoc-btn-pdf" id="ple-pdf-btn">⬇ Descargar PDF</button>
+        <button class="ipedoc-close" id="ple-close">✕</button>
+      </div>
+    </div>
+    <div class="ipedoc-body" id="ple-body">
+
+      <!-- Hero -->
+      <div class="ipedoc-hero">
+        <div class="ipedoc-hero-icon">🌐</div>
+        <div class="ipedoc-hero-fields">
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">Nombre completo</span>
+            <input class="ipedoc-input" id="ple-name" placeholder="Tu nombre y apellidos…" maxlength="80">
+          </div>
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">Curso / Grupo</span>
+            <input class="ipedoc-input" id="ple-curso" placeholder="Ej: DAM 1º A" maxlength="50">
+          </div>
+          <div class="ipedoc-field-row">
+            <span class="ipedoc-field-label">¿Cómo defino mi aprendizaje ideal?</span>
+            <input class="ipedoc-input" id="ple-vision" placeholder="Mi forma de aprender es…" maxlength="120">
+          </div>
+        </div>
+      </div>
+
+      <div class="ipedoc-grid">
+
+        <!-- Herramientas digitales -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">🛠️ Herramientas digitales</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="GitHub">GitHub</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="VS Code">VS Code</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Notion">Notion</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Figma">Figma</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="ChatGPT / IA">ChatGPT / IA</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Stack Overflow">Stack Overflow</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="YouTube">YouTube</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Anki">Anki</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Trello">Trello</span>
+            <span class="ipedoc-tag" data-group="ple-herramientas" data-val="Obsidian">Obsidian</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-herramientas-extra" placeholder="Otras herramientas…" rows="2"></textarea>
+        </div>
+
+        <!-- Fuentes de información -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">📡 Fuentes de información</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Documentación oficial">Documentación oficial</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Cursos online">Cursos online</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Libros técnicos">Libros técnicos</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Blogs dev">Blogs dev</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Podcasts">Podcasts</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Reddit / foros">Reddit / foros</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Compañeros">Compañeros</span>
+            <span class="ipedoc-tag" data-group="ple-fuentes" data-val="Profesor">Profesor</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-fuentes-extra" placeholder="Otras fuentes…" rows="2"></textarea>
+        </div>
+
+        <!-- Estilo de aprendizaje -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">🧠 Estilo de aprendizaje</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Visual">Visual</span>
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Auditivo">Auditivo</span>
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Kinestésico">Kinestésico</span>
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Lectura / escritura">Lectura / escritura</span>
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Por proyectos">Por proyectos</span>
+            <span class="ipedoc-tag" data-group="ple-estilo" data-val="Ensayo y error">Ensayo y error</span>
+          </div>
+        </div>
+
+        <!-- Red personal -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">🤝 Mi red de aprendizaje</div>
+          <div class="ipedoc-tags-wrap">
+            <span class="ipedoc-tag" data-group="ple-red" data-val="Trabajo en equipo">Trabajo en equipo</span>
+            <span class="ipedoc-tag" data-group="ple-red" data-val="Mentores">Mentores</span>
+            <span class="ipedoc-tag" data-group="ple-red" data-val="Comunidades online">Comunidades online</span>
+            <span class="ipedoc-tag" data-group="ple-red" data-val="Trabajo individual">Trabajo individual</span>
+            <span class="ipedoc-tag" data-group="ple-red" data-val="Pair programming">Pair programming</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-red-extra" placeholder="Describe tu red…" rows="2"></textarea>
+        </div>
+
+        <!-- Satisfacción con el aprendizaje -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">😊 Satisfacción con mi aprendizaje (1–5)</div>
+          <div class="ipedoc-stars" id="ple-satisfaccion-stars" data-group="ple-satisfaccion">
+            <span class="ipedoc-star" data-val="1">⭐</span>
+            <span class="ipedoc-star" data-val="2">⭐</span>
+            <span class="ipedoc-star" data-val="3">⭐</span>
+            <span class="ipedoc-star" data-val="4">⭐</span>
+            <span class="ipedoc-star" data-val="5">⭐</span>
+          </div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-satisfaccion-nota" placeholder="¿Por qué esa puntuación?" rows="2"></textarea>
+        </div>
+
+        <!-- Retos -->
+        <div class="ipedoc-section">
+          <div class="ipedoc-section-title">⚡ Retos de aprendizaje</div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-retos" placeholder="¿Qué te cuesta más aprender? ¿Qué barreras encuentras?" rows="4"></textarea>
+        </div>
+
+        <!-- Metas -->
+        <div class="ipedoc-section" style="grid-column:1/-1;">
+          <div class="ipedoc-section-title">🏆 Metas a corto, medio y largo plazo</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#fb923c;opacity:.6;margin-bottom:5px;text-transform:uppercase;">Corto (1 mes)</div>
+              <textarea class="ipedoc-input ipedoc-textarea" id="ple-meta-corto" placeholder="Ej: Terminar el proyecto de Java" rows="3"></textarea>
+            </div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#fb923c;opacity:.6;margin-bottom:5px;text-transform:uppercase;">Medio (6 meses)</div>
+              <textarea class="ipedoc-input ipedoc-textarea" id="ple-meta-medio" placeholder="Ej: Dominar Spring Boot" rows="3"></textarea>
+            </div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#fb923c;opacity:.6;margin-bottom:5px;text-transform:uppercase;">Largo (1–2 años)</div>
+              <textarea class="ipedoc-input ipedoc-textarea" id="ple-meta-largo" placeholder="Ej: Trabajar como dev junior" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reflexión -->
+        <div class="ipedoc-section" style="grid-column:1/-1;">
+          <div class="ipedoc-section-title">💬 Reflexión sobre mi PLE</div>
+          <textarea class="ipedoc-input ipedoc-textarea" id="ple-reflexion" placeholder="¿Cómo quieres mejorar tu entorno de aprendizaje?" rows="3"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ UPLOAD BUTTON ══ -->
 <button id="upload-btn" title="Subir código">
   <span style="font-size:16px">📤</span>
@@ -1305,7 +1735,7 @@ const WDFULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábad
    { id, type:"bday"|"exam"|"hol", label, month, day, year|null }
 ══════════════════════════════════════ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD4RDqcQYH_8fNPbo6d_K9GFgQiPh-3Cno",
@@ -2583,6 +3013,250 @@ document.getElementById('huella-backdrop').addEventListener('click',e=>{
   if(e.target===document.getElementById('huella-backdrop'))
     document.getElementById('huella-backdrop').classList.remove('open');
 });
+
+/* ══════════════════════════════════════════════
+   IPE — PDI + PLE  (Firebase + PDF download)
+═══════════════════════════════════════════════ */
+
+// ── State ──
+const _ipeState = { pdi:{stars:{}}, ple:{stars:{}} };
+
+// ── Tag toggle ──
+document.querySelectorAll('.ipedoc-tag').forEach(tag=>{
+  tag.addEventListener('click',()=>{
+    tag.classList.toggle('sel');
+  });
+});
+
+// ── Star rating ──
+function initStars(containerId){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const stars = container.querySelectorAll('.ipedoc-star');
+  stars.forEach(star=>{
+    star.addEventListener('click',()=>{
+      const val = +star.dataset.val;
+      const group = container.dataset.group;
+      _ipeState[group.startsWith('pdi')?'pdi':'ple'].stars[group] = val;
+      stars.forEach(s=> s.classList.toggle('on', +s.dataset.val <= val));
+    });
+    star.addEventListener('mouseenter',()=>{
+      const val = +star.dataset.val;
+      stars.forEach(s=> s.style.opacity = +s.dataset.val <= val ? '1' : '.3');
+    });
+    star.addEventListener('mouseleave',()=>{
+      const group = container.dataset.group;
+      const cur = (_ipeState[group.startsWith('pdi')?'pdi':'ple'].stars[group])||0;
+      stars.forEach(s=> s.style.opacity = +s.dataset.val <= cur ? '1' : '.3');
+    });
+  });
+}
+initStars('pdi-motivacion-stars');
+initStars('ple-satisfaccion-stars');
+
+// ── Collect data ──
+function collectIpeDoc(prefix){
+  const data = {};
+  // Text inputs & textareas
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{
+    if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id){
+      data[el.id] = el.value;
+    }
+  });
+  // Tags
+  const tagGroups = {};
+  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{
+    if(!tagGroups[t.dataset.group]) tagGroups[t.dataset.group]=[];
+    if(t.classList.contains('sel')) tagGroups[t.dataset.group].push(t.dataset.val);
+  });
+  Object.assign(data, tagGroups);
+  // Stars
+  const stateKey = prefix==='pdi'?'pdi':'ple';
+  Object.assign(data, _ipeState[stateKey].stars);
+  return data;
+}
+
+// ── Apply data ──
+function applyIpeDoc(prefix, data){
+  if(!data) return;
+  // Text inputs & textareas
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>{
+    if((el.tagName==='INPUT'||el.tagName==='TEXTAREA') && el.id && data[el.id]!==undefined){
+      el.value = data[el.id];
+    }
+  });
+  // Tags
+  document.querySelectorAll(`.ipedoc-tag[data-group^="${prefix}"]`).forEach(t=>{
+    const arr = data[t.dataset.group]||[];
+    t.classList.toggle('sel', arr.includes(t.dataset.val));
+  });
+  // Stars
+  const stateKey = prefix==='pdi'?'pdi':'ple';
+  ['pdi-motivacion','ple-satisfaccion'].forEach(group=>{
+    if(data[group]!==undefined){
+      const val = +data[group];
+      _ipeState[stateKey].stars[group]=val;
+      const container = document.getElementById(group+'-stars');
+      if(container) container.querySelectorAll('.ipedoc-star').forEach(s=>{
+        s.classList.toggle('on',+s.dataset.val<=val);
+        s.style.opacity = +s.dataset.val<=val?'1':'.3';
+      });
+    }
+  });
+}
+
+// ── Save to Firebase ──
+async function saveIpeDoc(prefix){
+  const data = collectIpeDoc(prefix);
+  data.browserId = BROWSER_ID;
+  data.savedAt = Date.now();
+  await setDoc(doc(_db,'IPE','Registros', prefix.toUpperCase(), BROWSER_ID), data);
+}
+
+// ── Load from Firebase ──
+async function loadIpeDoc(prefix){
+  try{
+    const snap = await getDoc(doc(_db,'IPE','Registros', prefix.toUpperCase(), BROWSER_ID));
+    if(snap.exists()) applyIpeDoc(prefix, snap.data());
+  }catch(e){ console.warn('IPE load error:',e); }
+}
+
+// ── Show save indicator ──
+function showSaved(lblId){
+  const lbl = document.getElementById(lblId);
+  lbl.classList.add('show');
+  setTimeout(()=>lbl.classList.remove('show'),2000);
+}
+
+// ── PDF download (print dialog) ──
+function downloadIpePdf(prefix, title){
+  const body = document.getElementById(prefix+'-body');
+  if(!body) return;
+
+  // Clone body for print
+  const win = window.open('','_blank','width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap');
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{background:#0f0a05;color:#fff7ed;font-family:'DM Sans',sans-serif;padding:24px;}
+      h1{font-family:'Playfair Display',serif;font-size:22px;color:#fb923c;margin-bottom:20px;border-bottom:1px solid rgba(251,146,60,.3);padding-bottom:10px;}
+      .hero{background:linear-gradient(135deg,#1a0f05,#2d1a08);border:1px solid rgba(251,146,60,.2);border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;gap:16px;align-items:flex-start;}
+      .hero-icon{font-size:40px;}
+      .field{margin-bottom:10px;}
+      .field-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#fb923c;opacity:.7;margin-bottom:3px;}
+      .field-val{font-size:13px;color:#fff7ed;border-bottom:1px solid rgba(251,146,60,.15);padding-bottom:5px;min-height:18px;}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+      .section{background:rgba(255,255,255,.02);border:1px solid rgba(251,146,60,.1);border-radius:10px;padding:14px;}
+      .section-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fb923c;margin-bottom:10px;}
+      .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+      .tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:999px;border:1px solid rgba(251,146,60,.35);color:#fb923c;background:rgba(251,146,60,.1);}
+      .stars{font-size:16px;margin-bottom:6px;}
+      .textarea-val{font-size:12px;color:rgba(255,247,237,.75);line-height:1.5;white-space:pre-wrap;min-height:20px;}
+      .full{grid-column:1/-1;}
+      .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+    </style>
+  </head><body>`);
+
+  const data = collectIpeDoc(prefix);
+  const icon = prefix==='pdi'?'🗺️':'🌐';
+  win.document.write(`<h1>${icon} ${title}</h1>`);
+
+  // Hero
+  const nameKey=prefix+'-name', cursoKey=prefix+'-curso', visionKey=prefix+(prefix==='pdi'?'-objetivo':'-vision');
+  win.document.write(`<div class="hero"><div class="hero-icon">${icon}</div><div style="flex:1">
+    <div class="field"><div class="field-lbl">Nombre</div><div class="field-val">${data[nameKey]||'–'}</div></div>
+    <div class="field"><div class="field-lbl">Curso</div><div class="field-val">${data[cursoKey]||'–'}</div></div>
+    <div class="field"><div class="field-lbl">${prefix==='pdi'?'Objetivo principal':'Aprendizaje ideal'}</div><div class="field-val">${data[visionKey]||'–'}</div></div>
+  </div></div>`);
+
+  // Sections — render all ipedoc-section elements from the live DOM
+  const sections = document.querySelectorAll(`#${prefix}-body .ipedoc-section`);
+  win.document.write('<div class="grid">');
+  sections.forEach(sec=>{
+    const isFullWidth = sec.style.gridColumn==='1 / -1'||sec.style.gridColumn==='1/-1';
+    win.document.write(`<div class="section${isFullWidth?' full':''}">`);
+    const titleEl = sec.querySelector('.ipedoc-section-title');
+    if(titleEl) win.document.write(`<div class="section-title">${titleEl.textContent}</div>`);
+
+    // Tags
+    const selTags = [...sec.querySelectorAll('.ipedoc-tag.sel')].map(t=>t.textContent);
+    if(selTags.length) win.document.write(`<div class="tags">${selTags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`);
+
+    // Stars
+    const starCont = sec.querySelector('.ipedoc-stars');
+    if(starCont){
+      const val = _ipeState[prefix==='pdi'?'pdi':'ple'].stars[starCont.dataset.group]||0;
+      win.document.write(`<div class="stars">${'⭐'.repeat(val)}${'☆'.repeat(5-val)}</div>`);
+    }
+
+    // Textareas / inputs
+    sec.querySelectorAll('textarea, input[type="text"]').forEach(el=>{
+      if(el.value) win.document.write(`<div class="textarea-val">${el.value.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`);
+    });
+
+    // Meta grid special case
+    const metaGrid = sec.querySelector('div[style*="grid-template-columns:1fr 1fr 1fr"]');
+    if(metaGrid){
+      win.document.write('<div class="meta-grid">');
+      metaGrid.querySelectorAll('div > div:first-child').forEach((lbl,i)=>{
+        const ta = metaGrid.querySelectorAll('textarea')[i];
+        win.document.write(`<div><div class="field-lbl">${lbl.textContent}</div><div class="textarea-val">${(ta&&ta.value)||'–'}</div></div>`);
+      });
+      win.document.write('</div>');
+    }
+
+    win.document.write('</div>');
+  });
+  win.document.write('</div></body></html>');
+  win.document.close();
+  setTimeout(()=>win.print(),600);
+}
+
+// ── Button wiring ──
+// Hub open/close
+document.getElementById('ipe-btn').addEventListener('click',()=>{
+  document.getElementById('ipe-backdrop').classList.add('open');
+});
+document.getElementById('ipe-hub-close').addEventListener('click',()=>{
+  document.getElementById('ipe-backdrop').classList.remove('open');
+});
+document.getElementById('ipe-backdrop').addEventListener('click',e=>{
+  if(e.target===document.getElementById('ipe-backdrop'))
+    document.getElementById('ipe-backdrop').classList.remove('open');
+});
+
+// Open PDI
+document.getElementById('ipe-open-pdi').addEventListener('click',async()=>{
+  document.getElementById('ipe-backdrop').classList.remove('open');
+  document.getElementById('pdi-backdrop').classList.add('open');
+  await loadIpeDoc('pdi');
+});
+// Open PLE
+document.getElementById('ipe-open-ple').addEventListener('click',async()=>{
+  document.getElementById('ipe-backdrop').classList.remove('open');
+  document.getElementById('ple-backdrop').classList.add('open');
+  await loadIpeDoc('ple');
+});
+
+// PDI close / save / pdf
+document.getElementById('pdi-close').addEventListener('click',()=>document.getElementById('pdi-backdrop').classList.remove('open'));
+document.getElementById('pdi-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('pdi-backdrop')) document.getElementById('pdi-backdrop').classList.remove('open'); });
+document.getElementById('pdi-save-btn').addEventListener('click',async()=>{
+  await saveIpeDoc('pdi'); showSaved('pdi-saved-lbl');
+});
+document.getElementById('pdi-pdf-btn').addEventListener('click',()=>downloadIpePdf('pdi','Plan de Desarrollo Individual'));
+
+// PLE close / save / pdf
+document.getElementById('ple-close').addEventListener('click',()=>document.getElementById('ple-backdrop').classList.remove('open'));
+document.getElementById('ple-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('ple-backdrop')) document.getElementById('ple-backdrop').classList.remove('open'); });
+document.getElementById('ple-save-btn').addEventListener('click',async()=>{
+  await saveIpeDoc('ple'); showSaved('ple-saved-lbl');
+});
+document.getElementById('ple-pdf-btn').addEventListener('click',()=>downloadIpePdf('ple','Entorno Personal de Aprendizaje'));
 
 document.getElementById('upload-btn').addEventListener('click', openUploadModal);
 document.getElementById('upload-close').addEventListener('click', closeUploadModal);
