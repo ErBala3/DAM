@@ -123,6 +123,7 @@
     .fbadge.css{background:rgba(38,77,228,.15);color:var(--css);}
     .fbadge.dir{background:rgba(74,222,128,.12);color:var(--accent);}
     .fbadge.other{background:rgba(148,163,184,.1);color:var(--muted);}
+    .fbadge.drawio{background:rgba(124,111,234,.15);color:#7c6fea;}
     .count-pill { font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:1px 7px; }
     .chevron { color:var(--muted);transition:transform .22s ease;font-size:11px; }
     .chevron.open { transform:rotate(90deg); }
@@ -1615,6 +1616,8 @@
       <div class="modal-actions">
         <a class="modal-btn" id="modal-gh" href="#" target="_blank">↗ GitHub</a>
         <button class="modal-btn" id="modal-copy">📋 Copiar</button>
+        <button class="modal-btn" id="modal-download">⬇ Descargar</button>
+        <button class="modal-btn" id="modal-delete" style="display:none;color:#f87171;">🗑️ Eliminar</button>
         <button class="modal-close" id="modal-close">✕</button>
       </div>
     </div>
@@ -2166,7 +2169,7 @@ async function forceSyncArchivos(statusCb){
       try{ const r = await fetch(dl_url); if(r.ok) content = (await r.text()).slice(0, 50000); } catch(e){ console.warn('Sin contenido para', name); }
       const fileDoc = { id: item.sha, name, path: item.path, carpeta, lang, download_url: dl_url, html_url, content, updatedAt: Date.now() };
       await saveCodigoFile(fileDoc);
-      _allArchivos.push(fileDoc);
+      _allArchivos.push({...fileDoc, _docId: fileDoc.id});
       done++;
       statusCb(`Guardando en Firebase… ${done}/${blobs.length}`);
     }));
@@ -2188,9 +2191,9 @@ async function initArchivos(){
 
 const OWNER='ErBala3',REPO='DAM',BRANCH='main',ROOT='GitTodo';
 const getExt=n=>n.includes('.')?n.split('.').pop().toLowerCase():'';
-const ICONS={java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'};
+const ICONS={java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣',drawio:'📐'};
 const getIcon=item=>item.type==='dir'?'📁':(ICONS[getExt(item.name)]||'📄');
-const getLang=name=>{const e=getExt(name);return e==='java'?'java':e==='html'?'html':e==='css'?'css':'other';};
+const getLang=name=>{const e=getExt(name);return e==='java'?'java':e==='html'?'html':e==='css'?'css':e==='drawio'?'drawio':'other';};
 
 async function apiFetch(path){
   const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`,{headers:{Accept:'application/vnd.github.v3+json'}});
@@ -2203,23 +2206,50 @@ function highlight(code,lang){
   if(['java','js','ts'].includes(lang)){s=s.replace(/(\/\/[^\n]*)/g,'<span class="cmt">$1</span>');s=s.replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="cmt">$1</span>');s=s.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>');}
   if(lang==='java'){s=s.replace(/\b(public|private|protected|class|interface|extends|implements|new|return|void|static|final|if|else|for|while|do|switch|case|break|continue|import|package|try|catch|finally|throws|throw|this|super|null|true|false|abstract|synchronized|instanceof)\b/g,'<span class="kw">$1</span>');s=s.replace(/\b(int|long|double|float|boolean|char|byte|short|String|Object|List|Map|Set|ArrayList|Integer|Double|Boolean)\b/g,'<span class="typ">$1</span>');s=s.replace(/(@\w+)/g,'<span class="ann">$1</span>');}
   if(lang==='html'){s=s.replace(/(&lt;!--[\s\S]*?--&gt;)/g,'<span class="cmt">$1</span>');s=s.replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9-]*)/g,'<span class="kw">$1</span>');s=s.replace(/(=(?:"[^"]*"|'[^']*'))/g,'<span class="str">$1</span>');}
+  if(lang==='drawio'){s=s.replace(/(&lt;!--[\s\S]*?--&gt;)/g,'<span class="cmt">$1</span>');s=s.replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9:_-]*)/g,'<span class="kw">$1</span>');s=s.replace(/(=(?:"[^"]*"|'[^']*'))/g,'<span class="str">$1</span>');}
   if(lang==='css'){s=s.replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="cmt">$1</span>');s=s.replace(/([.#]?[\w-]+\s*\{)/g,'<span class="kw">$1</span>');s=s.replace(/(:[\s]*[^;{}\n]+)/g,'<span class="str">$1</span>');}
   s=s.replace(/\b(\d+\.?\d*)(px|em|rem|%|vh|vw|s|ms)?\b/g,'<span class="num">$1$2</span>');
   return s;
 }
 const bd2=document.getElementById('modal-backdrop');
-const mTitle=document.getElementById('modal-title'),mIcon=document.getElementById('modal-icon'),mBody=document.getElementById('modal-body'),mGh=document.getElementById('modal-gh'),mCopy=document.getElementById('modal-copy');
+const mTitle=document.getElementById('modal-title'),mIcon=document.getElementById('modal-icon'),mBody=document.getElementById('modal-body'),mGh=document.getElementById('modal-gh'),mCopy=document.getElementById('modal-copy'),mDownload=document.getElementById('modal-download'),mDelete=document.getElementById('modal-delete');
 let rawCode='';
+let currentFileName='archivo.txt';
+let currentFbDocId=null;
+const MIME_BY_EXT={drawio:'application/xml',xml:'application/xml',json:'application/json',html:'text/html',css:'text/css',js:'text/javascript',java:'text/x-java-source',md:'text/markdown',txt:'text/plain',sql:'application/sql'};
 document.getElementById('modal-close').onclick=()=>bd2.classList.remove('open');
 bd2.addEventListener('click',e=>{if(e.target===bd2)bd2.classList.remove('open');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){bd2.classList.remove('open');closeCalModal();document.getElementById('ev-popup-overlay').classList.remove('open');}});
 mCopy.onclick=()=>{if(!rawCode)return;navigator.clipboard.writeText(rawCode).then(()=>{mCopy.textContent='✅ Copiado';setTimeout(()=>{mCopy.textContent='📋 Copiar';},2000);});};
+mDownload.onclick=()=>{
+  if(!rawCode)return;
+  const ext=getExt(currentFileName);
+  const mime=MIME_BY_EXT[ext]||'application/octet-stream';
+  const blob=new Blob([rawCode],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=currentFileName;a.rel='noopener';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+mDelete.onclick=async()=>{
+  if(!currentFbDocId)return;
+  if(!confirm(`¿Eliminar "${currentFileName}"? Esta acción no se puede deshacer.`))return;
+  try{
+    await deleteDoc(doc(_db,'Codigo','Codigos','Archivos',currentFbDocId));
+    _allArchivos=_allArchivos.filter(f=>f._docId!==currentFbDocId);
+    bd2.classList.remove('open');
+  }catch(e){ alert('No se pudo eliminar: '+e.message); }
+};
 async function openFile(item){
   bd2.classList.add('open');mTitle.textContent=item.name;mIcon.textContent=getIcon(item);mGh.href=item.html_url;
+  currentFileName=item.name; currentFbDocId=null; mDelete.style.display='none';
   mBody.innerHTML='<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';rawCode='';
   const e=getExt(item.name);
   if(['png','jpg','jpeg','gif','webp','svg'].includes(e)){mBody.innerHTML=`<img src="${item.download_url}" style="max-width:100%;border-radius:8px;" alt="${item.name}">`;return;}
-  try{const r=await fetch(item.download_url);if(!r.ok)throw new Error(r.statusText);rawCode=await r.text();mBody.innerHTML=`<pre>${highlight(rawCode,getLang(item.name))}</pre>`;}
+  const drawioNote = e === 'drawio'
+    ? `<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);margin-top:10px;">📐 Archivo de <strong>draw.io / diagrams.net</strong>. Pulsa "⬇ Descargar" y ábrelo con la extensión <strong>Draw.io Integration</strong> en VS Code, o arrástralo a <a href="https://app.diagrams.net" target="_blank" rel="noopener" style="color:var(--accent);">app.diagrams.net</a>.</div>`
+    : '';
+  try{const r=await fetch(item.download_url);if(!r.ok)throw new Error(r.statusText);rawCode=await r.text();mBody.innerHTML=`<pre>${highlight(rawCode,getLang(item.name))}</pre>${drawioNote}`;}
   catch(err){mBody.innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`;}
 }
 function sortI(items){return [...items].sort((a,b)=>{if(a.type!==b.type)return a.type==='dir'?-1:1;return a.name.localeCompare(b.name,'es',{numeric:true});});}
@@ -2271,10 +2301,26 @@ document.getElementById('search-input').addEventListener('input', function(){
         const el = document.createElement('div'); el.className = 'tree-leaf'; el.dataset.name = f.name.toLowerCase();
         const ext  = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
         const lang = f.lang || 'other';
-        const icon = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣'}[ext] || '📄';
+        const icon = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',png:'🖼️',jpg:'🖼️',jpeg:'🖼️',gif:'🖼️',pdf:'📕',zip:'📦',sql:'🗄️',sh:'⚙️',ts:'🟦',kt:'🟣',drawio:'📐'}[ext] || '📄';
         const carpetaLabel = f.carpeta && f.carpeta !== '/' ? `<span style="font-size:9px;opacity:.4;margin-left:6px;">📁 ${f.carpeta}</span>` : '';
-        el.innerHTML = `<span class="tree-icon" style="font-size:14px">${icon}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
-        el.addEventListener('click', () => openFileFromFirebase(f));
+        el.style.display = 'flex'; el.style.alignItems = 'center';
+        el.innerHTML = `<span class="tree-icon" style="font-size:14px">${icon}</span><span class="leaf-name">${f.name}</span>${carpetaLabel}${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}${f._docId?`<button data-role="fb-del" title="Eliminar archivo" style="margin-left:auto;background:none;border:none;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:6px;cursor:pointer;">🗑️</button>`:''}`;
+        el.addEventListener('click', (e) => {
+          if(e.target.closest('[data-role="fb-del"]')) return;
+          openFileFromFirebase(f);
+        });
+        const delBtn = el.querySelector('[data-role="fb-del"]');
+        if(delBtn){
+          delBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if(!confirm(`¿Eliminar "${f.name}"? Esta acción no se puede deshacer.`)) return;
+            try{
+              await deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId));
+              _allArchivos = _allArchivos.filter(x => x._docId !== f._docId);
+              el.remove();
+            } catch(err){ alert('No se pudo eliminar: ' + err.message); }
+          });
+        }
         fbPanel.appendChild(el);
       });
       document.getElementById('search-count').textContent = `${matches.length} resultado${matches.length!==1?'s':''}`;
@@ -2296,12 +2342,20 @@ function openFileFromFirebase(f){
   document.getElementById('modal-title').textContent=f.name;
   document.getElementById('modal-icon').textContent=ICONS[getExt(f.name)]||'📄';
   document.getElementById('modal-gh').href=f.html_url||'#';
+  if(f.html_url){ document.getElementById('modal-gh').style.display=''; } else { document.getElementById('modal-gh').style.display='none'; }
+  currentFileName = f.name;
+  currentFbDocId = f._docId || null;
+  mDelete.style.display = currentFbDocId ? '' : 'none';
   bd2.classList.add('open');
-  if(f.content){ rawCode = f.content; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`; }
+  const ext = getExt(f.name);
+  const drawioNote = ext === 'drawio'
+    ? `<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);margin-top:10px;">📐 Archivo de <strong>draw.io / diagrams.net</strong>. Pulsa "⬇ Descargar" y ábrelo con la extensión <strong>Draw.io Integration</strong> en VS Code, o arrástralo a <a href="https://app.diagrams.net" target="_blank" rel="noopener" style="color:var(--accent);">app.diagrams.net</a>.</div>`
+    : '';
+  if(f.content){ rawCode = f.content; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>${drawioNote}`; }
   else if(f.download_url){
     document.getElementById('modal-body').innerHTML='<div class="modal-loading"><div class="spinner"></div><span>Cargando archivo…</span></div>';
     rawCode = '';
-    fetch(f.download_url).then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); }).then(text=>{ rawCode = text; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>`; }).catch(err=>{ document.getElementById('modal-body').innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`; });
+    fetch(f.download_url).then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); }).then(text=>{ rawCode = text; document.getElementById('modal-body').innerHTML=`<pre>${highlight(rawCode,getLang(f.name))}</pre>${drawioNote}`; }).catch(err=>{ document.getElementById('modal-body').innerHTML=`<div class="error-box">No se pudo cargar el archivo.<br>${err.message}</div>`; });
   } else { document.getElementById('modal-body').innerHTML='<div class="modal-loading"><span>Sin contenido disponible</span></div>'; }
 }
 
@@ -2393,8 +2447,24 @@ function renderFolderTree(allFolders, filter){
   filtered.forEach(folder => {
     const parts = folder.split('/'); const last = parts[parts.length - 1]; const depth = parts.length - 1;
     const el = document.createElement('div'); el.className = 'tree-leaf'; el.style.paddingLeft = (11 + depth * 14) + 'px';
-    el.innerHTML = `<span class="tree-icon" style="font-size:14px">📁</span><span class="leaf-name">${last}</span><span style="font-size:9px;opacity:.35;margin-left:4px;">${depth > 0 ? folder : ''}</span>`;
-    el.addEventListener('click', () => selectUploadFolder(folder));
+    el.style.display = 'flex'; el.style.alignItems = 'center';
+    const count = _allArchivos.filter(f => (f.carpeta||'') === folder || (f.carpeta||'').startsWith(folder + '/')).length;
+    el.innerHTML = `<span class="tree-icon" style="font-size:14px">📁</span><span class="leaf-name">${last}</span><span style="font-size:9px;opacity:.35;margin-left:4px;">${depth > 0 ? folder : ''}</span><button data-role="folder-del" title="Eliminar carpeta y su contenido" style="margin-left:auto;background:none;border:none;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:6px;cursor:pointer;">🗑️</button>`;
+    el.addEventListener('click', (e) => {
+      if(e.target.closest('[data-role="folder-del"]')) return;
+      selectUploadFolder(folder);
+    });
+    el.querySelector('[data-role="folder-del"]').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if(!confirm(`¿Eliminar la carpeta "${folder}" y sus ${count} archivo${count!==1?'s':''}? Esta acción no se puede deshacer.`)) return;
+      const toDelete = _allArchivos.filter(f => (f.carpeta||'') === folder || (f.carpeta||'').startsWith(folder + '/'));
+      try{
+        await Promise.all(toDelete.map(f => deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId))));
+        _allArchivos = _allArchivos.filter(f => !toDelete.includes(f));
+        const remaining = [...new Set(_allArchivos.map(f => f.carpeta || ''))].filter(f => f && f !== '/').sort();
+        renderFolderTree(remaining, document.getElementById('upload-folder-search').value);
+      } catch(err){ alert('No se pudieron eliminar algunos archivos: ' + err.message); }
+    });
     tree.appendChild(el);
   });
 }
@@ -2431,7 +2501,7 @@ function showPreview(files){
   const list = document.getElementById('upload-preview-list'); list.innerHTML = '';
   files.forEach(f => {
     const ext = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
-    const icons = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',kt:'🟣'};
+    const icons = {java:'☕',html:'🌐',css:'🎨',js:'🟨',md:'📝',txt:'📄',xml:'📋',json:'🔧',kt:'🟣',drawio:'📐'};
     const icon = icons[ext] || '📄';
     const rel = f.webkitRelativePath ? f.webkitRelativePath.split('/').slice(1).join('/') || f.name : f.name;
     const d = document.createElement('div'); d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:2px 0;';
@@ -2464,11 +2534,11 @@ document.getElementById('upload-submit').addEventListener('click', async () => {
       if(!carpeta) carpeta = '/';
       const content = await file.text().catch(() => '');
       const ext  = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
-      const lang = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':'other';
+      const lang = ext==='java'?'java':ext==='html'?'html':ext==='css'?'css':ext==='drawio'?'drawio':'other';
       const id   = 'upload_' + Date.now() + '_' + Math.random().toString(36).slice(2);
       const fileDoc = { id, name: fileName, path: 'GitTodo/' + (carpeta !== '/' ? carpeta + '/' : '') + fileName, carpeta, lang, download_url: '', html_url: '', content: content.slice(0, 50000), updatedAt: Date.now() };
       await saveCodigoFile(fileDoc);
-      _allArchivos.push(fileDoc);
+      _allArchivos.push({...fileDoc, _docId: fileDoc.id});
       done++; btn.textContent = `Subiendo… ${done}/${files.length}`;
     } catch(e){ errors++; console.error('Error subiendo', file.name, e); }
   }
