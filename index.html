@@ -1595,6 +1595,19 @@
       <span>Conectando con GitHub…</span>
     </div>
   </div>
+
+  <div class="section-label" id="uploads-label">// 📤 ejercicios subidos (compartido con la otra web)</div>
+  <div class="tree" id="uploads-tree-root">
+    <div class="loading-wrap"><div class="spinner"></div><span>Cargando…</span></div>
+  </div>
+
+  <div class="section-label" id="python-tree-label" style="display:flex;align-items:center;gap:8px;">
+    <span id="python-tree-label-text" style="flex:1;">// 🐍 repositorio ErBala3/python · cargando…</span>
+    <button id="python-tree-refresh" title="Actualizar ahora" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;">🔄 Actualizar</button>
+  </div>
+  <div class="tree" id="python-tree-root">
+    <div class="loading-wrap"><div class="spinner"></div><span>Conectando con ErBala3/python…</span></div>
+  </div>
 </main>
 
 <footer>
@@ -1725,6 +1738,20 @@ async function loadEvents(){
   return results.flat();
 }
 
+const _eventsByType = {};
+let _eventsSubscribed = false;
+function subscribeEvents(onChange){
+  if(_eventsSubscribed) return;
+  _eventsSubscribed = true;
+  Object.entries(TYPE_COL).forEach(([type, colName]) => {
+    onSnapshot(collection(_db, DOC_PATH, colName), snap => {
+      _eventsByType[type] = snap.docs.map(d => ({...d.data(), type, _docId: d.id}));
+      _allEvents = Object.values(_eventsByType).flat();
+      onChange();
+    }, err => console.warn('Eventos onSnapshot error ('+type+'):', err));
+  });
+}
+
 async function saveNewEvent(ev){
   const colName = TYPE_COL[ev.type];
   await setDoc(doc(_db, DOC_PATH, colName, ev.id), ev);
@@ -1762,7 +1789,7 @@ function buildSeedEvents(){
   return evs;
 }
 
-async function initEvents(){
+async function ensureSeeded(){
   showCalLoading(true);
   let evs = await loadEvents();
   if(!evs.length){
@@ -1774,10 +1801,8 @@ async function initEvents(){
   const expired = evs.filter(ev=>ev.type==='exam' && new Date(ev.year,ev.month-1,ev.day)<today);
   if(expired.length){
     await Promise.all(expired.map(ev=>deleteEvent(ev.id)));
-    evs = evs.filter(ev=>!expired.includes(ev));
   }
   showCalLoading(false);
-  return evs;
 }
 
 function getEventsForDay(evs, month, day, year){
@@ -1790,10 +1815,22 @@ function getEventsForDay(evs, month, day, year){
 
 let _allEvents = [];
 
-async function appInit(){
-  _allEvents = await initEvents();
+function renderCalendarAll(){
   refreshTodayWidgets();
   buildCalendar(calYear);
+  const popup = document.getElementById('ev-popup-overlay');
+  if(popup && popup.classList.contains('open') && _popupCtx){
+    const fresh = getEventsForDay(_allEvents, _popupCtx.month, _popupCtx.day, _popupCtx.year);
+    _popupCtx.dayEvs = fresh;
+    renderEvPopupEvents(fresh);
+  }
+}
+
+async function appInit(){
+  await ensureSeeded();
+  // Suscripción en tiempo real: cualquier cambio (aquí o en otra pestaña/página
+  // que use la misma base de datos) se refleja al instante, sin recargar.
+  subscribeEvents(renderCalendarAll);
 }
 
 const joinNames=ns=>ns.length===1?ns[0]:ns.length===2?ns.join(' y '):ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1];
@@ -2141,6 +2178,23 @@ async function loadCodigosFlat(){
   return snap.docs.map(d => ({...d.data(), _docId: d.id}));
 }
 
+let _archivosUnsub = null;
+function subscribeArchivos(){
+  if(_archivosUnsub) return; // ya suscrito, evita duplicar listeners
+  _archivosUnsub = onSnapshot(collection(_db, 'Codigo', 'Codigos', 'Archivos'), snap => {
+    _allArchivos = snap.docs.map(d => ({...d.data(), _docId: d.id}));
+    const label = document.getElementById('section-label');
+    if(label && !/Guardando|Obteniendo|Error/.test(label.textContent)){
+      label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
+    }
+    const searchInput = document.getElementById('search-input');
+    if(searchInput && searchInput.value.trim()) searchInput.dispatchEvent(new Event('input'));
+    const folderSearch = document.getElementById('upload-folder-search');
+    if(folderSearch) folderSearch.dispatchEvent(new Event('input'));
+    renderUploadsTree();
+  }, err => console.warn('Archivos onSnapshot error:', err));
+}
+
 async function saveCodigoFile(fileDoc){
   await setDoc(doc(_db, 'Codigo', 'Codigos', 'Archivos', fileDoc.id), fileDoc);
 }
@@ -2181,11 +2235,19 @@ async function initArchivos(){
   const label = document.getElementById('section-label');
   try{
     const existing = await loadCodigosFlat();
-    if(existing.length > 0){ _allArchivos = existing; label.textContent = label.textContent.replace('expandir', `expandir · 🔍 ${existing.length} archivos indexados`); return; }
+    if(existing.length > 0){
+      _allArchivos = existing;
+      label.textContent = label.textContent.replace('expandir', `expandir · 🔍 ${existing.length} archivos indexados`);
+      renderUploadsTree();
+      subscribeArchivos();
+      return;
+    }
   } catch(e){ console.warn('loadCodigosFlat error:', e); }
   try{
     await forceSyncArchivos(msg => { label.textContent = '// ' + msg; });
     label.textContent = `// ✅ ${_allArchivos.length} archivos · haz click para expandir`;
+    renderUploadsTree();
+    subscribeArchivos();
   } catch(e){ console.error('Error sync:', e); label.textContent = '// Error sincronizando: ' + e.message; }
 }
 
@@ -2198,6 +2260,12 @@ const getLang=name=>{const e=getExt(name);return e==='java'?'java':e==='html'?'h
 async function apiFetch(path){
   const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`,{headers:{Accept:'application/vnd.github.v3+json'}});
   if(!r.ok)throw new Error(`GitHub API ${r.status}`);
+  return r.json();
+}
+async function apiFetchGeneric(owner, repo, branch, path){
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents${path ? '/' + path : ''}?ref=${branch}`;
+  const r = await fetch(url, {headers:{Accept:'application/vnd.github.v3+json'}});
+  if(!r.ok) throw new Error(`GitHub API ${r.status}`);
   return r.json();
 }
 function highlight(code,lang){
@@ -2275,6 +2343,54 @@ function renderFolder(item,delay=0){
   wrap.appendChild(header);wrap.appendChild(children);return wrap;
 }
 
+// ---- Árbol en vivo del repositorio ErBala3/python (lee directo de la API de GitHub, tal cual está el repo) ----
+function renderPyFile(item, delay=0){
+  const el=document.createElement('div');el.className='tree-leaf';el.dataset.name=item.name.toLowerCase();el.style.animationDelay=`${delay}ms`;
+  const lang=getLang(item.name);
+  el.innerHTML=`<span class="tree-icon" style="font-size:14px">${getIcon(item)}</span><span class="leaf-name">${item.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
+  el.addEventListener('click',()=>openFile(item));return el;
+}
+function renderPyFolder(item, delay=0){
+  const wrap=document.createElement('div');wrap.className='tree-item';wrap.dataset.name=item.name.toLowerCase();wrap.style.animationDelay=`${delay}ms`;
+  const uid=`py-${Math.random().toString(36).slice(2)}`;
+  const header=document.createElement('div');header.className='tree-header';
+  header.innerHTML=`<span class="tree-icon">${getIcon(item)}</span><span class="tree-name">${item.name}</span><div class="tree-meta"><span class="fbadge dir">carpeta</span><span class="count-pill" id="${uid}">…</span><span class="chevron">▶</span></div>`;
+  const children=document.createElement('div');children.className='tree-children';let loaded=false;
+  header.addEventListener('click',async()=>{
+    const chv=header.querySelector('.chevron');const open=children.classList.toggle('open');chv.classList.toggle('open',open);
+    if(open&&!loaded){loaded=true;children.innerHTML=`<div class="sub-loading"><div class="sub-spinner"></div><span>Cargando ${item.name}…</span></div>`;
+      try{
+        const contents=await apiFetchGeneric('ErBala3','python','main',item.path);
+        children.innerHTML='';
+        const sorted=sortI(contents);
+        const pill=document.getElementById(uid); if(pill) pill.textContent=`${sorted.length} items`;
+        sorted.forEach((child,i)=>children.appendChild(child.type==='dir'?renderPyFolder(child,i*35):renderPyFile(child,i*35)));
+      } catch(e){ children.innerHTML=`<div class="error-box">Error cargando ${item.name}: ${e.message}</div>`; }
+    }
+  });
+  wrap.appendChild(header);wrap.appendChild(children);return wrap;
+}
+async function initPythonTree(){
+  const root=document.getElementById('python-tree-root'), label=document.getElementById('python-tree-label-text');
+  if(!root) return;
+  try{
+    const items=await apiFetchGeneric('ErBala3','python','main','');
+    root.innerHTML='';
+    const sorted=sortI(items);
+    if(label) label.textContent=`// 🐍 repositorio ErBala3/python · ${sorted.length} elemento${sorted.length!==1?'s':''} · haz click para expandir`;
+    sorted.forEach((item,i)=>root.appendChild(item.type==='dir'?renderPyFolder(item,i*55):renderPyFile(item,i*55)));
+  } catch(e){
+    if(label) label.textContent='// error al cargar ErBala3/python';
+    root.innerHTML=`<div class="error-box">❌ No se pudo conectar con ErBala3/python.<br><br><strong>Error:</strong> ${e.message}</div>`;
+  }
+}
+document.getElementById('python-tree-refresh')?.addEventListener('click', () => {
+  const root=document.getElementById('python-tree-root');
+  if(root) root.innerHTML='<div class="loading-wrap"><div class="spinner"></div><span>Actualizando…</span></div>';
+  initPythonTree();
+});
+setInterval(() => { initPythonTree(); }, 300000); // refresco automático cada 5 minutos, sin recargar la página
+
 function normalize(s){ return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
 let _searchTimer = null;
@@ -2337,6 +2453,89 @@ function getOrCreateFbPanel(treeRoot){
   return p;
 }
 
+// ---- Árbol persistente de "Ejercicios subidos" (Firebase), visible siempre, sin necesidad de buscar ----
+function buildUploadsTreeData(files){
+  const root = { children:{}, files:[] };
+  files.forEach(f => {
+    const carpeta = (f.carpeta && f.carpeta !== '/') ? f.carpeta : '';
+    const parts = carpeta ? carpeta.split('/').filter(Boolean) : [];
+    let node = root;
+    parts.forEach(p => {
+      node.children[p] = node.children[p] || { children:{}, files:[] };
+      node = node.children[p];
+    });
+    node.files.push(f);
+  });
+  return root;
+}
+function countUploadsFiles(node){
+  let c = node.files.length;
+  Object.values(node.children).forEach(ch => c += countUploadsFiles(ch));
+  return c;
+}
+function renderUploadsFolder(node, name, path){
+  const wrap = document.createElement('div'); wrap.className = 'tree-item';
+  const uid = `up-${Math.random().toString(36).slice(2)}`;
+  const total = countUploadsFiles(node);
+  const header = document.createElement('div'); header.className = 'tree-header';
+  header.innerHTML = `<span class="tree-icon">📁</span><span class="tree-name">${name}</span><div class="tree-meta"><span class="fbadge dir">carpeta</span><span class="count-pill" id="${uid}">${total} items</span><button data-role="up-del-folder" title="Eliminar carpeta y su contenido" style="background:none;border:none;color:var(--muted);font-size:13px;padding:2px 6px;border-radius:6px;cursor:pointer;">🗑️</button><span class="chevron">▶</span></div>`;
+  const children = document.createElement('div'); children.className = 'tree-children';
+  fillUploadsChildren(children, node, path);
+  header.addEventListener('click', (e) => {
+    if(e.target.closest('[data-role="up-del-folder"]')) return;
+    const open = children.classList.toggle('open');
+    header.querySelector('.chevron').classList.toggle('open', open);
+  });
+  header.querySelector('[data-role="up-del-folder"]').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if(!confirm(`¿Eliminar la carpeta "${name}" y sus ${total} archivo${total!==1?'s':''}? Esta acción no se puede deshacer.`)) return;
+    const toDelete = _allArchivos.filter(f => (f.carpeta||'') === path || (f.carpeta||'').startsWith(path + '/'));
+    try{
+      await Promise.all(toDelete.map(f => deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId))));
+    } catch(err){ alert('No se pudieron eliminar algunos archivos: ' + err.message); }
+  });
+  wrap.appendChild(header); wrap.appendChild(children);
+  return wrap;
+}
+function renderUploadsFile(f){
+  const el = document.createElement('div'); el.className = 'tree-leaf'; el.dataset.name = f.name.toLowerCase();
+  const lang = f.lang || getLang(f.name);
+  el.style.display = 'flex'; el.style.alignItems = 'center';
+  el.innerHTML = `<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}<button data-role="up-del-file" title="Eliminar archivo" style="margin-left:auto;background:none;border:none;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:6px;cursor:pointer;">🗑️</button>`;
+  el.addEventListener('click', (e) => {
+    if(e.target.closest('[data-role="up-del-file"]')) return;
+    openFileFromFirebase(f);
+  });
+  el.querySelector('[data-role="up-del-file"]').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if(!confirm(`¿Eliminar "${f.name}"? Esta acción no se puede deshacer.`)) return;
+    try{ await deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId)); }
+    catch(err){ alert('No se pudo eliminar: ' + err.message); }
+  });
+  return el;
+}
+function fillUploadsChildren(container, node, parentPath){
+  Object.keys(node.children).sort((a,b)=>a.localeCompare(b,'es')).forEach(name => {
+    const fullPath = parentPath ? parentPath + '/' + name : name;
+    container.appendChild(renderUploadsFolder(node.children[name], name, fullPath));
+  });
+  node.files.slice().sort((a,b)=>a.name.localeCompare(b.name,'es')).forEach(f => container.appendChild(renderUploadsFile(f)));
+}
+function renderUploadsTree(){
+  const root = document.getElementById('uploads-tree-root');
+  const label = document.getElementById('uploads-label');
+  if(!root) return;
+  if(!_allArchivos.length){
+    root.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#64748b;padding:16px 0;">Todavía no hay ejercicios subidos.</div>`;
+    if(label) label.textContent = '// 📤 ejercicios subidos (compartido con la otra web)';
+    return;
+  }
+  const data = buildUploadsTreeData(_allArchivos);
+  root.innerHTML = '';
+  fillUploadsChildren(root, data, '');
+  if(label) label.textContent = `// 📤 ejercicios subidos · ${_allArchivos.length} archivo${_allArchivos.length!==1?'s':''} (compartido con la otra web)`;
+}
+
 function openFileFromFirebase(f){
   const bd2=document.getElementById('modal-backdrop');
   document.getElementById('modal-title').textContent=f.name;
@@ -2372,6 +2571,7 @@ async function init(){
     root.innerHTML=`<div class="error-box">❌ No se pudo conectar con el repositorio.<br><br><strong>Error:</strong> ${e.message}</div>`;
   }
   initArchivos().catch(e => console.warn('Firebase códigos:', e));
+  initPythonTree().catch(e => console.warn('Árbol ErBala3/python:', e));
 }
 
 /* ══ Upload modal ══ */
