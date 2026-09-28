@@ -1596,18 +1596,7 @@
     </div>
   </div>
 
-  <div class="section-label" id="uploads-label">// 📤 ejercicios subidos (compartido con la otra web)</div>
-  <div class="tree" id="uploads-tree-root">
-    <div class="loading-wrap"><div class="spinner"></div><span>Cargando…</span></div>
-  </div>
-
-  <div class="section-label" id="python-tree-label" style="display:flex;align-items:center;gap:8px;">
-    <span id="python-tree-label-text" style="flex:1;">// 🐍 repositorio ErBala3/python · cargando…</span>
-    <button id="python-tree-refresh" title="Actualizar ahora" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;">🔄 Actualizar</button>
-  </div>
-  <div class="tree" id="python-tree-root">
-    <div class="loading-wrap"><div class="spinner"></div><span>Conectando con ErBala3/python…</span></div>
-  </div>
+  <div class="tree" id="uploads-tree-root"></div>
 </main>
 
 <footer>
@@ -2262,12 +2251,6 @@ async function apiFetch(path){
   if(!r.ok)throw new Error(`GitHub API ${r.status}`);
   return r.json();
 }
-async function apiFetchGeneric(owner, repo, branch, path){
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents${path ? '/' + path : ''}?ref=${branch}`;
-  const r = await fetch(url, {headers:{Accept:'application/vnd.github.v3+json'}});
-  if(!r.ok) throw new Error(`GitHub API ${r.status}`);
-  return r.json();
-}
 function highlight(code,lang){
   const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   let s=esc(code);
@@ -2343,53 +2326,6 @@ function renderFolder(item,delay=0){
   wrap.appendChild(header);wrap.appendChild(children);return wrap;
 }
 
-// ---- Árbol en vivo del repositorio ErBala3/python (lee directo de la API de GitHub, tal cual está el repo) ----
-function renderPyFile(item, delay=0){
-  const el=document.createElement('div');el.className='tree-leaf';el.dataset.name=item.name.toLowerCase();el.style.animationDelay=`${delay}ms`;
-  const lang=getLang(item.name);
-  el.innerHTML=`<span class="tree-icon" style="font-size:14px">${getIcon(item)}</span><span class="leaf-name">${item.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}`;
-  el.addEventListener('click',()=>openFile(item));return el;
-}
-function renderPyFolder(item, delay=0){
-  const wrap=document.createElement('div');wrap.className='tree-item';wrap.dataset.name=item.name.toLowerCase();wrap.style.animationDelay=`${delay}ms`;
-  const uid=`py-${Math.random().toString(36).slice(2)}`;
-  const header=document.createElement('div');header.className='tree-header';
-  header.innerHTML=`<span class="tree-icon">${getIcon(item)}</span><span class="tree-name">${item.name}</span><div class="tree-meta"><span class="fbadge dir">carpeta</span><span class="count-pill" id="${uid}">…</span><span class="chevron">▶</span></div>`;
-  const children=document.createElement('div');children.className='tree-children';let loaded=false;
-  header.addEventListener('click',async()=>{
-    const chv=header.querySelector('.chevron');const open=children.classList.toggle('open');chv.classList.toggle('open',open);
-    if(open&&!loaded){loaded=true;children.innerHTML=`<div class="sub-loading"><div class="sub-spinner"></div><span>Cargando ${item.name}…</span></div>`;
-      try{
-        const contents=await apiFetchGeneric('ErBala3','python','main',item.path);
-        children.innerHTML='';
-        const sorted=sortI(contents);
-        const pill=document.getElementById(uid); if(pill) pill.textContent=`${sorted.length} items`;
-        sorted.forEach((child,i)=>children.appendChild(child.type==='dir'?renderPyFolder(child,i*35):renderPyFile(child,i*35)));
-      } catch(e){ children.innerHTML=`<div class="error-box">Error cargando ${item.name}: ${e.message}</div>`; }
-    }
-  });
-  wrap.appendChild(header);wrap.appendChild(children);return wrap;
-}
-async function initPythonTree(){
-  const root=document.getElementById('python-tree-root'), label=document.getElementById('python-tree-label-text');
-  if(!root) return;
-  try{
-    const items=await apiFetchGeneric('ErBala3','python','main','');
-    root.innerHTML='';
-    const sorted=sortI(items);
-    if(label) label.textContent=`// 🐍 repositorio ErBala3/python · ${sorted.length} elemento${sorted.length!==1?'s':''} · haz click para expandir`;
-    sorted.forEach((item,i)=>root.appendChild(item.type==='dir'?renderPyFolder(item,i*55):renderPyFile(item,i*55)));
-  } catch(e){
-    if(label) label.textContent='// error al cargar ErBala3/python';
-    root.innerHTML=`<div class="error-box">❌ No se pudo conectar con ErBala3/python.<br><br><strong>Error:</strong> ${e.message}</div>`;
-  }
-}
-document.getElementById('python-tree-refresh')?.addEventListener('click', () => {
-  const root=document.getElementById('python-tree-root');
-  if(root) root.innerHTML='<div class="loading-wrap"><div class="spinner"></div><span>Actualizando…</span></div>';
-  initPythonTree();
-});
-setInterval(() => { initPythonTree(); }, 300000); // refresco automático cada 5 minutos, sin recargar la página
 
 function normalize(s){ return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
@@ -2454,86 +2390,66 @@ function getOrCreateFbPanel(treeRoot){
 }
 
 // ---- Árbol persistente de "Ejercicios subidos" (Firebase), visible siempre, sin necesidad de buscar ----
+
+// ---- Árbol de carpetas y archivos (misma estructura que la pestaña Ejercicios de la otra web) ----
+const _collator = new Intl.Collator('es', {numeric:true, sensitivity:'base'});
+const _openUp = new Set();
 function buildUploadsTreeData(files){
   const root = { children:{}, files:[] };
   files.forEach(f => {
     const carpeta = (f.carpeta && f.carpeta !== '/') ? f.carpeta : '';
-    const parts = carpeta ? carpeta.split('/').filter(Boolean) : [];
     let node = root;
-    parts.forEach(p => {
-      node.children[p] = node.children[p] || { children:{}, files:[] };
-      node = node.children[p];
-    });
+    carpeta.split('/').filter(Boolean).forEach(p => { node = node.children[p] = node.children[p] || { children:{}, files:[] }; });
     node.files.push(f);
   });
   return root;
 }
-function countUploadsFiles(node){
-  let c = node.files.length;
-  Object.values(node.children).forEach(ch => c += countUploadsFiles(ch));
-  return c;
-}
-function renderUploadsFolder(node, name, path){
-  const wrap = document.createElement('div'); wrap.className = 'tree-item';
-  const uid = `up-${Math.random().toString(36).slice(2)}`;
-  const total = countUploadsFiles(node);
-  const header = document.createElement('div'); header.className = 'tree-header';
-  header.innerHTML = `<span class="tree-icon">📁</span><span class="tree-name">${name}</span><div class="tree-meta"><span class="fbadge dir">carpeta</span><span class="count-pill" id="${uid}">${total} items</span><button data-role="up-del-folder" title="Eliminar carpeta y su contenido" style="background:none;border:none;color:var(--muted);font-size:13px;padding:2px 6px;border-radius:6px;cursor:pointer;">🗑️</button><span class="chevron">▶</span></div>`;
-  const children = document.createElement('div'); children.className = 'tree-children';
-  fillUploadsChildren(children, node, path);
-  header.addEventListener('click', (e) => {
-    if(e.target.closest('[data-role="up-del-folder"]')) return;
-    const open = children.classList.toggle('open');
-    header.querySelector('.chevron').classList.toggle('open', open);
-  });
-  header.querySelector('[data-role="up-del-folder"]').addEventListener('click', async (e) => {
-    e.stopPropagation();
-    if(!confirm(`¿Eliminar la carpeta "${name}" y sus ${total} archivo${total!==1?'s':''}? Esta acción no se puede deshacer.`)) return;
-    const toDelete = _allArchivos.filter(f => (f.carpeta||'') === path || (f.carpeta||'').startsWith(path + '/'));
-    try{
-      await Promise.all(toDelete.map(f => deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId))));
-    } catch(err){ alert('No se pudieron eliminar algunos archivos: ' + err.message); }
-  });
-  wrap.appendChild(header); wrap.appendChild(children);
-  return wrap;
-}
-function renderUploadsFile(f){
-  const el = document.createElement('div'); el.className = 'tree-leaf'; el.dataset.name = f.name.toLowerCase();
-  const lang = f.lang || getLang(f.name);
-  el.style.display = 'flex'; el.style.alignItems = 'center';
-  el.innerHTML = `<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}<button data-role="up-del-file" title="Eliminar archivo" style="margin-left:auto;background:none;border:none;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:6px;cursor:pointer;">🗑️</button>`;
-  el.addEventListener('click', (e) => {
-    if(e.target.closest('[data-role="up-del-file"]')) return;
-    openFileFromFirebase(f);
-  });
-  el.querySelector('[data-role="up-del-file"]').addEventListener('click', async (e) => {
-    e.stopPropagation();
-    if(!confirm(`¿Eliminar "${f.name}"? Esta acción no se puede deshacer.`)) return;
-    try{ await deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId)); }
-    catch(err){ alert('No se pudo eliminar: ' + err.message); }
-  });
-  return el;
-}
+function countUploadsFiles(n){ return n.files.length + Object.values(n.children).reduce((a,c)=>a+countUploadsFiles(c),0); }
 function fillUploadsChildren(container, node, parentPath){
-  Object.keys(node.children).sort((a,b)=>a.localeCompare(b,'es')).forEach(name => {
-    const fullPath = parentPath ? parentPath + '/' + name : name;
-    container.appendChild(renderUploadsFolder(node.children[name], name, fullPath));
+  Object.keys(node.children).sort(_collator.compare).forEach(name => {
+    const path = parentPath ? parentPath + '/' + name : name;
+    const total = countUploadsFiles(node.children[name]);
+    const wrap = document.createElement('div'); wrap.className = 'tree-item';
+    const header = document.createElement('div'); header.className = 'tree-header';
+    const isOpen = _openUp.has(path);
+    header.innerHTML = `<span class="tree-icon">📁</span><span class="tree-name">${name}</span><div class="tree-meta"><span class="count-pill">${total} items</span><button data-role="up-del-folder" title="Eliminar carpeta y su contenido" style="background:none;border:none;color:var(--muted);font-size:13px;padding:2px 6px;border-radius:6px;cursor:pointer;">🗑️</button><span class="chevron${isOpen?' open':''}">▶</span></div>`;
+    const children = document.createElement('div'); children.className = 'tree-children' + (isOpen ? ' open' : '');
+    fillUploadsChildren(children, node.children[name], path);
+    header.addEventListener('click', (e) => {
+      if(e.target.closest('[data-role="up-del-folder"]')) return;
+      const open = children.classList.toggle('open');
+      header.querySelector('.chevron').classList.toggle('open', open);
+      open ? _openUp.add(path) : _openUp.delete(path);
+    });
+    header.querySelector('[data-role="up-del-folder"]').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if(!confirm(`¿Eliminar la carpeta "${name}" y sus ${total} archivo${total!==1?'s':''}? Esta acción no se puede deshacer.`)) return;
+      const toDelete = _allArchivos.filter(f => (f.carpeta||'') === path || (f.carpeta||'').startsWith(path + '/'));
+      try{ await Promise.all(toDelete.map(f => deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId)))); }
+      catch(err){ alert('No se pudieron eliminar algunos archivos: ' + err.message); }
+    });
+    wrap.appendChild(header); wrap.appendChild(children); container.appendChild(wrap);
   });
-  node.files.slice().sort((a,b)=>a.name.localeCompare(b.name,'es')).forEach(f => container.appendChild(renderUploadsFile(f)));
+  node.files.slice().sort((a,b)=>_collator.compare(a.name,b.name)).forEach(f => {
+    const el = document.createElement('div'); el.className = 'tree-leaf';
+    const lang = f.lang || getLang(f.name);
+    el.style.display = 'flex'; el.style.alignItems = 'center';
+    el.innerHTML = `<span class="tree-icon" style="font-size:14px">${ICONS[getExt(f.name)]||'📄'}</span><span class="leaf-name">${f.name}</span>${lang!=='other'?`<span class="fbadge ${lang}">${lang.toUpperCase()}</span>`:''}<button data-role="up-del-file" title="Eliminar archivo" style="margin-left:auto;background:none;border:none;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:6px;cursor:pointer;">🗑️</button>`;
+    el.addEventListener('click', (e) => { if(!e.target.closest('[data-role="up-del-file"]')) openFileFromFirebase(f); });
+    el.querySelector('[data-role="up-del-file"]').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if(!confirm(`¿Eliminar "${f.name}"? Esta acción no se puede deshacer.`)) return;
+      try{ await deleteDoc(doc(_db,'Codigo','Codigos','Archivos', f._docId)); }
+      catch(err){ alert('No se pudo eliminar: ' + err.message); }
+    });
+    container.appendChild(el);
+  });
 }
 function renderUploadsTree(){
   const root = document.getElementById('uploads-tree-root');
-  const label = document.getElementById('uploads-label');
   if(!root) return;
-  if(!_allArchivos.length){
-    root.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#64748b;padding:16px 0;">Todavía no hay ejercicios subidos.</div>`;
-    if(label) label.textContent = '// 📤 ejercicios subidos (compartido con la otra web)';
-    return;
-  }
-  const data = buildUploadsTreeData(_allArchivos);
   root.innerHTML = '';
-  fillUploadsChildren(root, data, '');
-  if(label) label.textContent = `// 📤 ejercicios subidos · ${_allArchivos.length} archivo${_allArchivos.length!==1?'s':''} (compartido con la otra web)`;
+  fillUploadsChildren(root, buildUploadsTreeData(_allArchivos), '');
 }
 
 function openFileFromFirebase(f){
@@ -2571,7 +2487,6 @@ async function init(){
     root.innerHTML=`<div class="error-box">❌ No se pudo conectar con el repositorio.<br><br><strong>Error:</strong> ${e.message}</div>`;
   }
   initArchivos().catch(e => console.warn('Firebase códigos:', e));
-  initPythonTree().catch(e => console.warn('Árbol ErBala3/python:', e));
 }
 
 /* ══ Upload modal ══ */
